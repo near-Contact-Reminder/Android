@@ -5,4 +5,5 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.hilt.application) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.ktlint) apply false
 }
