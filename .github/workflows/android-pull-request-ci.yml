@@ -3,11 +3,14 @@ name: Android Pull Request CI
 on:
   pull_request:
     branches: [ "main", "develop", "dev" ]
-    paths: 'Near/**'
     
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Near
 
     steps:
       - name: Checkout the code
