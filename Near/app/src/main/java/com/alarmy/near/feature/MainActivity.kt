@@ -1,4 +1,4 @@
-package com.alarmy.near
+package com.alarmy.near.feature
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
