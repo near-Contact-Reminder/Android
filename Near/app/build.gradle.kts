@@ -73,4 +73,7 @@ dependencies {
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
     implementation(libs.room.paging)
+
+    // Navigation
+    implementation(libs.navigation.compose)
 }
