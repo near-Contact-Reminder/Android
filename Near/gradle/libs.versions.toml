@@ -21,6 +21,8 @@ roomVersion = "2.6.1"
 ktlintVersion = "13.0.0"
 # Navigation
 navigationVersion = "2.9.2"
+# Kotlin Serialization
+kotlinSerializationVersion = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +51,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVers
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
 room-paging = { group = "androidx.room", name = "room-paging", version.ref = "roomVersion" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationVersion" }
+kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerializationVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -57,4 +60,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 hilt-application = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintVersion" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

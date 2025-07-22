@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.application)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -73,7 +74,8 @@ dependencies {
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
     implementation(libs.room.paging)
-
     // Navigation
     implementation(libs.navigation.compose)
+    // Serialization
+    implementation(libs.kotlin.serialization.json)
 }
