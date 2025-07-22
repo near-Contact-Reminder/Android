@@ -1,4 +1,4 @@
-package com.alarmy.near.repository
+package com.alarmy.near.data.repository
 
 interface ExampleRepository {
     fun getExampleData(): String

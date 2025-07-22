@@ -1,4 +1,4 @@
-package com.alarmy.near.feature.home
+package com.alarmy.near.presentation.feature.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alarmy.near.feature.home.model.HomeUiState
-import com.alarmy.near.ui.theme.NearTheme
+import com.alarmy.near.presentation.feature.home.model.HomeUiState
+import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
 internal fun HomeRoute(

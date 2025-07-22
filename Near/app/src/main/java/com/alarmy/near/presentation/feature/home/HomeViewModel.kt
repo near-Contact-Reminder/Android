@@ -1,7 +1,7 @@
-package com.alarmy.near.feature.home
+package com.alarmy.near.presentation.feature.home
 
 import androidx.lifecycle.ViewModel
-import com.alarmy.near.feature.home.model.HomeUiState
+import com.alarmy.near.presentation.feature.home.model.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

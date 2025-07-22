@@ -1,4 +1,4 @@
-package com.alarmy.near.feature.main
+package com.alarmy.near.presentation.feature.main
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

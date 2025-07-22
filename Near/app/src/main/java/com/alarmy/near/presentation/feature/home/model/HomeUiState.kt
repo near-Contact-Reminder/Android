@@ -1,4 +1,4 @@
-package com.alarmy.near.feature.home.model
+package com.alarmy.near.presentation.feature.home.model
 
 sealed interface HomeUiState {
     data object Loading : HomeUiState
