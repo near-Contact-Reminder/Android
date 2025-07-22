@@ -1,6 +1,6 @@
 [versions]
 agp = "8.10.1"
-kotlin = "2.0.21"
+kotlin = "2.2.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -9,7 +9,7 @@ lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
 # Hilt
-hiltVersion = "2.51.1"
+hiltVersion = "2.57"
 hiltNavigationVersion = "1.2.0"
 # Retrofit
 retrofitVersion = "2.9.0"
