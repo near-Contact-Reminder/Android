@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.alarmy.near.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
