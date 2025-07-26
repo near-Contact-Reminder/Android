@@ -193,7 +193,7 @@ internal val Typography =
 
 @Preview(showBackground = true)
 @Composable
-fun TypographyPreview() {
+private fun TypographyPreview() {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
         Text("소중한 사람들과 더 가까워지는 시간 24", style = Typography.H1_24_BOLD)
         Text("소중한 사람들과 더 가까워지는 시간 24", style = Typography.H1_24_MEDIUM)
