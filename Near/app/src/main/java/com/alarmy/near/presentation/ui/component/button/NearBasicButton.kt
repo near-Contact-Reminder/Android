@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,18 +21,25 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 fun NearBasicButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit,
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = NearTheme.colors.BLUE01_5AA2E9,
+        contentColor = NearTheme.colors.WHITE_FFFFFF,
+    ),
+    enabled: Boolean = true,
     contentPadding: PaddingValues,
+    content: @Composable RowScope.() -> Unit,
 ) {
     Button(
         modifier =
             modifier
                 .heightIn(min = 56.dp)
                 .wrapContentHeight(),
+        colors = colors,
+        enabled = enabled,
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
-        content = content,
         contentPadding = contentPadding,
+        content = content,
     )
 }
 
