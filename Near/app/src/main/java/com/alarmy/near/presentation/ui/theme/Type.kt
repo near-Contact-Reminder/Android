@@ -110,7 +110,7 @@ internal val Typography =
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                lineHeight = 26.sp,
+                lineHeight = 24.sp,
                 letterSpacing =
                     letterSpacingToSp(
                         fontSize = 18.sp,
@@ -122,7 +122,7 @@ internal val Typography =
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                lineHeight = 24.sp,
+                lineHeight = 22.sp,
                 letterSpacing =
                     letterSpacingToSp(
                         fontSize = 16.sp,
@@ -134,7 +134,7 @@ internal val Typography =
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
-                lineHeight = 24.sp,
+                lineHeight = 22.sp,
                 letterSpacing =
                     letterSpacingToSp(
                         fontSize = 16.sp,
@@ -170,7 +170,7 @@ internal val Typography =
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
-                lineHeight = 16.sp,
+                lineHeight = 18.sp,
                 letterSpacing =
                     letterSpacingToSp(
                         fontSize = 12.sp,
@@ -182,7 +182,7 @@ internal val Typography =
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
-                lineHeight = 16.sp,
+                lineHeight = 18.sp,
                 letterSpacing =
                     letterSpacingToSp(
                         fontSize = 12.sp,
