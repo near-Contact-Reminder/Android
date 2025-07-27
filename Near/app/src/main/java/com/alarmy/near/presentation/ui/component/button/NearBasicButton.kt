@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.ui.component.button
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
@@ -26,6 +27,7 @@ fun NearBasicButton(
         contentColor = NearTheme.colors.WHITE_FFFFFF,
     ),
     enabled: Boolean = true,
+    border: BorderStroke? = null,
     contentPadding: PaddingValues,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -37,6 +39,7 @@ fun NearBasicButton(
         colors = colors,
         enabled = enabled,
         onClick = onClick,
+        border = border,
         shape = RoundedCornerShape(12.dp),
         contentPadding = contentPadding,
         content = content,
