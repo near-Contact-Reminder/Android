@@ -2,20 +2,16 @@ package com.alarmy.near.presentation.ui.component.textfield
 
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.presentation.ui.theme.NearTheme
@@ -30,6 +26,7 @@ fun NearTextField(
     placeHolderText: String = "",
     singleLine: Boolean = false,
     interactionSource: InteractionSource = remember { MutableInteractionSource() },
+    decorationBox: (@Composable (innerTextField: @Composable () -> Unit) -> Unit)? = null,
 ) {
     val colors =
         OutlinedTextFieldDefaults.colors(
@@ -54,35 +51,20 @@ fun NearTextField(
             ),
         cursorBrush = SolidColor(NearTheme.colors.BLACK_1A1A1A),
         onValueChange = onValueChange,
-    ) { innerTextField ->
-        OutlinedTextFieldDefaults.DecorationBox(
-            contentPadding = PaddingValues(16.dp),
-            value = value,
-            innerTextField = innerTextField,
-            enabled = enabled,
-            singleLine = singleLine,
-            interactionSource = interactionSource,
-            visualTransformation = VisualTransformation.None,
-            placeholder = {
-                Text(
-                    text = placeHolderText,
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY02_B7B7B7,
-                )
-            },
-            container = {
-                OutlinedTextFieldDefaults.Container(
-                    enabled = enabled,
-                    isError = false,
-                    interactionSource = interactionSource,
-                    colors = colors,
-                    shape = RoundedCornerShape(12.dp),
-                    focusedBorderThickness = (1.5).dp,
-                    unfocusedBorderThickness = (1.5).dp,
-                )
-            },
-        )
-    }
+        decorationBox =
+            decorationBox
+                ?: { innerTextField ->
+                    NearOutlinedTextFieldDecorationBox(
+                        value = value,
+                        innerTextField = innerTextField,
+                        enabled = enabled,
+                        singleLine = singleLine,
+                        interactionSource = interactionSource,
+                        colors = colors,
+                        placeHolderText = placeHolderText,
+                    )
+                },
+    )
 }
 
 @Preview(widthDp = 370, heightDp = 80, showBackground = true)
