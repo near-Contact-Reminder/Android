@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -14,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.presentation.ui.component.textfield.internal.NearOutlinedTextFieldDecorationBox
+import com.alarmy.near.presentation.ui.component.textfield.internal.NearTextFieldColors
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,18 +29,7 @@ fun NearTextField(
     interactionSource: InteractionSource = remember { MutableInteractionSource() },
     decorationBox: (@Composable (innerTextField: @Composable () -> Unit) -> Unit)? = null,
 ) {
-    val colors =
-        OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = NearTheme.colors.BLUE02_8ACCFF,
-            focusedTextColor = NearTheme.colors.BLACK_1A1A1A,
-            focusedContainerColor = NearTheme.colors.WHITE_FFFFFF,
-            unfocusedTextColor = NearTheme.colors.BLACK_1A1A1A,
-            unfocusedBorderColor = NearTheme.colors.GRAY03_EBEBEB,
-            unfocusedContainerColor = NearTheme.colors.WHITE_FFFFFF,
-            disabledTextColor = NearTheme.colors.GRAY02_B7B7B7,
-            disabledContainerColor = NearTheme.colors.GRAY04_F7F7F7,
-            disabledBorderColor = NearTheme.colors.GRAY03_EBEBEB,
-        )
+    val colors = NearTextFieldColors()
 
     BasicTextField(
         value = value,

@@ -1,4 +1,4 @@
-package com.alarmy.near.presentation.ui.component.textfield
+package com.alarmy.near.presentation.ui.component.textfield.internal
 
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.layout.PaddingValues
