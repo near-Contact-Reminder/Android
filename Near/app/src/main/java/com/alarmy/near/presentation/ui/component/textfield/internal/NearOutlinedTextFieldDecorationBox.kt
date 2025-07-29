@@ -14,17 +14,25 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NearOutlinedTextFieldDecorationBox(
+internal fun NearOutlinedTextFieldDecorationBox(
     value: String,
     innerTextField: @Composable () -> Unit,
     enabled: Boolean,
     singleLine: Boolean,
     interactionSource: InteractionSource,
     colors: TextFieldColors,
+    contentPadding: PaddingValues = PaddingValues(16.dp),
     placeHolderText: String,
+    container: (@Composable () -> Unit) = {
+        NearTextFieldDecorationContainer(
+            enabled = enabled,
+            interactionSource = interactionSource,
+            colors = colors
+        )
+    }
 ) {
     OutlinedTextFieldDefaults.DecorationBox(
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = contentPadding,
         value = value,
         innerTextField = innerTextField,
         enabled = enabled,
@@ -38,16 +46,24 @@ fun NearOutlinedTextFieldDecorationBox(
                 color = NearTheme.colors.GRAY02_B7B7B7,
             )
         },
-        container = {
-            OutlinedTextFieldDefaults.Container(
-                enabled = enabled,
-                isError = false,
-                interactionSource = interactionSource,
-                colors = colors,
-                shape = RoundedCornerShape(12.dp),
-                focusedBorderThickness = (1.5).dp,
-                unfocusedBorderThickness = (1.5).dp,
-            )
-        },
+        container = container,
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun NearTextFieldDecorationContainer(
+    enabled: Boolean,
+    interactionSource: InteractionSource,
+    colors: TextFieldColors,
+) {
+    OutlinedTextFieldDefaults.Container(
+        enabled = enabled,
+        isError = false,
+        interactionSource = interactionSource,
+        colors = colors,
+        shape = RoundedCornerShape(12.dp),
+        focusedBorderThickness = (1.5).dp,
+        unfocusedBorderThickness = (1.5).dp,
     )
 }

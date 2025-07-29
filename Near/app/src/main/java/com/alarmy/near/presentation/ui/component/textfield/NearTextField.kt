@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.presentation.ui.component.textfield.internal.NearOutlinedTextFieldDecorationBox
@@ -26,6 +27,7 @@ fun NearTextField(
     onValueChange: (String) -> Unit,
     placeHolderText: String = "",
     singleLine: Boolean = false,
+    onTextLayout: (textLayoutResult: TextLayoutResult) -> Unit = {},
     interactionSource: InteractionSource = remember { MutableInteractionSource() },
     decorationBox: (@Composable (innerTextField: @Composable () -> Unit) -> Unit)? = null,
 ) {
@@ -54,6 +56,7 @@ fun NearTextField(
                         placeHolderText = placeHolderText,
                     )
                 },
+        onTextLayout = onTextLayout
     )
 }
 
