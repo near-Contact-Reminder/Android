@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Near</string>
+    <string name="content_description_checkbox_check">체크</string>
+    <string name="content_description_checkbox_un_check">체크 해제</string>
 </resources>
