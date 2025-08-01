@@ -1,6 +1,8 @@
 package com.alarmy.near.presentation.feature.main
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
@@ -19,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 internal fun NearApp(
     modifier: Modifier = Modifier,
@@ -28,7 +31,8 @@ internal fun NearApp(
     val scope = rememberCoroutineScope()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+            Modifier.fillMaxSize(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarState,
@@ -42,7 +46,7 @@ internal fun NearApp(
         },
     ) { innerPadding ->
         NearNavHost(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.consumeWindowInsets(innerPadding), // 하위 뷰에 Padding을 소비한 것으로 알립니다.
             navController = navController,
             onShowSnackbar = {
                 scope.launch {
