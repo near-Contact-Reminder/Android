@@ -1,4 +1,4 @@
-package com.alarmy.near.di
+package com.alarmy.near.network.di
 
 // @Module
 // @InstallIn(SingletonComponent::class)
