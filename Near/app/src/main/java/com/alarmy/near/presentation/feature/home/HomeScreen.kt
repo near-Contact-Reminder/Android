@@ -68,122 +68,127 @@ internal fun HomeScreen(
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
 
-    Column(
-        modifier =
-            Modifier
-                .paint(
-                    painter =
-                        painterResource(
-                            R.drawable.img_bg,
-                        ),
-                    contentScale = ContentScale.FillBounds,
-                ).fillMaxSize(),
-    ) {
-        Spacer(modifier = Modifier.height(statusBarHeightDp))
-        Row(
+    Surface(modifier = modifier) {
+        Column(
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .padding(end = 20.dp),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
+                    .paint(
+                        painter =
+                            painterResource(
+                                R.drawable.img_bg,
+                            ),
+                        contentScale = ContentScale.FillBounds,
+                    ).fillMaxSize(),
         ) {
-            Text(
-                stringResource(R.string.home_my_profile_button_text),
-                style = NearTheme.typography.H2_18_BOLD.copy(letterSpacing = 0.sp),
-                color = NearTheme.colors.WHITE_FFFFFF,
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Image(painterResource(R.drawable.icon_32_bell), contentDescription = "")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text =
-                buildAnnotatedString {
-                    append("정하은님,\n")
-                    withStyle(
-                        SpanStyle(
-                            fontWeight = FontWeight.Bold,
-                        ),
-                    ) {
-                        append("누구를 챙길지")
-                    }
-                    append(" 정해볼까요?")
-                },
-            modifier = Modifier.padding(horizontal = 24.dp),
-            style = NearTheme.typography.H1_24_REGULAR,
-            color = NearTheme.colors.WHITE_FFFFFF,
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = stringResource(R.string.home_this_month_people),
-            modifier = Modifier.padding(horizontal = 24.dp),
-            style = NearTheme.typography.B1_16_BOLD,
-            color = NearTheme.colors.WHITE_FFFFFF,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Surface(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-            color = NearTheme.colors.WHITE_FFFFFF.copy(alpha = 0.2f),
-        ) {
-            Text(
-                text = stringResource(R.string.home_no_people_this_month),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 14.dp),
-                textAlign = TextAlign.Center,
-                style =
-                    NearTheme.typography.B2_14_MEDIUM.copy(
-                        fontWeight = FontWeight.Normal,
-                    ),
-                color = NearTheme.colors.WHITE_FFFFFF,
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        color = NearTheme.colors.WHITE_FFFFFF,
-                        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-                    ),
-        ) {
+            Spacer(modifier = Modifier.height(statusBarHeightDp))
             Row(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .align(Alignment.TopCenter)
-                        .padding(top = 20.dp, start = 24.dp, end = 16.dp),
+                        .padding(vertical = 8.dp)
+                        .padding(end = 20.dp),
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    stringResource(R.string.home_my_people),
-                    style = NearTheme.typography.H2_18_BOLD,
-                    color = NearTheme.colors.BLACK_1A1A1A,
+                    stringResource(R.string.home_my_profile_button_text),
+                    style = NearTheme.typography.H2_18_BOLD.copy(letterSpacing = 0.sp),
+                    color = NearTheme.colors.WHITE_FFFFFF,
                 )
-                Icon(
-                    painterResource(R.drawable.icon_32_menu),
-                    contentDescription = stringResource(R.string.home_my_people_setting),
+                Spacer(modifier = Modifier.width(12.dp))
+                Image(painterResource(R.drawable.icon_32_bell), contentDescription = "")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text =
+                    buildAnnotatedString {
+                        append("정하은님,\n")
+                        withStyle(
+                            SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                            ),
+                        ) {
+                            append("누구를 챙길지")
+                        }
+                        append(" 정해볼까요?")
+                    },
+                modifier = Modifier.padding(horizontal = 24.dp),
+                style = NearTheme.typography.H1_24_REGULAR,
+                color = NearTheme.colors.WHITE_FFFFFF,
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = stringResource(R.string.home_this_month_people),
+                modifier = Modifier.padding(horizontal = 24.dp),
+                style = NearTheme.typography.B1_16_BOLD,
+                color = NearTheme.colors.WHITE_FFFFFF,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Surface(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .clip(RoundedCornerShape(12.dp)),
+                color = NearTheme.colors.WHITE_FFFFFF.copy(alpha = 0.2f),
+            ) {
+                Text(
+                    text = stringResource(R.string.home_no_people_this_month),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 14.dp),
+                    textAlign = TextAlign.Center,
+                    style =
+                        NearTheme.typography.B2_14_MEDIUM.copy(
+                            fontWeight = FontWeight.Normal,
+                        ),
+                    color = NearTheme.colors.WHITE_FFFFFF,
                 )
             }
-            AddingUserButton()
+            Spacer(modifier = Modifier.height(24.dp))
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = NearTheme.colors.WHITE_FFFFFF,
+                            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                        ),
+            ) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.TopCenter)
+                            .padding(top = 20.dp, start = 24.dp, end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        stringResource(R.string.home_my_people),
+                        style = NearTheme.typography.H2_18_BOLD,
+                        color = NearTheme.colors.BLACK_1A1A1A,
+                    )
+                    Icon(
+                        painterResource(R.drawable.icon_32_menu),
+                        contentDescription = stringResource(R.string.home_my_people_setting),
+                    )
+                }
+                AddingUserButton()
+            }
         }
     }
 }
 
 @Composable
-private fun BoxScope.AddingUserButton(onClick: () -> Unit = {}) {
+private fun BoxScope.AddingUserButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .align(Alignment.Center)
                 .onNoRippleClick(
                     onClick = onClick,
