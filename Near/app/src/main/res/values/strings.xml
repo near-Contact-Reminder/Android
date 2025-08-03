@@ -7,4 +7,8 @@
     <string name="home_my_profile_button_text">MY</string>
     <string name="home_this_month_people">이번달 챙길 사람</string>
     <string name="home_no_people_this_month">이번달은 챙길 사람이 없네요.</string>
+    <string name="home_my_people">내 사람들</string>
+    <string name="home_my_people_setting">내 사람들 설정</string>
+    <string name="home_add_contact">연락처 추가</string>
+    <string name="home_add_contact_description">가까워 지고 싶은 사람을\n추가해보세요.</string>
 </resources>

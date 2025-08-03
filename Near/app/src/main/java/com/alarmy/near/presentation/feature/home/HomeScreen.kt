@@ -1,7 +1,10 @@
 package com.alarmy.near.presentation.feature.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.home.model.HomeUiState
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -140,6 +145,65 @@ internal fun HomeScreen(
                 color = NearTheme.colors.WHITE_FFFFFF,
             )
         }
+        Spacer(modifier = Modifier.height(24.dp))
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = NearTheme.colors.WHITE_FFFFFF,
+                        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                    ),
+        ) {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                        .padding(top = 20.dp, start = 24.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    stringResource(R.string.home_my_people),
+                    style = NearTheme.typography.H2_18_BOLD,
+                    color = NearTheme.colors.BLACK_1A1A1A,
+                )
+                Icon(
+                    painterResource(R.drawable.icon_32_menu),
+                    contentDescription = stringResource(R.string.home_my_people_setting),
+                )
+            }
+            AddingUserButton()
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.AddingUserButton(onClick: () -> Unit = {}) {
+    Column(
+        modifier =
+            Modifier
+                .align(Alignment.Center)
+                .onNoRippleClick(
+                    onClick = onClick,
+                ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painterResource(R.drawable._icon_64_adduser),
+            contentDescription =
+                stringResource(
+                    R.string.home_add_contact,
+                ),
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            stringResource(R.string.home_add_contact_description),
+            style = NearTheme.typography.B2_14_MEDIUM,
+            color = NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.3f),
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
