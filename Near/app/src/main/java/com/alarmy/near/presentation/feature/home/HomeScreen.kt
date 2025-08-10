@@ -210,7 +210,7 @@ internal fun HomeScreen(
                         Surface(
                             modifier.dropShadow(
                                 shape = RoundedCornerShape(12.dp),
-                                color = Color(color = 0xff000000).copy(alpha = 0.07f),
+                                color = Color.Black.copy(alpha = 0.07f),
                                 blur = 4.dp,
                                 offsetY = 4.dp,
                             ),
