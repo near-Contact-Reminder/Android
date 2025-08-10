@@ -14,9 +14,9 @@ data class ContactSummary(
     val contactFrequency: ContactFrequency,
 ) {
     val formattedDate: String
-        get() {
-            val formatter = DateTimeFormatter.ofPattern("yy.MM.dd")
-            val formattedDate = lastContactedAt.format(formatter)
-            return formattedDate
-        }
+        get() = lastContactedAt.format(formatter)
+
+    companion object {
+        private val formatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
+    }
 }

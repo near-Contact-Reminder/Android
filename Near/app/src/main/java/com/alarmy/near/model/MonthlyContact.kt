@@ -24,9 +24,12 @@ data class MonthlyContact(
         get() = getDaysBetween() == 0L
 
     private fun getDaysBetween(): Long {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val targetDate = LocalDate.parse(nextContactAt, formatter)
         val today = LocalDate.now()
         return ChronoUnit.DAYS.between(today, targetDate)
+    }
+
+    companion object {
+        private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
 }
