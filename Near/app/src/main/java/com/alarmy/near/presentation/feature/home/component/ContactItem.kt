@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,7 +42,12 @@ fun ContactItem(
                     Modifier
                         .align(Alignment.TopEnd)
                         .offset(x = 4.dp, y = (-4).dp),
-                painter = painterResource(R.drawable.ic_visual_24_emoji_100),
+                painter =
+                    when (contactSummary.contactFrequency) {
+                        ContactFrequency.LOW -> painterResource(R.drawable.ic_visual_24_emoji_0)
+                        ContactFrequency.MIDDLE -> painterResource(R.drawable.ic_visual_24_emoji_50)
+                        ContactFrequency.HIGH -> painterResource(R.drawable.ic_visual_24_emoji_100)
+                    },
                 contentDescription = "",
             )
         }

@@ -339,7 +339,7 @@ internal fun HomeScreenPreview() {
                         profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
                         lastContactedAt = LocalDate.of(2025, 7, 25),
                         isContacted = false,
-                        contactFrequency = ContactFrequency.LOW,
+                        contactFrequency = ContactFrequency.HIGH,
                     )
                 },
             monthlyContacts =
@@ -348,7 +348,7 @@ internal fun HomeScreenPreview() {
                         friendId = "intellegat$it",
                         name = "Stacey Stewart",
                         type = "ANNIVERSARY",
-                        nextContactAt = "2025-07-25",
+                        nextContactAt = "2025-09-30",
                     )
                 },
         )
