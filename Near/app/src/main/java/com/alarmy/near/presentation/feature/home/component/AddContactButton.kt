@@ -20,9 +20,12 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 private const val MAX_WIDTH_OF_NAME_TEXT = 97
 
 @Composable
-fun AddContactButton(modifier: Modifier = Modifier) {
+fun AddContactButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+) {
     Column(
-        modifier = modifier,
+        modifier = modifier.onNoRippleClick(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AddContactImage()

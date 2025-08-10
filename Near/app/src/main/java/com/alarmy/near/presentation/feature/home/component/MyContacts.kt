@@ -35,12 +35,16 @@ fun MyContacts(
                 contactsWithPage.count() + if (contactsWithPage.lastOrNull()?.count() == 5) 1 else 0
             },
         ),
+    onAddContactClick: () -> Unit = {},
+    onContactClick: (contactId: String) -> Unit = {},
 ) {
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         if (contactsWithPage.isEmpty()) { // 연락처가 아무도 없는 경우
             Column {
                 Spacer(modifier = Modifier.height(166.dp))
-                AddInitialContactButton()
+                AddInitialContactButton(
+                    onClick = onAddContactClick,
+                )
             }
         } else {
             HorizontalPager(
@@ -57,7 +61,9 @@ fun MyContacts(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
                         ) {
-                            AddContactButton()
+                            AddContactButton(
+                                onClick = onAddContactClick,
+                            )
                         }
                     }
                 } else {
@@ -71,9 +77,12 @@ fun MyContacts(
                                 ) {
                                     ContactItem(
                                         contactSummary = contactsWithPage[page][0],
+                                        onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((60 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
-                                    AddContactButton()
+                                    AddContactButton(
+                                        onClick = onAddContactClick,
+                                    )
                                 }
                             }
                         }
@@ -86,14 +95,18 @@ fun MyContacts(
                                 Spacer(modifier = Modifier.height(112.dp))
                                 ContactItem(
                                     contactSummary = contactsWithPage[page][0],
+                                    onClick = onContactClick,
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Row {
                                     ContactItem(
                                         contactSummary = contactsWithPage[page][1],
+                                        onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((118 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
-                                    AddContactButton()
+                                    AddContactButton(
+                                        onClick = onAddContactClick,
+                                    )
                                 }
                             }
                         }
@@ -108,17 +121,23 @@ fun MyContacts(
                                     ContactItem(
                                         modifier = Modifier.align(Alignment.TopCenter),
                                         contactSummary = contactsWithPage[page][0],
+                                        onClick = onContactClick,
                                     )
                                     Row(modifier = Modifier.padding(top = 92.dp, bottom = 78.dp)) {
                                         ContactItem(
                                             contactSummary = contactsWithPage[page][1],
+                                            onClick = onContactClick,
                                         )
                                         Spacer(modifier = Modifier.width((141 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                         ContactItem(
                                             contactSummary = contactsWithPage[page][2],
+                                            onClick = onContactClick,
                                         )
                                     }
-                                    AddContactButton(modifier = Modifier.align(Alignment.BottomCenter))
+                                    AddContactButton(
+                                        modifier = Modifier.align(Alignment.BottomCenter),
+                                        onClick = onAddContactClick,
+                                    )
                                 }
                             }
                         }
@@ -133,14 +152,17 @@ fun MyContacts(
                                     ContactItem(
                                         modifier = Modifier.align(Alignment.TopCenter),
                                         contactSummary = contactsWithPage[page][0],
+                                        onClick = onContactClick,
                                     )
                                     Row(modifier = Modifier.padding(top = 62.dp)) {
                                         ContactItem(
                                             contactSummary = contactsWithPage[page][1],
+                                            onClick = onContactClick,
                                         )
                                         Spacer(modifier = Modifier.width((138 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                         ContactItem(
                                             contactSummary = contactsWithPage[page][2],
+                                            onClick = onContactClick,
                                         )
                                     }
                                 }
@@ -148,9 +170,12 @@ fun MyContacts(
                                 Row {
                                     ContactItem(
                                         contactSummary = contactsWithPage[page][3],
+                                        onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((51 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
-                                    AddContactButton()
+                                    AddContactButton(
+                                        onClick = onAddContactClick,
+                                    )
                                 }
                             }
                         }
@@ -165,14 +190,17 @@ fun MyContacts(
                                     ContactItem(
                                         modifier = Modifier.align(Alignment.TopCenter),
                                         contactSummary = contactsWithPage[page][0],
+                                        onClick = onContactClick,
                                     )
                                     Row(modifier = Modifier.padding(top = 62.dp)) {
                                         ContactItem(
                                             contactSummary = contactsWithPage[page][1],
+                                            onClick = onContactClick,
                                         )
                                         Spacer(modifier = Modifier.width((138 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                         ContactItem(
                                             contactSummary = contactsWithPage[page][2],
+                                            onClick = onContactClick,
                                         )
                                     }
                                 }
@@ -180,10 +208,12 @@ fun MyContacts(
                                 Row {
                                     ContactItem(
                                         contactSummary = contactsWithPage[page][3],
+                                        onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((51 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                     ContactItem(
                                         contactSummary = contactsWithPage[page][4],
+                                        onClick = onContactClick,
                                     )
                                 }
                             }
@@ -205,7 +235,7 @@ fun MyContactsPreview() {
                 contactsWithPage =
                     List(5) {
                         ContactSummary(
-                            id = 2003,
+                            id = "2003",
                             name = "일이삼사오육칠팔구",
                             profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
                             lastContactedAt = LocalDate.of(2025, 7, 25),

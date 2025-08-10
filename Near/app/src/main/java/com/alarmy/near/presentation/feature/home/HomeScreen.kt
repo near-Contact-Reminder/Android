@@ -53,6 +53,7 @@ import com.alarmy.near.model.ContactSummary
 import com.alarmy.near.model.MonthlyContact
 import com.alarmy.near.presentation.feature.home.component.MyContacts
 import com.alarmy.near.presentation.ui.extension.dropShadow
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import java.time.LocalDate
 
@@ -62,15 +63,19 @@ private const val MINIMUM_PAGE_COUNT_TO_SHOW_UI = 2
 internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onContactClick: (String) -> Unit = {},
+    onAlarmClick: () -> Unit = {},
+    onMyPageClick: () -> Unit = {},
 ) {
     val uiState = viewModel.uiStateFlow.collectAsStateWithLifecycle()
     HomeScreen(
         onContactClick = {},
-        onRemoveContact = viewModel::removeContact,
+        onAlarmClick = {},
+        onMyPageClick = {},
         contacts =
             List(6) {
                 ContactSummary(
-                    id = 2003,
+                    id = "2003",
                     name = "일이삼사오육칠팔구",
                     profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
                     lastContactedAt = LocalDate.of(2025, 7, 25),
@@ -86,8 +91,9 @@ internal fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
-    onContactClick: (Long) -> Unit = { _ -> },
-    onRemoveContact: (Long) -> Unit = { _ -> },
+    onContactClick: (String) -> Unit = { _ -> },
+    onMyPageClick: () -> Unit = {},
+    onAlarmClick: () -> Unit = {},
     contacts: List<ContactSummary>,
     monthlyContacts: List<MonthlyContact>,
 ) {
@@ -125,12 +131,17 @@ internal fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    stringResource(R.string.home_my_profile_button_text),
+                    modifier = Modifier.onNoRippleClick(onClick = onMyPageClick),
+                    text = stringResource(R.string.home_my_profile_button_text),
                     style = NearTheme.typography.H2_18_BOLD.copy(letterSpacing = 0.sp),
                     color = NearTheme.colors.WHITE_FFFFFF,
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Image(painterResource(R.drawable.ic_32_bell), contentDescription = "")
+                Image(
+                    modifier = Modifier.onNoRippleClick(onClick = onAlarmClick),
+                    painter = painterResource(R.drawable.ic_32_bell),
+                    contentDescription = "",
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -282,6 +293,10 @@ internal fun HomeScreen(
                     modifier = Modifier.align(Alignment.TopCenter),
                     contactsWithPage = contactsWithPage,
                     pagerState = pagerState,
+                    onContactClick = onContactClick,
+                    onAddContactClick = {
+                        // TODO Contact 클릭 이벤트 구현
+                    },
                 )
 
                 if (contactsWithPage.size >= MINIMUM_PAGE_COUNT_TO_SHOW_UI) {
@@ -330,11 +345,10 @@ internal fun HomeScreenPreview() {
     NearTheme {
         HomeScreen(
             onContactClick = {},
-            onRemoveContact = {},
             contacts =
                 List(6) {
                     ContactSummary(
-                        id = 2003,
+                        id = "2003",
                         name = "일이삼사오육칠팔구",
                         profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
                         lastContactedAt = LocalDate.of(2025, 7, 25),
@@ -343,7 +357,7 @@ internal fun HomeScreenPreview() {
                     )
                 },
             monthlyContacts =
-                List(2) {
+                List(4) {
                     MonthlyContact(
                         friendId = "intellegat$it",
                         name = "Stacey Stewart",

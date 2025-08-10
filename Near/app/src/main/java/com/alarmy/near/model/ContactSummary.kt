@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 
 @Immutable
 data class ContactSummary(
-    val id: Long,
+    val id: String,
     val name: String,
     val profileImageUrl: String,
     val lastContactedAt: LocalDate,

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.ContactSummary
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import java.time.LocalDate
 
@@ -30,8 +31,15 @@ private const val MAX_WIDTH_OF_NAME_TEXT = 97
 fun ContactItem(
     modifier: Modifier = Modifier,
     contactSummary: ContactSummary,
+    onClick: (contactId: String) -> Unit = {},
 ) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier =
+            modifier.onNoRippleClick {
+                onClick(contactSummary.id)
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Box {
             Image(
                 painter = painterResource(R.drawable.img_64_user1),
@@ -85,12 +93,12 @@ fun ContactItemPreview_Default() {
         modifier = Modifier.padding(top = 10.dp),
         contactSummary =
             ContactSummary(
-                id = 1L,
+                id = "123L",
                 name = "홍길동",
                 profileImageUrl = "",
                 lastContactedAt = LocalDate.of(2025, 5, 31),
                 isContacted = true,
                 contactFrequency = ContactFrequency.HIGH,
-        )
+            ),
     )
 }
