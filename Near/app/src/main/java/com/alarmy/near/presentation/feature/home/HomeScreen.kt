@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -40,9 +45,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.ContactSummary
+import com.alarmy.near.presentation.feature.home.component.MyContacts
 import com.alarmy.near.presentation.feature.home.model.HomeUiState
-import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import java.time.LocalDate
+
+private const val MINIMUM_PAGE_COUNT_TO_SHOW_UI = 2
 
 @Composable
 internal fun HomeRoute(
@@ -54,6 +64,17 @@ internal fun HomeRoute(
         uiState = uiState.value,
         onContactClick = {},
         onRemoveContact = viewModel::removeContact,
+        contacts =
+            List(6) {
+                ContactSummary(
+                    id = 2003,
+                    name = "일이삼사오육칠팔구",
+                    profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
+                    lastContactedAt = LocalDate.of(2025, 7, 25),
+                    isContacted = false,
+                    contactFrequency = ContactFrequency.LOW,
+                )
+            },
     )
 }
 
@@ -64,9 +85,18 @@ internal fun HomeScreen(
     uiState: HomeUiState,
     onContactClick: (Long) -> Unit = { _ -> },
     onRemoveContact: (Long) -> Unit = { _ -> },
+    contacts: List<ContactSummary>,
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
+    val contactsWithPage = contacts.chunked(5)
+    val pagerState: PagerState =
+        rememberPagerState(
+            initialPage = 0,
+            pageCount = {
+                contactsWithPage.count() + if (contactsWithPage.lastOrNull()?.count() == 5) 1 else 0
+            },
+    )
 
     Surface(modifier = modifier) {
         Column(
@@ -96,7 +126,7 @@ internal fun HomeScreen(
                     color = NearTheme.colors.WHITE_FFFFFF,
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Image(painterResource(R.drawable.icon_32_bell), contentDescription = "")
+                Image(painterResource(R.drawable.ic_32_bell), contentDescription = "")
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -160,7 +190,7 @@ internal fun HomeScreen(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .align(Alignment.TopCenter)
+                            .align(Alignment.TopStart)
                             .padding(top = 20.dp, start = 24.dp, end = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -171,44 +201,54 @@ internal fun HomeScreen(
                         color = NearTheme.colors.BLACK_1A1A1A,
                     )
                     Icon(
-                        painterResource(R.drawable.icon_32_menu),
+                        painterResource(R.drawable.ic_32_menu),
                         contentDescription = stringResource(R.string.home_my_people_setting),
                     )
                 }
-                AddingUserButton()
+                Spacer(modifier = Modifier.height(16.dp))
+                MyContacts(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    contactsWithPage = contactsWithPage,
+                    pagerState = pagerState,
+                )
+
+                if (contactsWithPage.size >= MINIMUM_PAGE_COUNT_TO_SHOW_UI) {
+                    Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                        PagerIndicator(pagerState)
+                        Spacer(modifier = Modifier.height(104.dp))
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun BoxScope.AddingUserButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-) {
-    Column(
-        modifier =
-            modifier
-                .align(Alignment.Center)
-                .onNoRippleClick(
-                    onClick = onClick,
-                ),
-        horizontalAlignment = Alignment.CenterHorizontally,
+private fun PagerIndicator(pagerState: PagerState) {
+    Row(
+        Modifier
+            .wrapContentHeight()
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
     ) {
-        Image(
-            painterResource(R.drawable._icon_64_adduser),
-            contentDescription =
-                stringResource(
-                    R.string.home_add_contact,
-                ),
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            stringResource(R.string.home_add_contact_description),
-            style = NearTheme.typography.B2_14_MEDIUM,
-            color = NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.3f),
-            textAlign = TextAlign.Center,
-        )
+        repeat(pagerState.pageCount) { iteration ->
+            val color =
+                if (pagerState.currentPage == iteration) {
+                    Color(0xff737373)
+                } else {
+                    Color(
+                        0xffe2e2e2,
+                    )
+                }
+            Box(
+                modifier =
+                    Modifier
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                        .size(8.dp),
+            )
+        }
     }
 }
 
@@ -220,6 +260,17 @@ internal fun HomeScreenPreview() {
             uiState = HomeUiState.Loading,
             onContactClick = {},
             onRemoveContact = {},
+            contacts =
+                List(5) {
+                    ContactSummary(
+                        id = 2003,
+                        name = "일이삼사오육칠팔구",
+                        profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
+                        lastContactedAt = LocalDate.of(2025, 7, 25),
+                        isContacted = false,
+                        contactFrequency = ContactFrequency.LOW,
+                    )
+                },
         )
     }
 }
