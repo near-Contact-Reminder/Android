@@ -55,7 +55,7 @@ fun ContactItem(
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            color = Color(0xff222222),
+            color = NearTheme.colors.BLACK_1A1A1A,
         )
         Spacer(modifier = Modifier.height(1.dp))
         Row {
