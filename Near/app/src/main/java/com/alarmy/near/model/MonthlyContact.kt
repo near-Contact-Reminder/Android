@@ -10,22 +10,19 @@ data class MonthlyContact(
     val type: String,
     val nextContactAt: String,
 ) {
-    val dDay: String
-        get() {
-            val daysBetween = getDaysBetween()
-            return when {
-                daysBetween == 0L -> "D-day"
-                daysBetween > 0L -> "D-$daysBetween"
-                else -> "D+${-daysBetween}" // 과거 날짜
-            }
+    fun daysUntilNextContact(today: LocalDate): String {
+        val daysBetween = getDaysBetween(today)
+        return when {
+            daysBetween == 0L -> "D-day"
+            daysBetween > 0L -> "D-$daysBetween"
+            else -> "D+${-daysBetween}" // 과거 날짜
         }
+    }
 
-    val isDDay: Boolean
-        get() = getDaysBetween() == 0L
+    fun isNextContactDay(today: LocalDate): Boolean = getDaysBetween(today) == 0L
 
-    private fun getDaysBetween(): Long {
+    private fun getDaysBetween(today: LocalDate): Long {
         val targetDate = LocalDate.parse(nextContactAt, formatter)
-        val today = LocalDate.now()
         return ChronoUnit.DAYS.between(today, targetDate)
     }
 

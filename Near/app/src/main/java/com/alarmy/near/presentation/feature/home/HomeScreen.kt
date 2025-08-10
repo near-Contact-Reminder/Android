@@ -207,6 +207,7 @@ internal fun HomeScreen(
                         },
                     ) {
                         val monthlyContact = monthlyContacts[it]
+                        val now = LocalDate.now()
                         Surface(
                             modifier.dropShadow(
                                 shape = RoundedCornerShape(12.dp),
@@ -240,15 +241,15 @@ internal fun HomeScreen(
                                     color = NearTheme.colors.BLACK_1A1A1A,
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
-                                if (monthlyContact.isDDay) {
+                                if (monthlyContact.isNextContactDay(now)) {
                                     Text(
-                                        text = monthlyContact.dDay,
+                                        text = monthlyContact.daysUntilNextContact(LocalDate.now()),
                                         style = NearTheme.typography.B2_14_BOLD,
                                         color = NearTheme.colors.BLUE01_5AA2E9,
                                     )
                                 } else {
                                     Text(
-                                        text = monthlyContact.dDay,
+                                        text = monthlyContact.daysUntilNextContact(now),
                                         style = NearTheme.typography.B2_14_MEDIUM,
                                         color = NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.5f),
                                     )
