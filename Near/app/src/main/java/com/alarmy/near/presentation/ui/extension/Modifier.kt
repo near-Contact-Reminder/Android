@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 fun Modifier.onNoRippleClick(onClick: () -> Unit): Modifier =
     this then
         Modifier.clickable(
-            onClick = {},
+            onClick = onClick,
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
         )
