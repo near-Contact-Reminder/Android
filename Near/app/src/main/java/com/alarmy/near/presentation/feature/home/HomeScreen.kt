@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -38,6 +40,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,8 +50,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.ContactSummary
+import com.alarmy.near.model.MonthlyContact
 import com.alarmy.near.presentation.feature.home.component.MyContacts
-import com.alarmy.near.presentation.feature.home.model.HomeUiState
+import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import java.time.LocalDate
 
@@ -61,7 +65,6 @@ internal fun HomeRoute(
 ) {
     val uiState = viewModel.uiStateFlow.collectAsStateWithLifecycle()
     HomeScreen(
-        uiState = uiState.value,
         onContactClick = {},
         onRemoveContact = viewModel::removeContact,
         contacts =
@@ -75,6 +78,7 @@ internal fun HomeRoute(
                     contactFrequency = ContactFrequency.LOW,
                 )
             },
+        monthlyContacts = emptyList(),
     )
 }
 
@@ -82,10 +86,10 @@ internal fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
-    uiState: HomeUiState,
     onContactClick: (Long) -> Unit = { _ -> },
     onRemoveContact: (Long) -> Unit = { _ -> },
     contacts: List<ContactSummary>,
+    monthlyContacts: List<MonthlyContact>,
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -96,7 +100,7 @@ internal fun HomeScreen(
             pageCount = {
                 contactsWithPage.count() + if (contactsWithPage.lastOrNull()?.count() == 5) 1 else 0
             },
-    )
+        )
 
     Surface(modifier = modifier) {
         Column(
@@ -132,7 +136,7 @@ internal fun HomeScreen(
             Text(
                 text =
                     buildAnnotatedString {
-                        append("정하은님,\n")
+                        append("주지스님,\n")
                         withStyle(
                             SpanStyle(
                                 fontWeight = FontWeight.Bold,
@@ -154,28 +158,96 @@ internal fun HomeScreen(
                 color = NearTheme.colors.WHITE_FFFFFF,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Surface(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                color = NearTheme.colors.WHITE_FFFFFF.copy(alpha = 0.2f),
-            ) {
-                Text(
-                    text = stringResource(R.string.home_no_people_this_month),
+            if (monthlyContacts.isEmpty()) {
+                Surface(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 14.dp),
-                    textAlign = TextAlign.Center,
-                    style =
-                        NearTheme.typography.B2_14_MEDIUM.copy(
-                            fontWeight = FontWeight.Normal,
-                        ),
-                    color = NearTheme.colors.WHITE_FFFFFF,
-                )
+                            .padding(horizontal = 20.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                    color = NearTheme.colors.WHITE_FFFFFF.copy(alpha = 0.2f),
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_no_people_this_month),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 14.dp),
+                        textAlign = TextAlign.Center,
+                        style =
+                            NearTheme.typography.B2_14_MEDIUM.copy(
+                                fontWeight = FontWeight.Normal,
+                            ),
+                        color = NearTheme.colors.WHITE_FFFFFF,
+                    )
+                }
+            } else {
+                LazyRow(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    items(
+                        count = monthlyContacts.size,
+                        key = {
+                            monthlyContacts[it].friendId
+                        },
+                    ) {
+                        val monthlyContact = monthlyContacts[it]
+                        Surface(
+                            modifier.dropShadow(
+                                shape = RoundedCornerShape(12.dp),
+                                color = Color(color = 0xff000000).copy(alpha = 0.07f),
+                                blur = 4.dp,
+                                offsetY = 4.dp,
+                            ),
+                            color = NearTheme.colors.WHITE_FFFFFF,
+                            shape = RoundedCornerShape(12.dp),
+                        ) {
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .padding(start = 12.dp, end = 16.dp)
+                                        .padding(vertical = 12.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Image(
+                                    painterResource(R.drawable.icon_visual_mail),
+                                    contentDescription = "",
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    modifier = Modifier.widthIn(max = 97.dp),
+                                    text = monthlyContact.name,
+                                    style = NearTheme.typography.B2_14_BOLD,
+                                    textAlign = TextAlign.Center,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                if (monthlyContact.isDDay) {
+                                    Text(
+                                        text = monthlyContact.dDay,
+                                        style = NearTheme.typography.B2_14_BOLD,
+                                        color = NearTheme.colors.BLUE01_5AA2E9,
+                                    )
+                                } else {
+                                    Text(
+                                        text = monthlyContact.dDay,
+                                        style = NearTheme.typography.B2_14_MEDIUM,
+                                        color = NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.5f),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
+
             Spacer(modifier = Modifier.height(24.dp))
             Box(
                 modifier =
@@ -257,11 +329,10 @@ private fun PagerIndicator(pagerState: PagerState) {
 internal fun HomeScreenPreview() {
     NearTheme {
         HomeScreen(
-            uiState = HomeUiState.Loading,
             onContactClick = {},
             onRemoveContact = {},
             contacts =
-                List(5) {
+                List(6) {
                     ContactSummary(
                         id = 2003,
                         name = "일이삼사오육칠팔구",
@@ -269,6 +340,15 @@ internal fun HomeScreenPreview() {
                         lastContactedAt = LocalDate.of(2025, 7, 25),
                         isContacted = false,
                         contactFrequency = ContactFrequency.LOW,
+                    )
+                },
+            monthlyContacts =
+                List(2) {
+                    MonthlyContact(
+                        friendId = "intellegat$it",
+                        name = "Stacey Stewart",
+                        type = "ANNIVERSARY",
+                        nextContactAt = "2025-07-25",
                     )
                 },
         )
