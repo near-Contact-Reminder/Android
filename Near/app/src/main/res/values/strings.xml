@@ -2,6 +2,8 @@
     <string name="app_name">Near</string>
     <string name="content_description_checkbox_check">체크</string>
     <string name="content_description_checkbox_un_check">체크 해제</string>
+    <string name="common_back_button_description">뒤로 가기</string>
+    <string name="common_menu_button_description">메뉴</string>
 
     <!-- home  -->
     <string name="home_my_profile_button_text">MY</string>
