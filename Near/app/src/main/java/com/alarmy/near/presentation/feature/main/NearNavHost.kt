@@ -21,6 +21,7 @@ internal fun NearNavHost(
         navController = navController,
         startDestination = RouteHome,
     ) {
+        friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar)
         homeNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
             onContactClick = { contactId ->
