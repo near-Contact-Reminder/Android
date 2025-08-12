@@ -59,6 +59,7 @@ fun FriendProfileRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
 
 @Composable
 fun FriendProfileScreen(modifier: Modifier = Modifier) {
+    // TODO Home 머지시 상단 패딩 + status 색상 변경
     val currentTabPosition = remember { mutableIntStateOf(1) }
     Box(modifier = modifier.padding(bottom = 24.dp)) {
         Column(
@@ -161,11 +162,19 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
                         currentTabPosition.intValue = 0
                     },
                 ) {
-                    Text(
-                        text = stringResource(R.string.friend_profile_tab_text_profile),
-                        style = NearTheme.typography.B2_14_BOLD,
-                        color = NearTheme.colors.BLACK_1A1A1A,
-                    )
+                    if (currentTabPosition.intValue == 0) {
+                        Text(
+                            text = stringResource(R.string.friend_profile_tab_text_profile),
+                            style = NearTheme.typography.B2_14_BOLD,
+                            color = NearTheme.colors.BLACK_1A1A1A,
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.friend_profile_tab_text_profile),
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY02_B7B7B7,
+                        )
+                    }
                 }
                 Tab(
                     modifier =
@@ -177,11 +186,19 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
                         currentTabPosition.intValue = 1
                     },
                 ) {
-                    Text(
-                        text = stringResource(R.string.friend_profile_tab_text_record),
-                        style = NearTheme.typography.B2_14_BOLD,
-                        color = NearTheme.colors.BLACK_1A1A1A,
-                    )
+                    if (currentTabPosition.intValue == 1) {
+                        Text(
+                            text = stringResource(R.string.friend_profile_tab_text_record),
+                            style = NearTheme.typography.B2_14_BOLD,
+                            color = NearTheme.colors.BLACK_1A1A1A,
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.friend_profile_tab_text_record),
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY02_B7B7B7,
+                        )
+                    }
                 }
             }
             HorizontalDivider(thickness = 1.dp, color = NearTheme.colors.GRAY03_EBEBEB)
@@ -249,7 +266,7 @@ private fun RecordTab(modifier: Modifier = Modifier) {
         LazyVerticalGrid(
             GridCells.Fixed(3),
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(bottom = 60.dp)
+            contentPadding = PaddingValues(bottom = 60.dp),
         ) {
             items(15) {
                 RecordItem()
