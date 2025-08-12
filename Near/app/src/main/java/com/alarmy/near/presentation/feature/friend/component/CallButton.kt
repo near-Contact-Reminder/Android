@@ -2,8 +2,10 @@ package com.alarmy.near.presentation.feature.friend.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
@@ -36,10 +38,11 @@ fun CallButton(
                 disabledContainerColor = Color(0xfff7f7f7),
                 disabledContentColor = NearTheme.colors.GRAY02_B7B7B7,
             ),
+        contentPadding = PaddingValues(start = 42.dp, end = 45.dp, top = 12.dp, bottom = 12.dp),
         enabled = enabled,
-        contentPadding = ButtonDefaults.ContentPadding,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painter = painterResource(if (enabled) R.drawable.ic_visual_24_call else R.drawable.ic_visual_24_call_gray),
                 contentDescription = stringResource(R.string.friend_profile_call),
