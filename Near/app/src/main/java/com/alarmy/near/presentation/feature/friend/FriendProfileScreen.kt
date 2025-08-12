@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
@@ -57,7 +59,8 @@ fun FriendProfileRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
 
 @Composable
 fun FriendProfileScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier) {
+    val currentTabPosition = remember { mutableIntStateOf(1) }
+    Box(modifier = modifier.padding(bottom = 24.dp)) {
         Column(
             modifier =
                 Modifier
@@ -126,7 +129,6 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
                 MessageButton(Modifier.weight(1f), onClick = {})
             }
             Spacer(modifier = Modifier.height(24.dp))
-            val currentTabPosition = remember { mutableIntStateOf(0) }
             TabRow(
                 modifier =
                     Modifier
@@ -183,14 +185,17 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
                 }
             }
             HorizontalDivider(thickness = 1.dp, color = NearTheme.colors.GRAY03_EBEBEB)
-            ProfileTab()
+            if (currentTabPosition.intValue == 0) {
+                ProfileTab()
+            } else {
+                RecordTab()
+            }
         }
         NearSolidTypeButton(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
-                    .padding(bottom = 24.dp)
                     .align(Alignment.BottomCenter),
             contentPadding = PaddingValues(vertical = 17.dp),
             enabled = true,
@@ -226,6 +231,75 @@ private fun ProfileTab(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         ProfileMemoInfo(
             content = null,
+        )
+    }
+}
+
+@Composable
+private fun RecordTab(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(horizontal = 24.dp)) {
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            "챙김 기록",
+            style = NearTheme.typography.B2_14_BOLD,
+            color = NearTheme.colors.BLACK_1A1A1A,
+        )
+        Spacer(modifier = Modifier.height(13.dp))
+
+        LazyVerticalGrid(
+            GridCells.Fixed(3),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            contentPadding = PaddingValues(bottom = 60.dp)
+        ) {
+            items(15) {
+                RecordItem()
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecordItem(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Surface(
+            shape = RoundedCornerShape(44.dp),
+            border =
+                BorderStroke(
+                    color = NearTheme.colors.GRAY03_EBEBEB,
+                    width = 1.dp,
+                ),
+            color = NearTheme.colors.WHITE_FFFFFF,
+        ) {
+            Column(
+                modifier =
+                    Modifier.padding(
+                        top = 16.dp,
+                        bottom = 20.dp,
+                        start = 17.dp,
+                        end = 17.dp,
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.img_40_character),
+                    contentDescription = null,
+                )
+                Text(
+                    "11번째 챙김",
+                    style = NearTheme.typography.B2_14_MEDIUM,
+                    color = NearTheme.colors.BLUE01_5AA2E9,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            "25.03.20",
+            style = NearTheme.typography.B2_14_MEDIUM,
+            color = NearTheme.colors.GRAY01_888888,
         )
     }
 }
@@ -306,7 +380,7 @@ private fun ProfileMemoInfo(
                 Text(
                     modifier = Modifier.padding(start = 54.dp),
                     text =
-                            stringResource(R.string.friend_profile_info_memo_default_text),
+                        stringResource(R.string.friend_profile_info_memo_default_text),
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.GRAY02_B7B7B7,
                     textAlign = TextAlign.End,
