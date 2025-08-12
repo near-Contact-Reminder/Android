@@ -20,4 +20,13 @@
     <!--  상대 프로필(Friend Profile)  -->
     <string name="friend_profile_call">전화걸기</string>
     <string name="friend_profile_send_message">문자하기</string>
+    <string name="friend_profile_record_button_text">챙김 기록하기</string>
+    <string name="friend_profile_tab_text_profile">프로필</string>
+    <string name="friend_profile_tab_text_record">기록</string>
+    <string name="friend_profile_info_category_relation">관계</string>
+    <string name="friend_profile_info_category_term_of_contact">연락 주기</string>
+    <string name="friend_profile_info_category_birthday">생일</string>
+    <string name="friend_profile_info_category_anniversary">기념일</string>
+    <string name="friend_profile_info_category_memo">메모</string>
+    <string name="friend_profile_info_memo_default_text">꼭 기억해야 할 내용을 기록해보세요.\n예) 날생선 X, 작년 생일에 키링 선물함 등</string>
 </resources>
