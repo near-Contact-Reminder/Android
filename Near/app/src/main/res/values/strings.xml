@@ -2,6 +2,8 @@
     <string name="app_name">Near</string>
     <string name="content_description_checkbox_check">체크</string>
     <string name="content_description_checkbox_un_check">체크 해제</string>
+
+    <!--  Common  -->
     <string name="common_back_button_description">뒤로 가기</string>
     <string name="common_menu_button_description">메뉴</string>
 
@@ -14,4 +16,8 @@
     <string name="home_add_contact">연락처 추가</string>
     <string name="home_add_contact_description">가까워 지고 싶은 사람을\n추가해보세요.</string>
     <string name="home_add_people_text">사람 추가</string>
+
+    <!--  상대 프로필(Friend Profile)  -->
+    <string name="friend_profile_call">전화걸기</string>
+    <string name="friend_profile_send_message">문자하기</string>
 </resources>
