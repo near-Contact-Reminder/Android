@@ -30,14 +30,13 @@ fun NearTopAppbar(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClickBackButton)
                 .padding(horizontal = 20.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                modifier = Modifier,
+                modifier = Modifier.clickable(onClick = onClickBackButton),
                 painter = painterResource(R.drawable.ic_back_32_black),
                 contentDescription =
                     stringResource(
