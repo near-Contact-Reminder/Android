@@ -1,11 +1,10 @@
-package com.alarmy.near.presentation.feature.friend.component
+package com.alarmy.near.presentation.feature.friendprofile.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
@@ -23,7 +22,7 @@ import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun CallButton(
+fun MessageButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = false,
@@ -41,15 +40,14 @@ fun CallButton(
         contentPadding = PaddingValues(start = 42.dp, end = 45.dp, top = 12.dp, bottom = 12.dp),
         enabled = enabled,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(if (enabled) R.drawable.ic_visual_24_call else R.drawable.ic_visual_24_call_gray),
-                contentDescription = stringResource(R.string.friend_profile_call),
+                painter = painterResource(if (enabled) R.drawable.ic_visual_24_sms else R.drawable.ic_visual_24_sms_gray),
+                contentDescription = stringResource(R.string.friend_profile_send_message),
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = stringResource(R.string.friend_profile_call),
+                text = stringResource(R.string.friend_profile_send_message),
                 style = NearTheme.typography.B2_14_MEDIUM,
             )
         }
@@ -58,12 +56,12 @@ fun CallButton(
 
 @Preview(widthDp = 360, heightDp = 300, showBackground = true)
 @Composable
-fun CallButtonPreview() {
+fun MessageButtonPreview() {
     NearTheme {
         Column {
-            CallButton(onClick = {}, enabled = false)
+            MessageButton(onClick = {}, enabled = false)
             Spacer(modifier = Modifier.height(10.dp))
-            CallButton(onClick = {}, enabled = true)
+            MessageButton(onClick = {}, enabled = true)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.alarmy.near.presentation.feature.friend.component
+package com.alarmy.near.presentation.feature.friendprofile.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,7 @@ import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun MessageButton(
+fun CallButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = false,
@@ -42,12 +42,12 @@ fun MessageButton(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(if (enabled) R.drawable.ic_visual_24_sms else R.drawable.ic_visual_24_sms_gray),
-                contentDescription = stringResource(R.string.friend_profile_send_message),
+                painter = painterResource(if (enabled) R.drawable.ic_visual_24_call else R.drawable.ic_visual_24_call_gray),
+                contentDescription = stringResource(R.string.friend_profile_call),
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = stringResource(R.string.friend_profile_send_message),
+                text = stringResource(R.string.friend_profile_call),
                 style = NearTheme.typography.B2_14_MEDIUM,
             )
         }
@@ -56,12 +56,12 @@ fun MessageButton(
 
 @Preview(widthDp = 360, heightDp = 300, showBackground = true)
 @Composable
-fun MessageButtonPreview() {
+fun CallButtonPreview() {
     NearTheme {
         Column {
-            MessageButton(onClick = {}, enabled = false)
+            CallButton(onClick = {}, enabled = false)
             Spacer(modifier = Modifier.height(10.dp))
-            MessageButton(onClick = {}, enabled = true)
+            CallButton(onClick = {}, enabled = true)
         }
     }
 }

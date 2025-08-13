@@ -1,4 +1,4 @@
-package com.alarmy.near.presentation.feature.friend
+package com.alarmy.near.presentation.feature.friendprofile
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -46,8 +46,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
-import com.alarmy.near.presentation.feature.friend.component.CallButton
-import com.alarmy.near.presentation.feature.friend.component.MessageButton
+import com.alarmy.near.presentation.feature.friendprofile.component.CallButton
+import com.alarmy.near.presentation.feature.friendprofile.component.MessageButton
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.theme.NearTheme

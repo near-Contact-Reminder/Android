@@ -1,10 +1,10 @@
-package com.alarmy.near.presentation.feature.friend.navigation
+package com.alarmy.near.presentation.feature.friendprofile.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.alarmy.near.presentation.feature.friend.FriendProfileRoute
+import com.alarmy.near.presentation.feature.friendprofile.FriendProfileRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
