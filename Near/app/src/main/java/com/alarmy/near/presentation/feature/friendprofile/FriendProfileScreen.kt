@@ -72,7 +72,6 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
         ) {
             NearTopAppbar(
                 title = "프로필 상세",
-                isMenuVisible = true,
                 onClickBackButton = {},
                 menuButton = {
                     Image(

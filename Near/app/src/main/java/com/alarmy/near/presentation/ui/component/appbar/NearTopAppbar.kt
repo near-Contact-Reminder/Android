@@ -23,8 +23,7 @@ fun NearTopAppbar(
     modifier: Modifier = Modifier,
     title: String,
     onClickBackButton: () -> Unit = {},
-    isMenuVisible: Boolean = false,
-    menuButton: @Composable () -> Unit = {},
+    menuButton: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -51,7 +50,7 @@ fun NearTopAppbar(
                 color = NearTheme.colors.BLACK_1A1A1A,
             )
         }
-        if (isMenuVisible) {
+        if (menuButton != null) {
             menuButton()
         }
     }
