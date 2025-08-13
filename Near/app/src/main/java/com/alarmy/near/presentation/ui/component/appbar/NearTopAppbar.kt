@@ -24,13 +24,14 @@ fun NearTopAppbar(
     title: String,
     onClickBackButton: () -> Unit = {},
     isMenuVisible: Boolean = false,
-    onClickMenuButton: () -> Unit = {},
+    menuButton: @Composable () -> Unit = {},
 ) {
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 8.dp),
+                .padding(vertical = 8.dp)
+                .padding(start = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -51,11 +52,7 @@ fun NearTopAppbar(
             )
         }
         if (isMenuVisible) {
-            Image(
-                modifier = Modifier.clickable(onClick = onClickMenuButton),
-                painter = painterResource(R.drawable.ic_32_menu),
-                contentDescription = stringResource(R.string.common_menu_button_description),
-            )
+            menuButton()
         }
     }
 }

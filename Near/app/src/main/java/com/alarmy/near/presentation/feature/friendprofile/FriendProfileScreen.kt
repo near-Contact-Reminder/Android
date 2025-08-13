@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,7 +74,13 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
                 title = "프로필 상세",
                 isMenuVisible = true,
                 onClickBackButton = {},
-                onClickMenuButton = {},
+                menuButton = {
+                    Image(
+                        modifier = Modifier.clickable(onClick = {}),
+                        painter = painterResource(R.drawable.ic_32_menu),
+                        contentDescription = stringResource(R.string.common_menu_button_description),
+                    )
+                },
             )
             Spacer(modifier = Modifier.height(18.dp))
             Row(
