@@ -21,8 +21,13 @@ internal fun NearNavHost(
         navController = navController,
         startDestination = RouteHome,
     ) {
-        homeNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickContact = {
-            // 예시: navController.navigate(RouteContact(it))
-        })
+        homeNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onContactClick = { contactId ->
+                // 예시: navController.navigate(RouteContact(it))
+            },
+            onMyPageClick = {},
+            onAlarmClick = {},
+        )
     }
 }

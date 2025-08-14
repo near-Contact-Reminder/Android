@@ -19,11 +19,16 @@ fun NavController.navigateToHome(navOptions: NavOptions) {
 
 fun NavGraphBuilder.homeNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onClickContact: (id: Long) -> Unit,
+    onContactClick: (String) -> Unit = {},
+    onAlarmClick: () -> Unit = {},
+    onMyPageClick: () -> Unit = {},
 ) {
     composable<RouteHome> { backStackEntry ->
         HomeRoute(
             onShowErrorSnackBar = onShowErrorSnackBar,
+            onContactClick = onContactClick,
+            onAlarmClick = onAlarmClick,
+            onMyPageClick = onMyPageClick,
         )
     }
 }
