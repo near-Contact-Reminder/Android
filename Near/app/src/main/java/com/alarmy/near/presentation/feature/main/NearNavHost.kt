@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
+import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.RouteFriendProfileEditor
+import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 
@@ -19,9 +22,10 @@ internal fun NearNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = RouteHome,
+        startDestination = RouteFriendProfileEditor,
     ) {
         friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar)
+        friendProfileEditorNavGraph(onShowErrorSnackBar = onShowSnackbar)
         homeNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
             onContactClick = { contactId ->
