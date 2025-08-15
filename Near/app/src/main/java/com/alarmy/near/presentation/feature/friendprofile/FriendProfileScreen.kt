@@ -62,7 +62,7 @@ fun FriendProfileRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
 @Composable
 fun FriendProfileScreen(modifier: Modifier = Modifier) {
     // TODO Home 머지시 상단 패딩 + status 색상 변경
-    val currentTabPosition = remember { mutableIntStateOf(1) }
+    val currentTabPosition = remember { mutableIntStateOf(0) }
     Box(modifier = modifier.padding(bottom = 24.dp)) {
         Column(
             modifier =
@@ -76,7 +76,7 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
                 onClickBackButton = {},
                 menuButton = {
                     Image(
-                        modifier = Modifier.onNoRippleClick(onClick = {}),
+                        modifier = Modifier.onNoRippleClick(onClick = {}).padding(end = 20.dp),
                         painter = painterResource(R.drawable.ic_32_menu),
                         contentDescription = stringResource(R.string.common_menu_button_description),
                     )

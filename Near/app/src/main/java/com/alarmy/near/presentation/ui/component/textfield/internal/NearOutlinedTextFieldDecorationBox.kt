@@ -27,9 +27,9 @@ internal fun NearOutlinedTextFieldDecorationBox(
         NearTextFieldDecorationContainer(
             enabled = enabled,
             interactionSource = interactionSource,
-            colors = colors
+            colors = colors,
         )
-    }
+    },
 ) {
     OutlinedTextFieldDefaults.DecorationBox(
         contentPadding = contentPadding,
@@ -63,7 +63,7 @@ internal fun NearTextFieldDecorationContainer(
         interactionSource = interactionSource,
         colors = colors,
         shape = RoundedCornerShape(12.dp),
-        focusedBorderThickness = (1.5).dp,
-        unfocusedBorderThickness = (1.5).dp,
+        focusedBorderThickness = (1).dp,
+        unfocusedBorderThickness = (1).dp,
     )
 }
