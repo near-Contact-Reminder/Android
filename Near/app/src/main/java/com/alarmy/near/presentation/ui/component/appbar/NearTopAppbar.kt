@@ -1,7 +1,6 @@
 package com.alarmy.near.presentation.ui.component.appbar
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -36,7 +36,7 @@ fun NearTopAppbar(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                modifier = Modifier.clickable(onClick = onClickBackButton),
+                modifier = Modifier.onNoRippleClick(onClick = onClickBackButton),
                 painter = painterResource(R.drawable.ic_back_32_black),
                 contentDescription =
                     stringResource(

@@ -51,6 +51,7 @@ import com.alarmy.near.presentation.feature.friendprofile.component.CallButton
 import com.alarmy.near.presentation.feature.friendprofile.component.MessageButton
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -75,7 +76,7 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
                 onClickBackButton = {},
                 menuButton = {
                     Image(
-                        modifier = Modifier.clickable(onClick = {}),
+                        modifier = Modifier.onNoRippleClick(onClick = {}),
                         painter = painterResource(R.drawable.ic_32_menu),
                         contentDescription = stringResource(R.string.common_menu_button_description),
                     )
