@@ -29,7 +29,7 @@ fun NearLimitedTextField(
     value: String,
     maxTextCount: Int = MAX_TEXT_COUNT,
     onValueChange: (String) -> Unit,
-    enabled: Boolean,
+    enabled: Boolean = true,
     placeHolderText: String,
     singleLine: Boolean = false,
     interactionSource: InteractionSource = remember { MutableInteractionSource() },

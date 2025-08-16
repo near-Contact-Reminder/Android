@@ -29,4 +29,7 @@
     <string name="friend_profile_info_category_anniversary">기념일</string>
     <string name="friend_profile_info_category_memo">메모</string>
     <string name="friend_profile_info_memo_default_text">꼭 기억해야 할 내용을 기록해보세요.\n예) 날생선 X, 작년 생일에 키링 선물함 등</string>
+    <string name="friend_profile_editor_relation_freind">친구</string>
+    <string name="friend_profile_editor_relation_family">가족</string>
+    <string name="friend_profile_editor_relation_acquaintance">지인</string>
 </resources>
