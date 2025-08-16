@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -44,6 +46,7 @@ fun FriendProfileEditorRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Uni
 
 @Composable
 fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
+    val isErrorMessageVisible = remember { mutableStateOf(false) }
     Column(
         modifier =
             modifier
@@ -100,7 +103,15 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                     },
                 )
             }
-            Spacer(modifier = Modifier.height(31.dp))
+            if (isErrorMessageVisible.value) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "이름을 입력해주세요.",
+                    style = NearTheme.typography.FC_12_MEDIUM,
+                    color = NearTheme.colors.NEGATIVE_F04E4E,
+                )
+            }
+            Spacer(modifier = Modifier.height(32.dp))
             Row(
                 modifier =
                     Modifier
@@ -282,6 +293,7 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                     start = 24.dp,
                     end = 20.dp,
                 ),
+            verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             item {
                 Column {
@@ -297,6 +309,14 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                             value = "가나다",
                             onValueChange = {
                             },
+                        )
+                    }
+                    if (isErrorMessageVisible.value) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "이름을 입력해주세요.",
+                            style = NearTheme.typography.FC_12_MEDIUM,
+                            color = NearTheme.colors.NEGATIVE_F04E4E,
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
