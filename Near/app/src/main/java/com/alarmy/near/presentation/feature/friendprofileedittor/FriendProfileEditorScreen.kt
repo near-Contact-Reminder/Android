@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
 import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
@@ -47,11 +49,18 @@ fun FriendProfileEditorRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Uni
     FriendProfileEditorScreen()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
     val isErrorMessageVisible = remember { mutableStateOf(false) }
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
+    val showBottomSheet = remember { mutableStateOf(false) }
+    if (showBottomSheet.value) {
+        ReminderIntervalBottomSheet(onDismissRequest = {
+            showBottomSheet.value = false
+        })
+    }
     Column(
         modifier =
             modifier
@@ -191,7 +200,10 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                 Surface(
                     modifier =
                         modifier
-                            .weight(1f),
+                            .weight(1f)
+                            .onNoRippleClick({
+                                showBottomSheet.value = true
+                            }),
                     shape = RoundedCornerShape(12.dp),
                     border =
                         BorderStroke(
