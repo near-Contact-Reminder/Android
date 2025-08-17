@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.alarmy.near.R
 
 enum class ReminderInterval(
-    @param:StringRes val value: Int,
+    @param:StringRes val labelRes: Int,
 ) {
     DAILY(R.string.reminder_interval_daily), // 매일
     WEEKLY(R.string.reminder_interval_weekly), // 매주
