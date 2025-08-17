@@ -75,12 +75,12 @@ fun NearLimitedTextField(
                         interactionSource = interactionSource,
                         colors = colors,
                     )
-                    if (value.count() > 0 && enabled) {
+                    if (!singleLine || value.count() > 0 && enabled) {
                         Row(
                             modifier = Modifier,
                             horizontalArrangement = Arrangement.End,
                             verticalAlignment =
-                                if (lineCount.intValue == 1) {
+                                if (singleLine && lineCount.intValue == 1) {
                                     Alignment.CenterVertically
                                 } else {
                                     Alignment.Bottom
@@ -91,7 +91,7 @@ fun NearLimitedTextField(
                                 modifier =
                                     Modifier.padding(
                                         end = 16.dp,
-                                        bottom = if (lineCount.intValue == 1) 0.dp else 16.dp,
+                                        bottom = if (singleLine && lineCount.intValue == 1) 0.dp else 16.dp,
                                     ),
                                 style = NearTheme.typography.B2_14_MEDIUM,
                                 color = NearTheme.colors.GRAY02_B7B7B7,
