@@ -32,4 +32,9 @@
     <string name="friend_profile_editor_relation_freind">친구</string>
     <string name="friend_profile_editor_relation_family">가족</string>
     <string name="friend_profile_editor_relation_acquaintance">지인</string>
+    <string name="reminder_interval_daily">매일</string>
+    <string name="reminder_interval_weekly">매주</string>
+    <string name="reminder_interval_biweekly">2주</string>
+    <string name="reminder_interval_monthly">매달</string>
+    <string name="reminder_interval_semiannual">6개월</string>
 </resources>
