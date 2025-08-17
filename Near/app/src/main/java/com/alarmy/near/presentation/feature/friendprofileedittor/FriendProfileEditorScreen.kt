@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -47,12 +50,15 @@ fun FriendProfileEditorRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Uni
 @Composable
 fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
     val isErrorMessageVisible = remember { mutableStateOf(false) }
+    val density = LocalDensity.current
+    val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
     Column(
         modifier =
             modifier
                 .fillMaxSize()
                 .background(NearTheme.colors.WHITE_FFFFFF),
     ) {
+        Spacer(modifier = Modifier.padding(top = statusBarHeightDp))
         NearTopAppbar(
             modifier = Modifier.padding(end = 24.dp),
             title = "",
@@ -404,6 +410,7 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                     "꼭 기억해야 할 내용을 기록해보세요.\n" +
                         "예) 날생선 X, 작년 생일에\n" +
                         "키링 선물함 등",
+                maxTextCount = 100,
             )
         }
         Spacer(modifier = Modifier.height(80.dp))
