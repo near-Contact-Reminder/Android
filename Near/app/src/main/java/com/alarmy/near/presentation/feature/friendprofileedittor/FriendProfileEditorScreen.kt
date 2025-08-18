@@ -47,13 +47,21 @@ import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun FriendProfileEditorRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
-    FriendProfileEditorScreen()
+fun FriendProfileEditorRoute(
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onClickBackButton: () -> Unit = {},
+) {
+    FriendProfileEditorScreen(
+        onClickBackButton = onClickBackButton,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
+fun FriendProfileEditorScreen(
+    modifier: Modifier = Modifier,
+    onClickBackButton: () -> Unit = {},
+) {
     val isErrorMessageVisible = remember { mutableStateOf(false) }
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -73,7 +81,7 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
         NearTopAppbar(
             modifier = Modifier.padding(end = 24.dp),
             title = "",
-            onClickBackButton = {},
+            onClickBackButton = onClickBackButton,
             menuButton = {
                 Text(
                     text = "완료",

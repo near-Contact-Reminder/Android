@@ -14,10 +14,14 @@ fun NavController.navigateToFriendProfile(navOptions: NavOptions) {
     navigate(RouteFriendProfile, navOptions)
 }
 
-fun NavGraphBuilder.friendProfileNavGraph(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
+fun NavGraphBuilder.friendProfileNavGraph(
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onClickBackButton: () -> Unit,
+) {
     composable<RouteFriendProfile> { backStackEntry ->
         FriendProfileRoute(
             onShowErrorSnackBar = onShowErrorSnackBar,
+            onClickBackButton = onClickBackButton,
         )
     }
 }

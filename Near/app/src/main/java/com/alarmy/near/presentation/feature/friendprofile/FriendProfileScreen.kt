@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,12 +54,20 @@ import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun FriendProfileRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
-    FriendProfileScreen()
+fun FriendProfileRoute(
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onClickBackButton: () -> Unit = {},
+) {
+    FriendProfileScreen(
+        onClickBackButton = onClickBackButton,
+    )
 }
 
 @Composable
-fun FriendProfileScreen(modifier: Modifier = Modifier) {
+fun FriendProfileScreen(
+    modifier: Modifier = Modifier,
+    onClickBackButton: () -> Unit = {},
+) {
     // TODO Home 머지시 상단 패딩 + status 색상 변경
     val currentTabPosition = remember { mutableIntStateOf(0) }
     Box(modifier = modifier.padding(bottom = 24.dp)) {
@@ -73,7 +80,7 @@ fun FriendProfileScreen(modifier: Modifier = Modifier) {
         ) {
             NearTopAppbar(
                 title = "프로필 상세",
-                onClickBackButton = {},
+                onClickBackButton = onClickBackButton,
                 menuButton = {
                     Image(
                         modifier = Modifier.onNoRippleClick(onClick = {}).padding(end = 20.dp),
