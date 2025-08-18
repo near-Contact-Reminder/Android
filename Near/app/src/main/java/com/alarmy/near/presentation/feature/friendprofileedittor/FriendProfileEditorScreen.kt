@@ -272,7 +272,7 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            "2주 (수요일 마다)",
+                            "2020.06.24",
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.BLACK_1A1A1A,
                         )
@@ -315,6 +315,10 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
         ) {
             item {
                 Column {
+                    val anniversaryDatePickerState = remember { mutableStateOf(false) }
+                    if(anniversaryDatePickerState.value) {
+
+                    }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "기념일 이름",
@@ -345,7 +349,7 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            "생일",
+                            "날짜",
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )

@@ -21,6 +21,8 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,22 +37,32 @@ import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.ui.component.button.NearLineTypeButton
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearCheckbox
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderIntervalBottomSheet(
     modifier: Modifier = Modifier,
+    selectedReminderInterval: ReminderInterval = ReminderInterval.WEEKLY,
+    onSelectReminderInterval: (ReminderInterval) -> Unit = {},
     sheetState: SheetState =
         rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
         ),
     onDismissRequest: () -> Unit = {},
 ) {
+    val initialReminderInterval = remember { selectedReminderInterval }
+
+    val tempSelected = remember { mutableStateOf(initialReminderInterval) }
     ModalBottomSheet(
+        modifier = modifier,
         containerColor = NearTheme.colors.WHITE_FFFFFF,
         sheetState = sheetState,
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = {
+            tempSelected.value = initialReminderInterval
+            onDismissRequest()
+        },
         dragHandle = {
             Surface(
                 modifier = Modifier.padding(top = 12.dp, bottom = 24.dp),
@@ -130,19 +142,27 @@ fun ReminderIntervalBottomSheet(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(start = 24.dp, end = 14.dp),
+                            .padding(start = 24.dp, end = 14.dp)
+                            .onNoRippleClick(onClick = {
+                                tempSelected.value = reminderInterval
+                            }),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text( // TODO 선택된 Text 볼드 처리
+                    Text(
                         stringResource(reminderInterval.labelRes),
-                        style = NearTheme.typography.B1_16_MEDIUM,
+                        style =
+                            if (reminderInterval == tempSelected.value) {
+                                NearTheme.typography.B1_16_BOLD
+                            } else {
+                                NearTheme.typography.B1_16_MEDIUM
+                            },
                         color = NearTheme.colors.BLACK_1A1A1A,
                     )
                     NearCheckbox(
-                        checked = true,
-                    ) {
-                    }
+                        checked = tempSelected.value == reminderInterval,
+                        onCheckedChange = {},
+                    )
                 }
             }
         }
@@ -151,7 +171,10 @@ fun ReminderIntervalBottomSheet(
             NearLineTypeButton(
                 modifier = Modifier.weight(1f),
                 text = "취소",
-                onClick = {},
+                onClick = {
+                    tempSelected.value = initialReminderInterval
+                    onDismissRequest()
+                },
                 contentPadding = PaddingValues(vertical = 17.dp),
                 enabled = true,
             )
@@ -159,7 +182,9 @@ fun ReminderIntervalBottomSheet(
             NearSolidTypeButton(
                 modifier = Modifier.weight(1f),
                 text = "확인",
-                onClick = {},
+                onClick = {
+                    onSelectReminderInterval(tempSelected.value)
+                },
                 enabled = true,
                 contentPadding = PaddingValues(vertical = 17.dp),
             )
