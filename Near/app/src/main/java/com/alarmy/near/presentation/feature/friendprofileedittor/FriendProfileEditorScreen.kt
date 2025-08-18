@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
@@ -242,6 +244,16 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                         .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                val birthdayDatePickerState = remember { mutableStateOf(false) }
+                val datePickerState =
+                    rememberDatePickerState()
+                if (birthdayDatePickerState.value) {
+                    NearDatePicker(
+                        datePickerState = datePickerState,
+                        onDismiss = { birthdayDatePickerState.value = false },
+                        onDateSelected = {},
+                    )
+                }
                 Text(
                     "생일",
                     style = NearTheme.typography.B2_14_MEDIUM,
@@ -262,12 +274,15 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                 ) {
                     Row(
                         modifier =
-                            Modifier.padding(
-                                start = 16.dp,
-                                end = 12.dp,
-                                top = 14.dp,
-                                bottom = 14.dp,
-                            ),
+                            Modifier
+                                .padding(
+                                    start = 16.dp,
+                                    end = 12.dp,
+                                    top = 14.dp,
+                                    bottom = 14.dp,
+                                ).onNoRippleClick({
+                                    birthdayDatePickerState.value = true
+                                }),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
@@ -316,8 +331,14 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
             item {
                 Column {
                     val anniversaryDatePickerState = remember { mutableStateOf(false) }
-                    if(anniversaryDatePickerState.value) {
-
+                    val datePickerState =
+                        rememberDatePickerState()
+                    if (anniversaryDatePickerState.value) {
+                        NearDatePicker(
+                            datePickerState = datePickerState,
+                            onDismiss = { anniversaryDatePickerState.value = false },
+                            onDateSelected = {},
+                        )
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -357,7 +378,10 @@ fun FriendProfileEditorScreen(modifier: Modifier = Modifier) {
                         Surface(
                             modifier =
                                 modifier
-                                    .weight(1f),
+                                    .weight(1f)
+                                    .onNoRippleClick(onClick = {
+                                        anniversaryDatePickerState.value = true
+                                    }),
                             shape = RoundedCornerShape(12.dp),
                             border =
                                 BorderStroke(
