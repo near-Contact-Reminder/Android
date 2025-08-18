@@ -6,10 +6,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.PlatformParagraphStyle
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -80,6 +83,11 @@ internal val Typography =
                         fontSize = 24.sp,
                         letterSpacingPercent = -0.25f,
                     ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
+                    ),
             ),
         H1_24_MEDIUM =
             TextStyle(
@@ -91,6 +99,11 @@ internal val Typography =
                     letterSpacingToSp(
                         fontSize = 24.sp,
                         letterSpacingPercent = -0.25f,
+                    ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
                     ),
             ),
         H1_24_REGULAR =
@@ -104,6 +117,11 @@ internal val Typography =
                         fontSize = 24.sp,
                         letterSpacingPercent = -0.25f,
                     ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
+                    ),
             ),
         H2_18_BOLD =
             TextStyle(
@@ -115,6 +133,11 @@ internal val Typography =
                     letterSpacingToSp(
                         fontSize = 18.sp,
                         letterSpacingPercent = -0.25f,
+                    ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
                     ),
             ),
         B1_16_BOLD =
@@ -128,6 +151,11 @@ internal val Typography =
                         fontSize = 16.sp,
                         letterSpacingPercent = -0.25f,
                     ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
+                    ),
             ),
         B1_16_MEDIUM =
             TextStyle(
@@ -139,6 +167,11 @@ internal val Typography =
                     letterSpacingToSp(
                         fontSize = 16.sp,
                         letterSpacingPercent = -0.25f,
+                    ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
                     ),
             ),
         B2_14_BOLD =
@@ -152,6 +185,11 @@ internal val Typography =
                         fontSize = 14.sp,
                         letterSpacingPercent = -0.25f,
                     ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
+                    ),
             ),
         B2_14_MEDIUM =
             TextStyle(
@@ -163,6 +201,11 @@ internal val Typography =
                     letterSpacingToSp(
                         fontSize = 14.sp,
                         letterSpacingPercent = -0.25f,
+                    ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
                     ),
             ),
         FC_12_BOLD =
@@ -176,6 +219,11 @@ internal val Typography =
                         fontSize = 12.sp,
                         letterSpacingPercent = -0.25f,
                     ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
+                    ),
             ),
         FC_12_MEDIUM =
             TextStyle(
@@ -187,6 +235,11 @@ internal val Typography =
                     letterSpacingToSp(
                         fontSize = 12.sp,
                         letterSpacingPercent = -0.25f,
+                    ),
+                lineHeightStyle =
+                    LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None,
                     ),
             ),
     )

@@ -32,7 +32,7 @@ internal fun NearApp(
 
     Scaffold(
         modifier =
-            Modifier.fillMaxSize(),
+            modifier.fillMaxSize(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarState,

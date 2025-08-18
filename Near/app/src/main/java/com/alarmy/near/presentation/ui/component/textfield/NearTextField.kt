@@ -2,6 +2,7 @@ package com.alarmy.near.presentation.ui.component.textfield
 
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.BasicTextField
@@ -35,7 +36,7 @@ fun NearTextField(
 
     BasicTextField(
         value = value,
-        modifier = modifier,
+        modifier = modifier.heightIn(min = 0.dp, max = 52.dp),
         enabled = enabled,
         textStyle =
             NearTheme.typography.B2_14_MEDIUM.copy(
