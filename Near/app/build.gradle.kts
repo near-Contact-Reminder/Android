@@ -1,8 +1,4 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import java.util.Properties
-
-val localProperties =
-    Properties().apply { rootProject.file("local.properties").inputStream().use { load(it) } }
 
 plugins {
     alias(libs.plugins.android.application)
@@ -38,6 +34,7 @@ android {
         }
         debug {
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_DEV_URL"))
+            buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
         }
     }
     compileOptions {
