@@ -67,7 +67,7 @@ internal fun HomeRoute(
     onAlarmClick: () -> Unit = {},
     onMyPageClick: () -> Unit = {},
 ) {
-    val uiState = viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiState = viewModel.friendsFlow.collectAsStateWithLifecycle()
     HomeScreen(
         onContactClick = {},
         onAlarmClick = {},
