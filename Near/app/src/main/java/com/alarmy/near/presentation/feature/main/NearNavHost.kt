@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
-import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.RouteFriendProfileEditor
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
+import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 
 @Composable
@@ -21,7 +21,7 @@ internal fun NearNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = RouteFriendProfileEditor,
+        startDestination = RouteHome,
     ) {
         friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
             navController.popBackStack()
