@@ -25,6 +25,24 @@ jobs:
       - name: set up Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: Access Near DEV_URL
+        env:
+          NEAR_DEV_URL: ${{ secrets.NEAR_DEV_URL }}
+        run: |
+          echo "NEAR_DEV_URL=\"NEAR_DEV_URL\"" >> local.properties
+
+      - name: Access Near PROD_URL
+        env:
+          NEAR_DEV_URL: ${{ secrets.NEAR_PROD_URL }}
+        run: |
+          echo "NEAR_PROD_URL=\"NEAR_PROD_URL\"" >> local.properties
+
+      - name: Access Near TEMP_TOKEN
+        env:
+          NEAR_DEV_URL: ${{ secrets.TEMP_TOKEN }}
+        run: |
+          echo "TEMP_TOKEN=\"TEMP_TOKEN\"" >> local.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
