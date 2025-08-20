@@ -31,6 +31,7 @@ android {
                 "proguard-rules.pro",
             )
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_PROD_URL"))
+            buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
         }
         debug {
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_DEV_URL"))
