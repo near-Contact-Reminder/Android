@@ -1,7 +1,9 @@
 package com.alarmy.near.data.di
 
+import com.alarmy.near.data.repository.DefaultFriendRepository
 import com.alarmy.near.data.repository.ExampleRepository
 import com.alarmy.near.data.repository.ExampleRepositoryImpl
+import com.alarmy.near.data.repository.FriendRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,4 +16,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindExampleRepository(exampleRepositoryImpl: ExampleRepositoryImpl): ExampleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFriendRepository(friendRepository: DefaultFriendRepository): FriendRepository
 }

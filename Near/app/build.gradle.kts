@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -28,6 +30,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            buildConfigField("String", "NEAR_URL", getProperty("NEAR_PROD_URL"))
+            buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
+        }
+        debug {
+            buildConfigField("String", "NEAR_URL", getProperty("NEAR_DEV_URL"))
+            buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
         }
     }
     compileOptions {
@@ -38,6 +46,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -63,9 +72,10 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
-    // Retrofit
+    // Retrofit & OkHttp
     implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.kotlin.serialization.converter)
+    implementation(libs.logging.interceptor)
     // Glide
     implementation(libs.glide)
     kapt(libs.glide.compiler)
@@ -79,3 +89,5 @@ dependencies {
     // Serialization
     implementation(libs.kotlin.serialization.json)
 }
+
+fun getProperty(propertyKey: String): String = gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
