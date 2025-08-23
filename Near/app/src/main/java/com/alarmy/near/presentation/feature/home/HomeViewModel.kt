@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.Friend
+import com.alarmy.near.model.MonthlyFriend
 import com.alarmy.near.presentation.feature.home.model.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class HomeViewModel
     @Inject
     constructor(
-        private val friendRepository: FriendRepository,
+        friendRepository: FriendRepository,
     ) : ViewModel() {
         // Example: 여러번 초기화되는 StateFlow
         private val _uiStateFlow = MutableStateFlow(HomeUiState.Loading)
@@ -31,6 +32,16 @@ class HomeViewModel
                     started = SharingStarted.WhileSubscribed(5_000),
                     initialValue = emptyList(),
                 )
+
+        val monthlyFriendFlow:
+            StateFlow<List<MonthlyFriend>> =
+            friendRepository
+                .fetchMonthlyFriends()
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue = emptyList(),
+            )
 
         fun removeContact(id: Long) {
             // contactRepository.removeContact(id)
