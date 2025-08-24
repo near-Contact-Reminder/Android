@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.alarmy.near.model.Friend
 import com.alarmy.near.presentation.feature.friendprofile.FriendProfileRoute
 import kotlinx.serialization.Serializable
 
@@ -22,11 +23,13 @@ fun NavController.navigateToFriendProfile(
 fun NavGraphBuilder.friendProfileNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickBackButton: () -> Unit,
+    onEditFriendInfo: (Friend) -> Unit = {},
 ) {
     composable<RouteFriendProfile> { backStackEntry ->
         FriendProfileRoute(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onClickBackButton = onClickBackButton,
+            onEditFriendInfo = onEditFriendInfo,
         )
     }
 }
