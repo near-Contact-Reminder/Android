@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.feature.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +23,14 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,13 +71,15 @@ internal fun HomeRoute(
     onContactClick: (String) -> Unit = {},
     onAlarmClick: () -> Unit = {},
     onMyPageClick: () -> Unit = {},
+    onAddContactClick: () -> Unit = {},
 ) {
     val friends = viewModel.friendsFlow.collectAsStateWithLifecycle()
     val monthlyFriends = viewModel.monthlyFriendFlow.collectAsStateWithLifecycle()
     HomeScreen(
-        onContactClick = {},
-        onAlarmClick = {},
-        onMyPageClick = {},
+        onContactClick = onContactClick,
+        onAlarmClick = onAlarmClick,
+        onMyPageClick = onMyPageClick,
+        onAddContactClick = onAddContactClick,
         contacts = friends.value,
         monthlyFriends = monthlyFriends.value,
     )
@@ -86,6 +92,7 @@ internal fun HomeScreen(
     onContactClick: (String) -> Unit = { _ -> },
     onMyPageClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
+    onAddContactClick: () -> Unit = {},
     contacts: List<FriendSummary>,
     monthlyFriends: List<MonthlyFriend>,
 ) {
@@ -99,6 +106,7 @@ internal fun HomeScreen(
                 contactsWithPage.count() + if (contactsWithPage.lastOrNull()?.count() == 5) 1 else 0
             },
         )
+    val dropdownState = remember { mutableStateOf(false) }
 
     Surface(modifier = modifier) {
         Column(
@@ -253,6 +261,7 @@ internal fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
             Box(
                 modifier =
                     Modifier
@@ -262,6 +271,15 @@ internal fun HomeScreen(
                             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
                         ),
             ) {
+                MyContacts(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    contactsWithPage = contactsWithPage,
+                    pagerState = pagerState,
+                    onContactClick = onContactClick,
+                    onAddContactClick = {
+                        onAddContactClick()
+                    },
+                )
                 Row(
                     modifier =
                         Modifier
@@ -276,21 +294,38 @@ internal fun HomeScreen(
                         style = NearTheme.typography.H2_18_BOLD,
                         color = NearTheme.colors.BLACK_1A1A1A,
                     )
-                    Icon(
-                        painterResource(R.drawable.ic_32_menu),
-                        contentDescription = stringResource(R.string.home_my_people_setting),
-                    )
+                    Column {
+                        Image(
+                            modifier =
+                                Modifier.onNoRippleClick(onClick = {
+                                    Log.d("covy", "onClick")
+                                    dropdownState.value = true
+                                }),
+                            painter = painterResource(R.drawable.ic_32_menu),
+                            contentDescription = stringResource(R.string.home_my_people_setting),
+                        )
+                        DropdownMenu(
+                            modifier = Modifier.background(color = NearTheme.colors.WHITE_FFFFFF),
+                            expanded = dropdownState.value,
+                            shape = RoundedCornerShape(12.dp),
+                            onDismissRequest = { dropdownState.value = false },
+                        ) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    // TODO 연락처 화면 이동
+                                    dropdownState.value = false
+                                },
+                                text = {
+                                    Text(
+                                        stringResource(R.string.home_menu_text_add_friend),
+                                        style = NearTheme.typography.B2_14_MEDIUM,
+                                        color = NearTheme.colors.BLACK_1A1A1A,
+                                    )
+                                },
+                            )
+                        }
+                    }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                MyContacts(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    contactsWithPage = contactsWithPage,
-                    pagerState = pagerState,
-                    onContactClick = onContactClick,
-                    onAddContactClick = {
-                        // TODO Contact 클릭 이벤트 구현
-                    },
-                )
 
                 if (contactsWithPage.size >= MINIMUM_PAGE_COUNT_TO_SHOW_UI) {
                     Column(modifier = Modifier.align(Alignment.BottomCenter)) {

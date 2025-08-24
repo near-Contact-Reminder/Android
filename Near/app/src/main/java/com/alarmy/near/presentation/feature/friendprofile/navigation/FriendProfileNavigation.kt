@@ -10,7 +10,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 object RouteFriendProfile
 
-fun NavController.navigateToFriendProfile(navOptions: NavOptions) {
+fun NavController.navigateToFriendProfile(
+    friendId: String,
+    navOptions: NavOptions? = null,
+) {
     navigate(RouteFriendProfile, navOptions)
 }
 
