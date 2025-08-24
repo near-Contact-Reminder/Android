@@ -49,7 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
-import com.alarmy.near.model.ContactSummary
+import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.model.MonthlyContact
 import com.alarmy.near.presentation.feature.home.component.MyContacts
 import com.alarmy.near.presentation.ui.extension.dropShadow
@@ -73,17 +73,7 @@ internal fun HomeRoute(
         onContactClick = {},
         onAlarmClick = {},
         onMyPageClick = {},
-        contacts =
-            List(6) {
-                ContactSummary(
-                    id = "2003",
-                    name = "일이삼사오육칠팔구",
-                    profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
-                    lastContactedAt = LocalDate.of(2025, 7, 25),
-                    isContacted = false,
-                    contactFrequency = ContactFrequency.LOW,
-                )
-            },
+        contacts = friends.value,
         monthlyContacts = emptyList(),
     )
 }
@@ -95,7 +85,7 @@ internal fun HomeScreen(
     onContactClick: (String) -> Unit = { _ -> },
     onMyPageClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
-    contacts: List<ContactSummary>,
+    contacts: List<FriendSummary>,
     monthlyContacts: List<MonthlyContact>,
 ) {
     val density = LocalDensity.current
@@ -119,7 +109,8 @@ internal fun HomeScreen(
                                 R.drawable.img_bg,
                             ),
                         contentScale = ContentScale.FillBounds,
-                    ).fillMaxSize(),
+                    )
+                    .fillMaxSize(),
         ) {
             Spacer(modifier = Modifier.height(statusBarHeightDp))
             Row(
@@ -349,11 +340,11 @@ internal fun HomeScreenPreview() {
             onContactClick = {},
             contacts =
                 List(6) {
-                    ContactSummary(
+                    FriendSummary(
                         id = "2003",
                         name = "일이삼사오육칠팔구",
                         profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
-                        lastContactedAt = LocalDate.of(2025, 7, 25),
+                        lastContactedAt = "2025-07-16",
                         isContacted = false,
                         contactFrequency = ContactFrequency.HIGH,
                     )

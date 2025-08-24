@@ -8,6 +8,6 @@ interface FriendService {
     @GET("/friend/list")
     suspend fun fetchFriends(): List<FriendEntity>
 
-    @GET("friends/monthly")
+    @GET("friend/monthly")
     suspend fun fetchMonthlyFriends(): List<MonthlyFriendEntity>
 }

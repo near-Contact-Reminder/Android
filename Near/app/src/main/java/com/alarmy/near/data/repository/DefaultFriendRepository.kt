@@ -2,6 +2,7 @@ package com.alarmy.near.data.repository
 
 import com.alarmy.near.data.mapper.toModel
 import com.alarmy.near.model.Friend
+import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.model.MonthlyFriend
 import com.alarmy.near.network.service.FriendService
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,7 @@ class DefaultFriendRepository
     constructor(
         private val friendService: FriendService,
     ) : FriendRepository {
-        override fun fetchFriends(): Flow<List<Friend>> =
+        override fun fetchFriends(): Flow<List<FriendSummary>> =
             flow {
                 emit(
                     friendService.fetchFriends().map {
@@ -29,5 +30,5 @@ class DefaultFriendRepository
                         it.toModel()
                     },
                 )
-        }
-}
+            }
+    }

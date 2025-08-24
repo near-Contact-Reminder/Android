@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.Friend
+import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.model.MonthlyFriend
 import com.alarmy.near.presentation.feature.home.model.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +25,7 @@ class HomeViewModel
         private val _uiStateFlow = MutableStateFlow(HomeUiState.Loading)
         val uiStateFlow = _uiStateFlow.asStateFlow()
 
-        val friendsFlow: StateFlow<List<Friend>> =
+        val friendsFlow: StateFlow<List<FriendSummary>> =
             friendRepository
                 .fetchFriends()
                 .stateIn(
@@ -41,7 +42,7 @@ class HomeViewModel
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
                     initialValue = emptyList(),
-            )
+                )
 
         fun removeContact(id: Long) {
             // contactRepository.removeContact(id)
