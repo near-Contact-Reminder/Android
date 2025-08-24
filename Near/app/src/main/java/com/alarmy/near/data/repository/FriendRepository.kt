@@ -1,8 +1,7 @@
 package com.alarmy.near.data.repository
 
-import com.alarmy.near.model.Friend
 import com.alarmy.near.model.FriendSummary
-import com.alarmy.near.model.MonthlyFriend
+import com.alarmy.near.model.monthly.MonthlyFriend
 import kotlinx.coroutines.flow.Flow
 
 interface FriendRepository {

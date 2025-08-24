@@ -50,7 +50,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.FriendSummary
-import com.alarmy.near.model.MonthlyContact
+import com.alarmy.near.model.monthly.MonthlyFriend
+import com.alarmy.near.model.monthly.MonthlyFriendType
 import com.alarmy.near.presentation.feature.home.component.MyContacts
 import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
@@ -74,7 +75,7 @@ internal fun HomeRoute(
         onAlarmClick = {},
         onMyPageClick = {},
         contacts = friends.value,
-        monthlyContacts = emptyList(),
+        monthlyFriends = monthlyFriends.value,
     )
 }
 
@@ -86,7 +87,7 @@ internal fun HomeScreen(
     onMyPageClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
     contacts: List<FriendSummary>,
-    monthlyContacts: List<MonthlyContact>,
+    monthlyFriends: List<MonthlyFriend>,
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -109,8 +110,7 @@ internal fun HomeScreen(
                                 R.drawable.img_bg,
                             ),
                         contentScale = ContentScale.FillBounds,
-                    )
-                    .fillMaxSize(),
+                    ).fillMaxSize(),
         ) {
             Spacer(modifier = Modifier.height(statusBarHeightDp))
             Row(
@@ -161,7 +161,7 @@ internal fun HomeScreen(
                 color = NearTheme.colors.WHITE_FFFFFF,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            if (monthlyContacts.isEmpty()) {
+            if (monthlyFriends.isEmpty()) {
                 Surface(
                     modifier =
                         Modifier
@@ -193,12 +193,12 @@ internal fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(
-                        count = monthlyContacts.size,
+                        count = monthlyFriends.size,
                         key = {
-                            monthlyContacts[it].friendId
+                            monthlyFriends[it].friendId
                         },
                     ) {
-                        val monthlyContact = monthlyContacts[it]
+                        val monthlyContact = monthlyFriends[it]
                         val now = LocalDate.now()
                         Surface(
                             modifier.dropShadow(
@@ -219,7 +219,7 @@ internal fun HomeScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Image(
-                                    painterResource(R.drawable.icon_visual_mail),
+                                    painterResource(monthlyContact.type.imageSrc),
                                     contentDescription = "",
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -349,12 +349,12 @@ internal fun HomeScreenPreview() {
                         contactFrequency = ContactFrequency.HIGH,
                     )
                 },
-            monthlyContacts =
+            monthlyFriends =
                 List(4) {
-                    MonthlyContact(
+                    MonthlyFriend(
                         friendId = "intellegat$it",
                         name = "Stacey Stewart",
-                        type = "ANNIVERSARY",
+                        type = MonthlyFriendType.ANNIVERSARY,
                         nextContactAt = "2025-09-30",
                     )
                 },
