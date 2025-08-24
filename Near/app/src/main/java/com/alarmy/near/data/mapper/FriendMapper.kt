@@ -2,9 +2,9 @@ package com.alarmy.near.data.mapper
 
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.FriendSummary
-import com.alarmy.near.network.response.FriendEntity
+import com.alarmy.near.network.response.FriendSummaryEntity
 
-fun FriendEntity.toModel(): FriendSummary =
+fun FriendSummaryEntity.toModel(): FriendSummary =
     FriendSummary(
         id = friendId,
         name = name,
@@ -17,5 +17,5 @@ fun FriendEntity.toModel(): FriendSummary =
                 in 30..69 -> ContactFrequency.MIDDLE
                 in 70..100 -> ContactFrequency.HIGH
                 else -> ContactFrequency.LOW
-        },
-            )
+            },
+    )
