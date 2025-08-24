@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
@@ -37,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.friendprofile.component.CallButton
 import com.alarmy.near.presentation.feature.friendprofile.component.MessageButton
@@ -55,6 +59,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
 fun FriendProfileRoute(
+    viewModel: FriendProfileViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickBackButton: () -> Unit = {},
 ) {
@@ -68,9 +73,15 @@ fun FriendProfileScreen(
     modifier: Modifier = Modifier,
     onClickBackButton: () -> Unit = {},
 ) {
-    // TODO Home 머지시 상단 패딩 + status 색상 변경
+    val density = LocalDensity.current
+    val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
     val currentTabPosition = remember { mutableIntStateOf(0) }
-    Box(modifier = modifier.padding(bottom = 24.dp)) {
+    Box(
+        modifier =
+            modifier
+                .background(NearTheme.colors.WHITE_FFFFFF)
+                .padding(top = statusBarHeightDp, bottom = 24.dp),
+    ) {
         Column(
             modifier =
                 Modifier
@@ -83,7 +94,10 @@ fun FriendProfileScreen(
                 onClickBackButton = onClickBackButton,
                 menuButton = {
                     Image(
-                        modifier = Modifier.onNoRippleClick(onClick = {}).padding(end = 20.dp),
+                        modifier =
+                            Modifier
+                                .onNoRippleClick(onClick = {})
+                                .padding(end = 20.dp),
                         painter = painterResource(R.drawable.ic_32_menu),
                         contentDescription = stringResource(R.string.common_menu_button_description),
                     )
