@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.model.ContactFrequency
-import com.alarmy.near.model.ContactSummary
+import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import java.time.LocalDate
 
@@ -27,7 +27,7 @@ private const val OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT = 34
 @Composable
 fun MyContacts(
     modifier: Modifier = Modifier,
-    contactsWithPage: List<List<ContactSummary>>,
+    contactsWithPage: List<List<FriendSummary>>,
     pagerState: PagerState =
         rememberPagerState(
             initialPage = 0,
@@ -76,7 +76,7 @@ fun MyContacts(
                                     horizontalArrangement = Arrangement.Center,
                                 ) {
                                     ContactItem(
-                                        contactSummary = contactsWithPage[page][0],
+                                        friendSummary = contactsWithPage[page][0],
                                         onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((60 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
@@ -94,13 +94,13 @@ fun MyContacts(
                             ) {
                                 Spacer(modifier = Modifier.height(112.dp))
                                 ContactItem(
-                                    contactSummary = contactsWithPage[page][0],
+                                    friendSummary = contactsWithPage[page][0],
                                     onClick = onContactClick,
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Row {
                                     ContactItem(
-                                        contactSummary = contactsWithPage[page][1],
+                                        friendSummary = contactsWithPage[page][1],
                                         onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((118 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
@@ -120,17 +120,17 @@ fun MyContacts(
                                 Box {
                                     ContactItem(
                                         modifier = Modifier.align(Alignment.TopCenter),
-                                        contactSummary = contactsWithPage[page][0],
+                                        friendSummary = contactsWithPage[page][0],
                                         onClick = onContactClick,
                                     )
                                     Row(modifier = Modifier.padding(top = 92.dp, bottom = 78.dp)) {
                                         ContactItem(
-                                            contactSummary = contactsWithPage[page][1],
+                                            friendSummary = contactsWithPage[page][1],
                                             onClick = onContactClick,
                                         )
                                         Spacer(modifier = Modifier.width((141 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                         ContactItem(
-                                            contactSummary = contactsWithPage[page][2],
+                                            friendSummary = contactsWithPage[page][2],
                                             onClick = onContactClick,
                                         )
                                     }
@@ -151,17 +151,17 @@ fun MyContacts(
                                 Box {
                                     ContactItem(
                                         modifier = Modifier.align(Alignment.TopCenter),
-                                        contactSummary = contactsWithPage[page][0],
+                                        friendSummary = contactsWithPage[page][0],
                                         onClick = onContactClick,
                                     )
                                     Row(modifier = Modifier.padding(top = 62.dp)) {
                                         ContactItem(
-                                            contactSummary = contactsWithPage[page][1],
+                                            friendSummary = contactsWithPage[page][1],
                                             onClick = onContactClick,
                                         )
                                         Spacer(modifier = Modifier.width((138 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                         ContactItem(
-                                            contactSummary = contactsWithPage[page][2],
+                                            friendSummary = contactsWithPage[page][2],
                                             onClick = onContactClick,
                                         )
                                     }
@@ -169,7 +169,7 @@ fun MyContacts(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Row {
                                     ContactItem(
-                                        contactSummary = contactsWithPage[page][3],
+                                        friendSummary = contactsWithPage[page][3],
                                         onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((51 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
@@ -189,17 +189,17 @@ fun MyContacts(
                                 Box {
                                     ContactItem(
                                         modifier = Modifier.align(Alignment.TopCenter),
-                                        contactSummary = contactsWithPage[page][0],
+                                        friendSummary = contactsWithPage[page][0],
                                         onClick = onContactClick,
                                     )
                                     Row(modifier = Modifier.padding(top = 62.dp)) {
                                         ContactItem(
-                                            contactSummary = contactsWithPage[page][1],
+                                            friendSummary = contactsWithPage[page][1],
                                             onClick = onContactClick,
                                         )
                                         Spacer(modifier = Modifier.width((138 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                         ContactItem(
-                                            contactSummary = contactsWithPage[page][2],
+                                            friendSummary = contactsWithPage[page][2],
                                             onClick = onContactClick,
                                         )
                                     }
@@ -207,12 +207,12 @@ fun MyContacts(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Row {
                                     ContactItem(
-                                        contactSummary = contactsWithPage[page][3],
+                                        friendSummary = contactsWithPage[page][3],
                                         onClick = onContactClick,
                                     )
                                     Spacer(modifier = Modifier.width((51 - OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT).dp))
                                     ContactItem(
-                                        contactSummary = contactsWithPage[page][4],
+                                        friendSummary = contactsWithPage[page][4],
                                         onClick = onContactClick,
                                     )
                                 }
@@ -234,11 +234,11 @@ fun MyContactsPreview() {
                 modifier = Modifier.align(Alignment.Center),
                 contactsWithPage =
                     List(5) {
-                        ContactSummary(
+                        FriendSummary(
                             id = "2003",
                             name = "일이삼사오육칠팔구",
                             profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
-                            lastContactedAt = LocalDate.of(2025, 7, 25),
+                            lastContactedAt = "2025-04-21",
                             isContacted = false,
                             contactFrequency = ContactFrequency.LOW,
                         )

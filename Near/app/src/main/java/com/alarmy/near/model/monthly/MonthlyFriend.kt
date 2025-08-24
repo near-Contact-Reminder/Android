@@ -1,13 +1,13 @@
-package com.alarmy.near.model
+package com.alarmy.near.model.monthly
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-data class MonthlyContact(
+data class MonthlyFriend(
     val friendId: String,
     val name: String,
-    val type: String,
+    val type: MonthlyFriendType,
     val nextContactAt: String,
 ) {
     fun daysUntilNextContact(today: LocalDate): String {

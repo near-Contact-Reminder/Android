@@ -22,6 +22,7 @@ fun NavGraphBuilder.homeNavGraph(
     onContactClick: (String) -> Unit = {},
     onAlarmClick: () -> Unit = {},
     onMyPageClick: () -> Unit = {},
+    onAddContactClick: () -> Unit = {},
 ) {
     composable<RouteHome> { backStackEntry ->
         HomeRoute(
@@ -29,6 +30,7 @@ fun NavGraphBuilder.homeNavGraph(
             onContactClick = onContactClick,
             onAlarmClick = onAlarmClick,
             onMyPageClick = onMyPageClick,
+            onAddContactClick = onAddContactClick,
         )
     }
 }

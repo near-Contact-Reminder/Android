@@ -20,23 +20,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
-import com.alarmy.near.model.ContactSummary
+import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
-import java.time.LocalDate
 
 private const val MAX_WIDTH_OF_NAME_TEXT = 97
 
 @Composable
 fun ContactItem(
     modifier: Modifier = Modifier,
-    contactSummary: ContactSummary,
+    friendSummary: FriendSummary,
     onClick: (contactId: String) -> Unit = {},
 ) {
     Column(
         modifier =
             modifier.onNoRippleClick {
-                onClick(contactSummary.id)
+                onClick(friendSummary.id)
             },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -51,7 +50,7 @@ fun ContactItem(
                         .align(Alignment.TopEnd)
                         .offset(x = 4.dp, y = (-4).dp),
                 painter =
-                    when (contactSummary.contactFrequency) {
+                    when (friendSummary.contactFrequency) {
                         ContactFrequency.LOW -> painterResource(R.drawable.ic_visual_24_emoji_0)
                         ContactFrequency.MIDDLE -> painterResource(R.drawable.ic_visual_24_emoji_50)
                         ContactFrequency.HIGH -> painterResource(R.drawable.ic_visual_24_emoji_100)
@@ -62,7 +61,7 @@ fun ContactItem(
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             modifier = Modifier.width(MAX_WIDTH_OF_NAME_TEXT.dp),
-            text = contactSummary.name,
+            text = friendSummary.name,
             style = NearTheme.typography.B2_14_BOLD,
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,
@@ -70,33 +69,35 @@ fun ContactItem(
             color = NearTheme.colors.BLACK_1A1A1A,
         )
         Spacer(modifier = Modifier.height(1.dp))
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                contactSummary.formattedDate,
+                friendSummary.lastContactedAt ?: "",
                 style = NearTheme.typography.FC_12_MEDIUM,
                 textAlign = TextAlign.Center,
                 color = NearTheme.colors.GRAY02_B7B7B7,
             )
             Spacer(modifier = Modifier.width(2.dp))
-            Image(
-                painter = painterResource(R.drawable.ic_12_check),
-                contentDescription = "",
-            )
+            if (friendSummary.lastContactedAt != null) {
+                Image(
+                    painter = painterResource(R.drawable.ic_12_check),
+                    contentDescription = "",
+                )
+            }
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ContactItemPreview_Default() {
+fun ContactItemPreview() {
     ContactItem(
         modifier = Modifier.padding(top = 10.dp),
-        contactSummary =
-            ContactSummary(
+        friendSummary =
+            FriendSummary(
                 id = "123L",
                 name = "홍길동",
                 profileImageUrl = "",
-                lastContactedAt = LocalDate.of(2025, 5, 31),
+                lastContactedAt = "2025-04-21",
                 isContacted = true,
                 contactFrequency = ContactFrequency.HIGH,
             ),

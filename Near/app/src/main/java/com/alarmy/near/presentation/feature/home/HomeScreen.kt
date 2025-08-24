@@ -22,11 +22,15 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,12 +53,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
-import com.alarmy.near.model.ContactSummary
-import com.alarmy.near.model.MonthlyContact
+import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.model.monthly.MonthlyFriend
+import com.alarmy.near.model.monthly.MonthlyFriendType
 import com.alarmy.near.presentation.feature.home.component.MyContacts
 import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 private const val MINIMUM_PAGE_COUNT_TO_SHOW_UI = 2
@@ -66,24 +72,24 @@ internal fun HomeRoute(
     onContactClick: (String) -> Unit = {},
     onAlarmClick: () -> Unit = {},
     onMyPageClick: () -> Unit = {},
+    onAddContactClick: () -> Unit = {},
 ) {
-    val uiState = viewModel.friendsFlow.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        launch {
+            viewModel.errorEvent.collect {
+                onShowErrorSnackBar(it)
+            }
+        }
+    }
+    val friends = viewModel.friendsFlow.collectAsStateWithLifecycle()
+    val monthlyFriends = viewModel.monthlyFriendFlow.collectAsStateWithLifecycle()
     HomeScreen(
-        onContactClick = {},
-        onAlarmClick = {},
-        onMyPageClick = {},
-        contacts =
-            List(6) {
-                ContactSummary(
-                    id = "2003",
-                    name = "일이삼사오육칠팔구",
-                    profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
-                    lastContactedAt = LocalDate.of(2025, 7, 25),
-                    isContacted = false,
-                    contactFrequency = ContactFrequency.LOW,
-                )
-            },
-        monthlyContacts = emptyList(),
+        onContactClick = onContactClick,
+        onAlarmClick = onAlarmClick,
+        onMyPageClick = onMyPageClick,
+        onAddContactClick = onAddContactClick,
+        contacts = friends.value,
+        monthlyFriends = monthlyFriends.value,
     )
 }
 
@@ -94,8 +100,9 @@ internal fun HomeScreen(
     onContactClick: (String) -> Unit = { _ -> },
     onMyPageClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
-    contacts: List<ContactSummary>,
-    monthlyContacts: List<MonthlyContact>,
+    onAddContactClick: () -> Unit = {},
+    contacts: List<FriendSummary>,
+    monthlyFriends: List<MonthlyFriend>,
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -107,6 +114,7 @@ internal fun HomeScreen(
                 contactsWithPage.count() + if (contactsWithPage.lastOrNull()?.count() == 5) 1 else 0
             },
         )
+    val dropdownState = remember { mutableStateOf(false) }
 
     Surface(modifier = modifier) {
         Column(
@@ -169,7 +177,7 @@ internal fun HomeScreen(
                 color = NearTheme.colors.WHITE_FFFFFF,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            if (monthlyContacts.isEmpty()) {
+            if (monthlyFriends.isEmpty()) {
                 Surface(
                     modifier =
                         Modifier
@@ -201,12 +209,12 @@ internal fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(
-                        count = monthlyContacts.size,
+                        count = monthlyFriends.size,
                         key = {
-                            monthlyContacts[it].friendId
+                            monthlyFriends[it].friendId
                         },
                     ) {
-                        val monthlyContact = monthlyContacts[it]
+                        val monthlyContact = monthlyFriends[it]
                         val now = LocalDate.now()
                         Surface(
                             modifier.dropShadow(
@@ -227,7 +235,7 @@ internal fun HomeScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Image(
-                                    painterResource(R.drawable.icon_visual_mail),
+                                    painterResource(monthlyContact.type.imageSrc),
                                     contentDescription = "",
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -261,6 +269,7 @@ internal fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
             Box(
                 modifier =
                     Modifier
@@ -270,6 +279,15 @@ internal fun HomeScreen(
                             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
                         ),
             ) {
+                MyContacts(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    contactsWithPage = contactsWithPage,
+                    pagerState = pagerState,
+                    onContactClick = onContactClick,
+                    onAddContactClick = {
+                        onAddContactClick()
+                    },
+                )
                 Row(
                     modifier =
                         Modifier
@@ -284,21 +302,37 @@ internal fun HomeScreen(
                         style = NearTheme.typography.H2_18_BOLD,
                         color = NearTheme.colors.BLACK_1A1A1A,
                     )
-                    Icon(
-                        painterResource(R.drawable.ic_32_menu),
-                        contentDescription = stringResource(R.string.home_my_people_setting),
-                    )
+                    Column {
+                        Image(
+                            modifier =
+                                Modifier.onNoRippleClick(onClick = {
+                                    dropdownState.value = true
+                                }),
+                            painter = painterResource(R.drawable.ic_32_menu),
+                            contentDescription = stringResource(R.string.home_my_people_setting),
+                        )
+                        DropdownMenu(
+                            modifier = Modifier.background(color = NearTheme.colors.WHITE_FFFFFF),
+                            expanded = dropdownState.value,
+                            shape = RoundedCornerShape(12.dp),
+                            onDismissRequest = { dropdownState.value = false },
+                        ) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    // TODO 연락처 화면 이동
+                                    dropdownState.value = false
+                                },
+                                text = {
+                                    Text(
+                                        stringResource(R.string.home_menu_text_add_friend),
+                                        style = NearTheme.typography.B2_14_MEDIUM,
+                                        color = NearTheme.colors.BLACK_1A1A1A,
+                                    )
+                                },
+                            )
+                        }
+                    }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                MyContacts(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    contactsWithPage = contactsWithPage,
-                    pagerState = pagerState,
-                    onContactClick = onContactClick,
-                    onAddContactClick = {
-                        // TODO Contact 클릭 이벤트 구현
-                    },
-                )
 
                 if (contactsWithPage.size >= MINIMUM_PAGE_COUNT_TO_SHOW_UI) {
                     Column(modifier = Modifier.align(Alignment.BottomCenter)) {
@@ -348,21 +382,21 @@ internal fun HomeScreenPreview() {
             onContactClick = {},
             contacts =
                 List(6) {
-                    ContactSummary(
+                    FriendSummary(
                         id = "2003",
                         name = "일이삼사오육칠팔구",
                         profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
-                        lastContactedAt = LocalDate.of(2025, 7, 25),
+                        lastContactedAt = "2025-07-16",
                         isContacted = false,
                         contactFrequency = ContactFrequency.HIGH,
                     )
                 },
-            monthlyContacts =
+            monthlyFriends =
                 List(4) {
-                    MonthlyContact(
+                    MonthlyFriend(
                         friendId = "intellegat$it",
                         name = "Stacey Stewart",
-                        type = "ANNIVERSARY",
+                        type = MonthlyFriendType.ANNIVERSARY,
                         nextContactAt = "2025-09-30",
                     )
                 },
