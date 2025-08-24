@@ -1,6 +1,6 @@
 package com.alarmy.near.model
 
-enum class ContactFrequency {
+enum class ContactFrequencyLevel {
     LOW,
     MIDDLE,
     HIGH,

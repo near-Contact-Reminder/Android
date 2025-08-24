@@ -9,5 +9,5 @@ data class FriendSummary(
     val profileImageUrl: String?,
     val lastContactedAt: String?,
     val isContacted: Boolean,
-    val contactFrequency: ContactFrequency,
+    val contactFrequencyLevel: ContactFrequencyLevel,
 )

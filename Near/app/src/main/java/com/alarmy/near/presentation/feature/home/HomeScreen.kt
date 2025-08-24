@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
-import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.ContactFrequencyLevel
 import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
 import com.alarmy.near.model.monthly.MonthlyFriendType
@@ -388,7 +388,7 @@ internal fun HomeScreenPreview() {
                         profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
                         lastContactedAt = "2025-07-16",
                         isContacted = false,
-                        contactFrequency = ContactFrequency.HIGH,
+                        contactFrequencyLevel = ContactFrequencyLevel.HIGH,
                     )
                 },
             monthlyFriends =
