@@ -1,7 +1,7 @@
 package com.alarmy.near.data.mapper
 
-import com.alarmy.near.model.ContactFrequencyLevel
-import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
+import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.network.response.FriendSummaryEntity
 
 fun FriendSummaryEntity.toModel(): FriendSummary =

@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.alarmy.near.model.ContactFrequencyLevel
-import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
+import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 private const val OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT = 34

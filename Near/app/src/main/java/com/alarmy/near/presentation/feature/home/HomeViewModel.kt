@@ -3,7 +3,7 @@ package com.alarmy.near.presentation.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.FriendRepository
-import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

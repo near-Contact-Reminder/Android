@@ -19,8 +19,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
-import com.alarmy.near.model.ContactFrequencyLevel
-import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
+import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
