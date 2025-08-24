@@ -8,13 +8,15 @@ import com.alarmy.near.presentation.feature.friendprofile.FriendProfileRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-object RouteFriendProfile
+data class RouteFriendProfile(
+    val friendId: String,
+)
 
 fun NavController.navigateToFriendProfile(
     friendId: String,
     navOptions: NavOptions? = null,
 ) {
-    navigate(RouteFriendProfile, navOptions)
+    navigate(RouteFriendProfile(friendId), navOptions)
 }
 
 fun NavGraphBuilder.friendProfileNavGraph(
