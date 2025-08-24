@@ -71,12 +71,16 @@ fun FriendProfileRoute(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickBackButton: () -> Unit = {},
     onEditFriendInfo: (Friend) -> Unit = {},
+    onClickCallButton: (phoneNumber: String) -> Unit = {},
+    onClickMessageButton: (phoneNumber: String) -> Unit = {},
 ) {
     val friendState = viewModel.friendFlow.collectAsStateWithLifecycle()
     FriendProfileScreen(
         friendState = friendState.value,
         onClickBackButton = onClickBackButton,
         onEditFriendInfo = onEditFriendInfo,
+        onClickCallButton = onClickCallButton,
+        onClickMessageButton = onClickMessageButton,
     )
 }
 
@@ -86,6 +90,8 @@ fun FriendProfileScreen(
     friendState: FriendState,
     onClickBackButton: () -> Unit = {},
     onEditFriendInfo: (Friend) -> Unit = {},
+    onClickCallButton: (phoneNumber: String) -> Unit = {},
+    onClickMessageButton: (phoneNumber: String) -> Unit = {},
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -207,9 +213,25 @@ fun FriendProfileScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 20.dp),
                     ) {
-                        CallButton(modifier = Modifier.weight(1f), onClick = {})
+                        CallButton(
+                            modifier = Modifier.weight(1f),
+                            enabled = !friend.phone.isNullOrBlank(),
+                            onClick = {
+                                friend.phone?.let {
+                                    onClickCallButton(friend.phone)
+                                }
+                            },
+                        )
                         Spacer(modifier = Modifier.width(7.dp))
-                        MessageButton(Modifier.weight(1f), onClick = {})
+                        MessageButton(
+                            Modifier.weight(1f),
+                            enabled = !friend.phone.isNullOrBlank(),
+                            onClick = {
+                                friend.phone?.let {
+                                    onClickMessageButton(friend.phone)
+                                }
+                            },
+                        )
                     }
                     Spacer(modifier = Modifier.height(24.dp))
                     TabRow(
