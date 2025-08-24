@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -35,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,6 +79,7 @@ fun FriendProfileScreen(
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
     val currentTabPosition = remember { mutableIntStateOf(0) }
+    val dropdownState = remember { mutableStateOf(false) }
     Box(
         modifier =
             modifier
@@ -90,19 +94,55 @@ fun FriendProfileScreen(
                     .background(NearTheme.colors.WHITE_FFFFFF),
         ) {
             NearTopAppbar(
-                title = "프로필 상세",
+                title = stringResource(R.string.friend_profile_title),
                 onClickBackButton = onClickBackButton,
                 menuButton = {
-                    Image(
-                        modifier =
-                            Modifier
-                                .onNoRippleClick(onClick = {})
-                                .padding(end = 20.dp),
-                        painter = painterResource(R.drawable.ic_32_menu),
-                        contentDescription = stringResource(R.string.common_menu_button_description),
-                    )
+                    Column(modifier = Modifier.padding(end = 20.dp)) {
+                        Image(
+                            modifier =
+                                Modifier
+                                    .onNoRippleClick(onClick = {
+                                        dropdownState.value = true
+                                    }),
+                            painter = painterResource(R.drawable.ic_32_menu),
+                            contentDescription = stringResource(R.string.common_menu_button_description),
+                        )
+                        DropdownMenu(
+                            modifier = Modifier.background(color = NearTheme.colors.WHITE_FFFFFF),
+                            expanded = dropdownState.value,
+                            shape = RoundedCornerShape(12.dp),
+                            onDismissRequest = { dropdownState.value = false },
+                        ) {
+                            DropdownMenuItem(
+                                onClick = {
+//                                    onUpdateFriend()
+                                    dropdownState.value = false
+                                },
+                                text = {
+                                    Text(
+                                        "수정",
+                                        style = NearTheme.typography.B2_14_MEDIUM,
+                                        color = NearTheme.colors.BLACK_1A1A1A,
+                                    )
+                                },
+                            )
+                            DropdownMenuItem(
+                                onClick = {
+                                    dropdownState.value = false
+                                },
+                                text = {
+                                    Text(
+                                        "삭제",
+                                        style = NearTheme.typography.B2_14_MEDIUM,
+                                        color = NearTheme.colors.BLACK_1A1A1A,
+                                    )
+                                },
+                            )
+                        }
+                    }
                 },
             )
+
             Spacer(modifier = Modifier.height(18.dp))
             Row(
                 modifier =
