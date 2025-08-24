@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FriendEntity(
     val friendId: String,
-    val imageUrl: String,
+    val imageUrl: String?,
     val relation: String,
     val name: String,
-    val contactFrequencyEntity: ContactFrequencyEntity,
+    val contactFrequency: ContactFrequencyEntity,
     val birthday: String?,
-    val anniversaryEntityList: List<AnniversaryEntity>,
+    val anniversaryList: List<AnniversaryEntity>,
     val memo: String?,
     val phone: String?,
     val lastContactAt: String?,

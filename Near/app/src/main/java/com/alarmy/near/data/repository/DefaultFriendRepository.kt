@@ -1,5 +1,6 @@
 package com.alarmy.near.data.repository
 
+import android.util.Log
 import com.alarmy.near.data.mapper.toModel
 import com.alarmy.near.data.mapper.toRequest
 import com.alarmy.near.model.Friend
@@ -27,6 +28,7 @@ class DefaultFriendRepository
 
         override fun fetchMonthlyFriends(): Flow<List<MonthlyFriend>> =
             flow {
+                Log.d("test", "repository")
                 emit(
                     friendService.fetchMonthlyFriends().map {
                         it.toModel()
@@ -61,6 +63,6 @@ class DefaultFriendRepository
         override fun recordContact(friendId: String): Flow<String> =
             flow {
                 val response = friendService.recordContact(friendId)
-            emit(response.message) // CommonMessageEntity.message 라고 가정
-        }
+                emit(response.message) // CommonMessageEntity.message 라고 가정
+            }
     }
