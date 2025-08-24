@@ -17,10 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.ContactFrequencyLevel
 import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.presentation.ui.theme.NearTheme
-import java.time.LocalDate
 
 private const val OVERFLOW_WIDTH_OF_CONTACT_ITEM_BY_NAME_TEXT = 34
 
@@ -240,7 +239,7 @@ fun MyContactsPreview() {
                             profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
                             lastContactedAt = "2025-04-21",
                             isContacted = false,
-                            contactFrequency = ContactFrequency.LOW,
+                            contactFrequencyLevel = ContactFrequencyLevel.LOW,
                         )
                     }.chunked(5),
             )

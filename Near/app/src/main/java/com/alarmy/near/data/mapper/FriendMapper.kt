@@ -1,6 +1,6 @@
 package com.alarmy.near.data.mapper
 
-import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.ContactFrequencyLevel
 import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.network.response.FriendSummaryEntity
 
@@ -11,11 +11,11 @@ fun FriendSummaryEntity.toModel(): FriendSummary =
         profileImageUrl = imageUrl,
         lastContactedAt = lastContactAt,
         isContacted = true,
-        contactFrequency =
+        contactFrequencyLevel =
             when (checkRate) {
-                in 0..29 -> ContactFrequency.LOW
-                in 30..69 -> ContactFrequency.MIDDLE
-                in 70..100 -> ContactFrequency.HIGH
-                else -> ContactFrequency.LOW
+                in 0..29 -> ContactFrequencyLevel.LOW
+                in 30..69 -> ContactFrequencyLevel.MIDDLE
+                in 70..100 -> ContactFrequencyLevel.HIGH
+                else -> ContactFrequencyLevel.LOW
             },
     )

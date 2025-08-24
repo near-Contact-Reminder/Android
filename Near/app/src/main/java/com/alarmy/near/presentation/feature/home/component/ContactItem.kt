@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
-import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.ContactFrequencyLevel
 import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
@@ -50,10 +50,10 @@ fun ContactItem(
                         .align(Alignment.TopEnd)
                         .offset(x = 4.dp, y = (-4).dp),
                 painter =
-                    when (friendSummary.contactFrequency) {
-                        ContactFrequency.LOW -> painterResource(R.drawable.ic_visual_24_emoji_0)
-                        ContactFrequency.MIDDLE -> painterResource(R.drawable.ic_visual_24_emoji_50)
-                        ContactFrequency.HIGH -> painterResource(R.drawable.ic_visual_24_emoji_100)
+                    when (friendSummary.contactFrequencyLevel) {
+                        ContactFrequencyLevel.LOW -> painterResource(R.drawable.ic_visual_24_emoji_0)
+                        ContactFrequencyLevel.MIDDLE -> painterResource(R.drawable.ic_visual_24_emoji_50)
+                        ContactFrequencyLevel.HIGH -> painterResource(R.drawable.ic_visual_24_emoji_100)
                     },
                 contentDescription = "",
             )
@@ -99,7 +99,7 @@ fun ContactItemPreview() {
                 profileImageUrl = "",
                 lastContactedAt = "2025-04-21",
                 isContacted = true,
-                contactFrequency = ContactFrequency.HIGH,
+                contactFrequencyLevel = ContactFrequencyLevel.HIGH,
             ),
     )
 }
