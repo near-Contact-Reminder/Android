@@ -22,6 +22,7 @@
     <string name="home_add_contact">연락처 추가</string>
     <string name="home_add_contact_description">가까워 지고 싶은 사람을\n추가해보세요.</string>
     <string name="home_add_people_text">사람 추가</string>
+    <string name="home_menu_text_add_friend">사람 추가</string>
 
     <!--  상대 프로필(Friend Profile)  -->
     <string name="friend_profile_call">전화걸기</string>
@@ -38,10 +39,12 @@
     <string name="friend_profile_editor_relation_freind">친구</string>
     <string name="friend_profile_editor_relation_family">가족</string>
     <string name="friend_profile_editor_relation_acquaintance">지인</string>
+
+    <!-- 챙김 주기 설정   -->
     <string name="reminder_interval_daily">매일</string>
     <string name="reminder_interval_weekly">매주</string>
     <string name="reminder_interval_biweekly">2주</string>
     <string name="reminder_interval_monthly">매달</string>
     <string name="reminder_interval_semiannual">6개월</string>
-    <string name="home_menu_text_add_friend">사람 추가</string>
+    <string name="friend_profile_title">프로필 상세</string>
 </resources>
