@@ -2,7 +2,7 @@ package com.alarmy.near.data.repository
 
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.FriendRecord
-import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
 import kotlinx.coroutines.flow.Flow
 

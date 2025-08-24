@@ -1,4 +1,4 @@
-package com.alarmy.near.model
+package com.alarmy.near.model.friendsummary
 
 import androidx.compose.runtime.Immutable
 
