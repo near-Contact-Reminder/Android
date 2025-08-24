@@ -1,6 +1,5 @@
 package com.alarmy.near.presentation.feature.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -307,7 +306,6 @@ internal fun HomeScreen(
                         Image(
                             modifier =
                                 Modifier.onNoRippleClick(onClick = {
-                                    Log.d("covy", "onClick")
                                     dropdownState.value = true
                                 }),
                             painter = painterResource(R.drawable.ic_32_menu),
