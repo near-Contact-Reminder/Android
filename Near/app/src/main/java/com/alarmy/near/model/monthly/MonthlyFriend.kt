@@ -26,7 +26,7 @@ data class MonthlyFriend(
         return ChronoUnit.DAYS.between(today, targetDate)
     }
 
-    companion object Companion {
+    companion object {
         private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
 }
