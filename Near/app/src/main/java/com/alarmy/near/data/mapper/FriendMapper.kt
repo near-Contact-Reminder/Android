@@ -1,21 +1,62 @@
 package com.alarmy.near.data.mapper
 
-import com.alarmy.near.model.ContactFrequencyLevel
-import com.alarmy.near.model.FriendSummary
-import com.alarmy.near.network.response.FriendSummaryEntity
+import com.alarmy.near.model.Anniversary
+import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.Friend
+import com.alarmy.near.network.request.AnniversaryRequest
+import com.alarmy.near.network.request.ContactFrequencyRequest
+import com.alarmy.near.network.request.FriendRequest
+import com.alarmy.near.network.response.AnniversaryEntity
+import com.alarmy.near.network.response.ContactFrequencyEntity
+import com.alarmy.near.network.response.FriendEntity
 
-fun FriendSummaryEntity.toModel(): FriendSummary =
-    FriendSummary(
-        id = friendId,
+fun FriendEntity.toModel(): Friend =
+    Friend(
+        friendId = friendId,
+        imageUrl = imageUrl,
+        relation = relation,
         name = name,
-        profileImageUrl = imageUrl,
-        lastContactedAt = lastContactAt,
-        isContacted = true,
-        contactFrequencyLevel =
-            when (checkRate) {
-                in 0..29 -> ContactFrequencyLevel.LOW
-                in 30..69 -> ContactFrequencyLevel.MIDDLE
-                in 70..100 -> ContactFrequencyLevel.HIGH
-                else -> ContactFrequencyLevel.LOW
-            },
+        contactFrequency = contactFrequencyEntity.toModel(),
+        birthday = birthday,
+        anniversaryList = anniversaryEntityList.map { it.toModel() },
+        memo = memo,
+        phone = phone,
+        lastContactAt = lastContactAt,
+    )
+
+fun ContactFrequencyEntity.toModel(): ContactFrequency =
+    ContactFrequency(
+        contactWeek = contactWeek,
+        dayOfWeek = dayOfWeek,
+    )
+
+fun AnniversaryEntity.toModel(): Anniversary =
+    Anniversary(
+        id = id,
+        title = title,
+        date = date,
+    )
+
+fun Friend.toRequest(): FriendRequest =
+    FriendRequest(
+        name = name,
+        relation = relation,
+        contactFrequency = contactFrequency.toRequest(),
+        birthday = birthday,
+        anniversaryList = anniversaryList.map { it.toRequest() },
+        memo = memo,
+        phone = phone,
+    )
+
+fun ContactFrequency.toRequest(): ContactFrequencyRequest =
+    ContactFrequencyRequest(
+        contactWeek = contactWeek,
+        dayOfWeek = dayOfWeek,
+    )
+
+fun Anniversary.toRequest(): AnniversaryRequest =
+    AnniversaryRequest(
+        id = id,
+        title = title,
+        date = date,
     )
