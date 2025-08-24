@@ -6,9 +6,11 @@ import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -18,10 +20,15 @@ class HomeViewModel
     constructor(
         friendRepository: FriendRepository,
     ) : ViewModel() {
+        private val _errorEvent = Channel<Throwable?>()
+        val errorEvent = _errorEvent.receiveAsFlow()
+
         val friendsFlow: StateFlow<List<FriendSummary>> =
             friendRepository
                 .fetchFriends()
-                .catch { }
+                .catch {
+                    _errorEvent.send(it)
+                }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
@@ -32,7 +39,9 @@ class HomeViewModel
             StateFlow<List<MonthlyFriend>> =
             friendRepository
                 .fetchMonthlyFriends()
-                .catch { }
+                .catch {
+                    _errorEvent.send(it)
+                }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),

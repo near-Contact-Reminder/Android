@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,6 +61,7 @@ import com.alarmy.near.presentation.feature.home.component.MyContacts
 import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 private const val MINIMUM_PAGE_COUNT_TO_SHOW_UI = 2
@@ -73,6 +75,13 @@ internal fun HomeRoute(
     onMyPageClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
 ) {
+    LaunchedEffect(Unit) {
+        launch {
+            viewModel.errorEvent.collect {
+                onShowErrorSnackBar(it)
+            }
+        }
+    }
     val friends = viewModel.friendsFlow.collectAsStateWithLifecycle()
     val monthlyFriends = viewModel.monthlyFriendFlow.collectAsStateWithLifecycle()
     HomeScreen(
