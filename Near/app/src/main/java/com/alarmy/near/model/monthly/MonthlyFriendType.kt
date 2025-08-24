@@ -15,9 +15,8 @@ enum class MonthlyFriendType(
         private const val ERROR_MESSAGE_NOT_FOUND_MONTHLY_TYPE = "일치하는 타입이 없습니다"
 
         fun from(value: String): MonthlyFriendType =
-            entries.firstOrNull { it.name == value }
-                ?: throw IllegalArgumentException(
-                    ERROR_MESSAGE_NOT_FOUND_MONTHLY_TYPE,
-                )
+            runCatching { valueOf(value.uppercase()) }.getOrNull() ?: throw IllegalStateException(
+                ERROR_MESSAGE_NOT_FOUND_MONTHLY_TYPE,
+            )
     }
 }
