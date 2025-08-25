@@ -14,7 +14,7 @@ data class Friend(
 )
 
 data class ContactFrequency(
-    val contactWeek: String,
+    val reminderInterval: ReminderInterval,
     val dayOfWeek: String,
 )
 
