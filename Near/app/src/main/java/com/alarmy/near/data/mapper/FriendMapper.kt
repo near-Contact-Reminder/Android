@@ -3,6 +3,7 @@ package com.alarmy.near.data.mapper
 import com.alarmy.near.model.Anniversary
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.Friend
+import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.network.request.AnniversaryRequest
 import com.alarmy.near.network.request.ContactFrequencyRequest
 import com.alarmy.near.network.request.FriendRequest
@@ -26,7 +27,7 @@ fun FriendEntity.toModel(): Friend =
 
 fun ContactFrequencyEntity.toModel(): ContactFrequency =
     ContactFrequency(
-        contactWeek = contactWeek,
+        reminderInterval = ReminderInterval.valueOf(contactWeek),
         dayOfWeek = dayOfWeek,
     )
 
@@ -50,7 +51,7 @@ fun Friend.toRequest(): FriendRequest =
 
 fun ContactFrequency.toRequest(): ContactFrequencyRequest =
     ContactFrequencyRequest(
-        contactWeek = contactWeek,
+        contactWeek = reminderInterval.toString(),
         dayOfWeek = dayOfWeek,
     )
 

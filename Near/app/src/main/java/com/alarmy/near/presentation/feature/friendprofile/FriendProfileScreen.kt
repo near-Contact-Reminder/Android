@@ -576,7 +576,7 @@ fun FriendProfileScreenPreview() {
                         name = "",
                         contactFrequency =
                             ContactFrequency(
-                                contactWeek = "EVERY_DAY",
+                                reminderInterval = "EVERY_DAY",
                                 dayOfWeek = "MONDAY",
                             ),
                         birthday = "1998-11-13",
