@@ -3,6 +3,7 @@ package com.alarmy.near.model
 import androidx.annotation.StringRes
 import com.alarmy.near.R
 
+// TODO StringRes UI-Layer 이동
 enum class ReminderInterval(
     @param:StringRes val labelRes: Int,
 ) {
