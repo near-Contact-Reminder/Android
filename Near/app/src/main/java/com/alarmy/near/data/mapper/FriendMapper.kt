@@ -3,6 +3,7 @@ package com.alarmy.near.data.mapper
 import com.alarmy.near.model.Anniversary
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.Friend
+import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.network.request.AnniversaryRequest
 import com.alarmy.near.network.request.ContactFrequencyRequest
@@ -15,7 +16,7 @@ fun FriendEntity.toModel(): Friend =
     Friend(
         friendId = friendId,
         imageUrl = imageUrl,
-        relation = relation,
+        relation = Relation.valueOf(relation),
         name = name,
         contactFrequency = contactFrequency.toModel(),
         birthday = birthday,
@@ -41,7 +42,7 @@ fun AnniversaryEntity.toModel(): Anniversary =
 fun Friend.toRequest(): FriendRequest =
     FriendRequest(
         name = name,
-        relation = relation,
+        relation = relation.toString(),
         contactFrequency = contactFrequency.toRequest(),
         birthday = birthday,
         anniversaryList = anniversaryList.map { it.toRequest() },
