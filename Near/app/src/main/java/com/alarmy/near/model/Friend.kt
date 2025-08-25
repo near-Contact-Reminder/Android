@@ -3,7 +3,7 @@ package com.alarmy.near.model
 data class Friend(
     val friendId: String,
     val imageUrl: String?,
-    val relation: String,
+    val relation: Relation,
     val name: String,
     val contactFrequency: ContactFrequency,
     val birthday: String?,
