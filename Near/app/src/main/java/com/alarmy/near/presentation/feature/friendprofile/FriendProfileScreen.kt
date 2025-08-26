@@ -57,10 +57,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.Friend
+import com.alarmy.near.model.FriendRecord
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofile.component.CallButton
 import com.alarmy.near.presentation.feature.friendprofile.component.MessageButton
+import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendShipRecordState
 import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendState
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
@@ -79,8 +81,10 @@ fun FriendProfileRoute(
     onClickMessageButton: (phoneNumber: String) -> Unit = {},
 ) {
     val friendState = viewModel.friendFlow.collectAsStateWithLifecycle()
+    val friendShipRecordState = viewModel.friendShipRecordStateFlow.collectAsStateWithLifecycle()
     FriendProfileScreen(
         friendState = friendState.value,
+        friendShipRecordState = friendShipRecordState.value,
         onClickBackButton = onClickBackButton,
         onEditFriendInfo = onEditFriendInfo,
         onClickCallButton = onClickCallButton,
@@ -92,6 +96,7 @@ fun FriendProfileRoute(
 fun FriendProfileScreen(
     modifier: Modifier = Modifier,
     friendState: FriendState,
+    friendShipRecordState: FriendShipRecordState,
     onClickBackButton: () -> Unit = {},
     onEditFriendInfo: (Friend) -> Unit = {},
     onClickCallButton: (phoneNumber: String) -> Unit = {},
@@ -319,7 +324,7 @@ fun FriendProfileScreen(
                     if (currentTabPosition.intValue == 0) {
                         ProfileTab(friend = friend)
                     } else {
-                        RecordTab()
+                        RecordTab(friendShipRecordState = friendShipRecordState)
                     }
                 }
                 NearSolidTypeButton(
@@ -390,7 +395,10 @@ private fun ProfileTab(
 }
 
 @Composable
-private fun RecordTab(modifier: Modifier = Modifier) {
+private fun RecordTab(
+    modifier: Modifier = Modifier,
+    friendShipRecordState: FriendShipRecordState,
+) {
     Column(modifier = modifier.padding(horizontal = 24.dp)) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
@@ -398,22 +406,38 @@ private fun RecordTab(modifier: Modifier = Modifier) {
             style = NearTheme.typography.B2_14_BOLD,
             color = NearTheme.colors.BLACK_1A1A1A,
         )
-        Spacer(modifier = Modifier.height(13.dp))
-
-        LazyVerticalGrid(
-            GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(bottom = 60.dp),
-        ) {
-            items(15) {
-                RecordItem()
+        if (friendShipRecordState.records.isEmpty()) {
+            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(60.dp))
+                Image(painterResource(R.drawable.img_100_character_empty), contentDescription = null)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    "이번달은 챙길 사람이 없네요.",
+                    style = NearTheme.typography.B2_14_MEDIUM,
+                    color = NearTheme.colors.GRAY01_888888,
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.height(13.dp))
+            LazyVerticalGrid(
+                GridCells.Fixed(3),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                contentPadding = PaddingValues(bottom = 60.dp),
+            ) {
+                items(friendShipRecordState.records.size) {
+                    RecordItem(friendRecord = friendShipRecordState.records[it], index = it)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun RecordItem(modifier: Modifier = Modifier) {
+private fun RecordItem(
+    modifier: Modifier = Modifier,
+    index: Int,
+    friendRecord: FriendRecord,
+) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -443,7 +467,7 @@ private fun RecordItem(modifier: Modifier = Modifier) {
                     contentDescription = null,
                 )
                 Text(
-                    "11번째 챙김",
+                    "${index + 1}번째 챙김",
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.BLUE01_5AA2E9,
                 )
@@ -451,7 +475,7 @@ private fun RecordItem(modifier: Modifier = Modifier) {
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "25.03.20",
+            friendRecord.createdAt,
             style = NearTheme.typography.B2_14_MEDIUM,
             color = NearTheme.colors.GRAY01_888888,
         )
@@ -609,6 +633,16 @@ fun FriendProfileScreenPreview() {
                         phone = "",
                         lastContactAt = "",
                     ),
+                ),
+            friendShipRecordState =
+                FriendShipRecordState(
+                    records =
+                        List(5) {
+                            FriendRecord(
+                                isChecked = true,
+                                createdAt = "2023-11-1$it",
+                            )
+                        },
                 ),
         )
     }
