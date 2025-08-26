@@ -41,4 +41,8 @@
     <string name="reminder_interval_monthly">매달</string>
     <string name="reminder_interval_semiannual">6개월</string>
     <string name="friend_profile_title">프로필 상세</string>
+    <string name="relation_friend">친구</string>
+    <string name="relation_family">가족</string>
+    <string name="relation_acquaintance">지인</string>
+    <string name="friend_profile_last_contact_date_format">%1$s 더 가까워졌어요</string>
 </resources>
