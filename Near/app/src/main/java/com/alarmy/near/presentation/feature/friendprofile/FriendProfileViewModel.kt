@@ -1,6 +1,5 @@
 package com.alarmy.near.presentation.feature.friendprofile
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +20,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -77,33 +79,59 @@ class FriendProfileViewModel
                 }.launchIn(viewModelScope)
         }
 
-        fun deleteFriend() {
+        fun onDeleteFriend(friendId: String) {
             friendRepository
                 .deleteFriend(friendId)
                 .onEach {
-                    _uiEvent.send(FriendProfileUIEvent.DeleteFriendSuccess)
+                    _uiEvent.send(FriendProfileUIEvent.DeleteFriendSuccess(friendId))
                     // event
                 }.catch { error ->
                     _uiEvent.send(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
                 }.launchIn(viewModelScope)
         }
 
-        fun recordFriendShip() {
+        fun onRecordFriendShip(friendId: String) {
             friendRepository
-                .recordContact(friendId)
-                .onEach { result ->
+                .recordContact(friendId) // 내 현재 시간 가져와서
+                .onEach { _ ->
                     _uiEvent.send(FriendProfileUIEvent.RecordFriendShipSuccess)
                     _friendShipRecordStateFlow.update { recordState ->
                         recordState.copy(
                             records =
                                 listOf(
-                                    FriendRecord(isChecked = true, createdAt = result),
+                                    FriendRecord(
+                                        isChecked = true,
+                                        createdAt = getTodayShortFormat(),
+                                    ),
                                 ) + (recordState.records),
                         )
                     }
+                    if (friendFlow.value is FriendState.Success) {
+                        _friendFlow.update {
+                            (it as FriendState.Success).copy(
+                                friend =
+                                    it.friend.copy(
+                                        lastContactAt = getTodayDashFormat(),
+                                    ),
+                            )
+                        }
+                    }
+
                     // event
                 }.catch { error ->
                     _uiEvent.send(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
                 }.launchIn(viewModelScope)
         }
+
+        private fun getTodayShortFormat(): String {
+            val today = LocalDate.now()
+            val formatter = DateTimeFormatter.ofPattern("yy.MM.dd", Locale.KOREA)
+            return today.format(formatter)
+        }
+
+        private fun getTodayDashFormat(): String {
+            val today = LocalDate.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREA)
+            return today.format(formatter)
+    }
     }

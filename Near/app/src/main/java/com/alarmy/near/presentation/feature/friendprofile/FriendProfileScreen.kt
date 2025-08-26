@@ -36,6 +36,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
@@ -52,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
@@ -62,12 +65,15 @@ import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofile.component.CallButton
 import com.alarmy.near.presentation.feature.friendprofile.component.MessageButton
+import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendProfileUIEvent
 import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendShipRecordState
 import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendState
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -79,16 +85,43 @@ fun FriendProfileRoute(
     onEditFriendInfo: (Friend) -> Unit = {},
     onClickCallButton: (phoneNumber: String) -> Unit = {},
     onClickMessageButton: (phoneNumber: String) -> Unit = {},
+    onDeleteFriendSuccess: (friendId: String) -> Unit = {},
 ) {
     val friendState = viewModel.friendFlow.collectAsStateWithLifecycle()
     val friendShipRecordState = viewModel.friendShipRecordStateFlow.collectAsStateWithLifecycle()
+    val recordSuccessDialogState = remember { mutableStateOf(false) }
+    LaunchedEffect(viewModel.uiEvent) {
+        launch {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    is FriendProfileUIEvent.NetworkError -> {
+                        onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
+                    }
+
+                    is FriendProfileUIEvent.DeleteFriendSuccess -> {
+                        onDeleteFriendSuccess(event.friendId)
+                    }
+
+                    is FriendProfileUIEvent.RecordFriendShipSuccess -> {
+                        recordSuccessDialogState.value = true
+                    }
+                }
+            }
+        }
+    }
     FriendProfileScreen(
         friendState = friendState.value,
         friendShipRecordState = friendShipRecordState.value,
+        recordSuccessDialogState = recordSuccessDialogState.value,
         onClickBackButton = onClickBackButton,
         onEditFriendInfo = onEditFriendInfo,
         onClickCallButton = onClickCallButton,
         onClickMessageButton = onClickMessageButton,
+        onRecordFriendShip = viewModel::onRecordFriendShip,
+        onDeleteFriend = viewModel::onDeleteFriend,
+        onDismissRecordSuccessDialog = {
+            recordSuccessDialogState.value = false
+        },
     )
 }
 
@@ -97,10 +130,14 @@ fun FriendProfileScreen(
     modifier: Modifier = Modifier,
     friendState: FriendState,
     friendShipRecordState: FriendShipRecordState,
+    recordSuccessDialogState: Boolean = false,
     onClickBackButton: () -> Unit = {},
     onEditFriendInfo: (Friend) -> Unit = {},
     onClickCallButton: (phoneNumber: String) -> Unit = {},
     onClickMessageButton: (phoneNumber: String) -> Unit = {},
+    onRecordFriendShip: (friendId: String) -> Unit = {},
+    onDeleteFriend: (friendId: String) -> Unit = {},
+    onDismissRecordSuccessDialog: () -> Unit = {},
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -122,6 +159,39 @@ fun FriendProfileScreen(
                             .fillMaxSize()
                             .background(NearTheme.colors.WHITE_FFFFFF),
                 ) {
+                    if (recordSuccessDialogState) {
+                        LaunchedEffect(true) {
+                            if (recordSuccessDialogState) {
+                                delay(2000L)
+                                onDismissRecordSuccessDialog()
+                            }
+                        }
+                        Dialog(onDismissRequest = onDismissRecordSuccessDialog) {
+                            Column(
+                                modifier =
+                                    Modifier
+                                        .width(255.dp)
+                                        .height(186.dp)
+                                        .background(
+                                            color = NearTheme.colors.WHITE_FFFFFF,
+                                            shape = RoundedCornerShape(16.dp),
+                                        ),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Image(
+                                    painterResource(R.drawable.img_100_character_success),
+                                    contentDescription = "",
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    "더 가까워졌어요!",
+                                    style = NearTheme.typography.B1_16_BOLD,
+                                    color = Color(0xff222222),
+                                )
+                            }
+                        }
+                    }
                     NearTopAppbar(
                         title = stringResource(R.string.friend_profile_title),
                         onClickBackButton = onClickBackButton,
@@ -157,6 +227,7 @@ fun FriendProfileScreen(
                                     )
                                     DropdownMenuItem(
                                         onClick = {
+                                            onDeleteFriend(friend.friendId)
                                             dropdownState.value = false
                                         },
                                         text = {
@@ -334,8 +405,8 @@ fun FriendProfileScreen(
                             .padding(horizontal = 20.dp)
                             .align(Alignment.BottomCenter),
                     contentPadding = PaddingValues(vertical = 17.dp),
-                    enabled = true,
-                    onClick = {},
+                    enabled = friend.isContactedToday.not(),
+                    onClick = { onRecordFriendShip(friend.friendId) },
                     text = stringResource(R.string.friend_profile_record_button_text),
                 )
             }
