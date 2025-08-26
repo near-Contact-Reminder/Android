@@ -57,6 +57,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.Friend
+import com.alarmy.near.model.Relation
+import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofile.component.CallButton
 import com.alarmy.near.presentation.feature.friendprofile.component.MessageButton
 import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendState
@@ -64,6 +66,8 @@ import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun FriendProfileRoute(
@@ -185,7 +189,7 @@ fun FriendProfileScreen(
                                     Modifier
                                         .align(Alignment.TopEnd)
                                         .offset(x = 2.dp, y = (-2).dp),
-                                painter = painterResource(R.drawable.ic_visual_24_emoji_100),
+                                painter = painterResource(R.drawable.ic_visual_24_emoji_0),
                                 contentDescription = null,
                             )
                         }
@@ -198,12 +202,18 @@ fun FriendProfileScreen(
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "3월 22일 더 가까워졌어요",
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.BLUE01_5AA2E9,
-                            )
+                            if (friend.lastContactAt != null) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text =
+                                        stringResource(
+                                            R.string.friend_profile_last_contact_date_format,
+                                            friend.lastContactAt.lastContactFormat(),
+                                        ),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLUE01_5AA2E9,
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))
@@ -307,7 +317,7 @@ fun FriendProfileScreen(
                     }
                     HorizontalDivider(thickness = 1.dp, color = NearTheme.colors.GRAY03_EBEBEB)
                     if (currentTabPosition.intValue == 0) {
-                        ProfileTab()
+                        ProfileTab(friend = friend)
                     } else {
                         RecordTab()
                     }
@@ -344,31 +354,37 @@ fun FriendProfileScreen(
 }
 
 @Composable
-private fun ProfileTab(modifier: Modifier = Modifier) {
+private fun ProfileTab(
+    modifier: Modifier = Modifier,
+    friend: Friend,
+) {
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(32.dp))
         ProfileDetailInfo(
             category = stringResource(R.string.friend_profile_info_category_relation),
-            content = "친구",
+            content = stringResource(friend.relation.resId),
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProfileDetailInfo(
             category = stringResource(R.string.friend_profile_info_category_term_of_contact),
-            content = "2주",
+            content = stringResource(friend.contactFrequency.reminderInterval.labelRes),
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProfileDetailInfo(
             category = stringResource(R.string.friend_profile_info_category_birthday),
-            content = "1996.03.21",
+            content = friend.birthday?.replace("-", ".") ?: "-",
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProfileDetailInfo(
             category = stringResource(R.string.friend_profile_info_category_anniversary),
-            content = "결혼기념일 (2020.06.24)",
+            content =
+                friend.anniversaryList.joinToString(" ") {
+                    "${it.title} (${it.date})"
+                },
         )
         Spacer(modifier = Modifier.height(16.dp))
         ProfileMemoInfo(
-            content = null,
+            content = friend.memo,
         )
     }
 }
@@ -562,6 +578,14 @@ fun Modifier.customTabIndicatorOffset(
             .width(currentTabWidth)
     }
 
+private fun String.lastContactFormat(): String {
+    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val outputFormatter = DateTimeFormatter.ofPattern("M월 d일")
+
+    val date = LocalDate.parse(this, inputFormatter)
+    return date.format(outputFormatter)
+}
+
 @Preview(showBackground = true)
 @Composable
 fun FriendProfileScreenPreview() {
@@ -572,11 +596,11 @@ fun FriendProfileScreenPreview() {
                     Friend(
                         friendId = "adfaggasf",
                         imageUrl = "",
-                        relation = "FRIEND",
+                        relation = Relation.FRIEND,
                         name = "",
                         contactFrequency =
                             ContactFrequency(
-                                reminderInterval = "EVERY_DAY",
+                                reminderInterval = ReminderInterval.EVERY_TWO_WEEK,
                                 dayOfWeek = "MONDAY",
                             ),
                         birthday = "1998-11-13",
