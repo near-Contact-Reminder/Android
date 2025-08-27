@@ -1,9 +1,11 @@
 package com.alarmy.near.model
 
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@Serializable
 data class Friend(
     val friendId: String,
     val imageUrl: String?,
@@ -27,11 +29,13 @@ data class Friend(
     }
 }
 
+@Serializable
 data class ContactFrequency(
     val reminderInterval: ReminderInterval,
     val dayOfWeek: String,
 )
 
+@Serializable
 data class Anniversary(
     val id: Int,
     val title: String,
