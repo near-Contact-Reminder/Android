@@ -45,6 +45,7 @@ class LoginViewModel
             viewModelScope.launch {
                 try {
                     updateLoadingState(isLoading = true)
+                    
                     val loginResult = authRepository.socialLogin(accessToken, providerType)
 
                     updateLoadingState(isLoading = false)

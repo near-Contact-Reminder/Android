@@ -20,6 +20,20 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${kakaoAppKey}" />
+            
+        <!-- 카카오톡 로그인 콜백을 위한 Activity -->
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="oauth"
+                      android:scheme="kakao${kakaoAppKey}" />
+            </intent-filter>
+        </activity>
+        
         <activity
             android:name=".presentation.feature.main.MainActivity"
             android:exported="true"

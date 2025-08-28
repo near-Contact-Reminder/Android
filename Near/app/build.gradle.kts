@@ -32,11 +32,13 @@ android {
             )
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_PROD_URL"))
             buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
+            buildConfigField("String", "KAKAO_NATIVE_APP_KEY", getProperty("KAKAO_NATIVE_APP_KEY"))
             manifestPlaceholders["kakaoAppKey"] = getProperty("KAKAO_NATIVE_APP_KEY").replace("\"", "")
         }
         debug {
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_DEV_URL"))
-            buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요            
+            buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
+            buildConfigField("String", "KAKAO_NATIVE_APP_KEY", getProperty("KAKAO_NATIVE_APP_KEY"))
             manifestPlaceholders["kakaoAppKey"] = getProperty("KAKAO_NATIVE_APP_KEY").replace("\"", "")
         }
     }

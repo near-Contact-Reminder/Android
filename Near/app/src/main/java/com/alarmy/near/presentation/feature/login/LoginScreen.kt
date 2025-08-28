@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,12 +28,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 
 @Composable
 internal fun LoginRoute(
     onNavigateToHome: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -41,10 +47,61 @@ internal fun LoginRoute(
         }
     }
 
+    /**
+     * 카카오 로그인 처리 함수
+     */
+    fun handleKakaoLogin() {
+        // 카카오톡으로 로그인 가능 여부 확인
+        val isKakaoTalkAvailable = UserApiClient.instance.isKakaoTalkLoginAvailable(context)
+
+        if (isKakaoTalkAvailable) {
+            // 카카오톡 앱이 설치되어 있으면 카카오톡으로 로그인
+            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+                handleKakaoLoginResult(token, error, "카카오톡 앱", viewModel, context)
+            }
+        } else {
+            // 카카오톡 앱이 없으면 카카오계정으로 웹 로그인
+            UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+                handleKakaoLoginResult(token, error, "카카오계정 웹", viewModel, context)
+            }
+        }
+    }
+
     LoginScreen(
         uiState = uiState,
-        performKakaoLogin = viewModel::performKakaoLogin,
+        performKakaoLogin = ::handleKakaoLogin,
     )
+}
+
+/**
+ * 카카오 로그인 결과 처리
+ */
+private fun handleKakaoLoginResult(
+    token: OAuthToken?,
+    error: Throwable?,
+    loginMethod: String,
+    viewModel: LoginViewModel,
+    context: android.content.Context,
+) {
+    when {
+        error != null -> {
+            if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                return
+            }
+
+            // 카카오톡 앱 로그인 실패 시 카카오계정 웹으로 재시도
+            if (loginMethod.contains("카카오톡 앱")) {
+                UserApiClient.instance.loginWithKakaoAccount(context) { retryToken, retryError ->
+                    handleKakaoLoginResult(retryToken, retryError, "카카오계정 웹 (재시도)", viewModel, context)
+                }
+            }
+        }
+
+        token != null -> {
+            // ViewModel에 토큰 전달
+            viewModel.performKakaoLogin(token.accessToken)
+        }
+    }
 }
 
 @Composable
