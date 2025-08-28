@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,11 +23,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun LoginScreen() {
+internal fun LoginRoute(
+    onNavigateToHome: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.loginSuccessEvent.collect {
+            onNavigateToHome()
+        }
+    }
+
+    LoginScreen(
+        uiState = uiState,
+        performKakaoLogin = viewModel::performKakaoLogin,
+    )
+}
+
+@Composable
+fun LoginScreen(
+    uiState: LoginUiState,
+    performKakaoLogin: () -> Unit,
+) {
     Column(
         modifier =
             Modifier
@@ -36,7 +62,10 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        KakaoLoginButton()
+        KakaoLoginButton(
+            enable = uiState.isLoading,
+            onLoginClick = performKakaoLogin,
+        )
     }
 }
 
@@ -69,7 +98,10 @@ private fun LoginIntroductionSection(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ColumnScope.KakaoLoginButton() {
+private fun ColumnScope.KakaoLoginButton(
+    enable: Boolean,
+    onLoginClick: () -> Unit,
+) {
     Image(
         modifier =
             Modifier
@@ -78,8 +110,9 @@ private fun ColumnScope.KakaoLoginButton() {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
+                    enabled = !enable,
                 ) {
-                    // TODO 카카오 로그인 구현
+                    onLoginClick()
                 },
         painter = painterResource(R.drawable.btn_kakao_login),
         contentDescription = stringResource(R.string.login_kakao_login_button_text),
@@ -99,6 +132,9 @@ private object LoginScreenConstants {
 @Composable
 fun LoginScreenPreview() {
     NearTheme {
-        LoginScreen()
+        LoginScreen(
+            uiState = LoginUiState(),
+            performKakaoLogin = {},
+        )
     }
 }
