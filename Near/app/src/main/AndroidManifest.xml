@@ -15,6 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Near"
         tools:targetApi="31">
+
+        <!-- Kakao SDK -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="${kakaoAppKey}" />
         <activity
             android:name=".presentation.feature.main.MainActivity"
             android:exported="true"
