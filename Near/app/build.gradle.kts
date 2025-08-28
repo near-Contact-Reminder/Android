@@ -88,6 +88,9 @@ dependencies {
     implementation(libs.navigation.compose)
     // Serialization
     implementation(libs.kotlin.serialization.json)
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.core)
 }
 
 fun getProperty(propertyKey: String): String = gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
