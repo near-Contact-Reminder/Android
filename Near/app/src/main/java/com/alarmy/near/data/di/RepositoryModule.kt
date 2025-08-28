@@ -1,5 +1,7 @@
 package com.alarmy.near.data.di
 
+import com.alarmy.near.data.repository.AuthRepository
+import com.alarmy.near.data.repository.AuthRepositoryImpl
 import com.alarmy.near.data.repository.DefaultFriendRepository
 import com.alarmy.near.data.repository.ExampleRepository
 import com.alarmy.near.data.repository.ExampleRepositoryImpl
@@ -20,4 +22,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindFriendRepository(friendRepository: DefaultFriendRepository): FriendRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
 }
