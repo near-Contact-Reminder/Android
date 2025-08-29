@@ -7,6 +7,14 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
     /**
      * 소셜 로그인 수행
+     * Factory 패턴으로 ProviderType에 따라 자동 분기
+     */
+    suspend fun performSocialLogin(
+        providerType: ProviderType,
+    ): LoginResult
+    
+    /**
+     * 소셜 로그인 수행 (토큰 직접 전달)
      */
     suspend fun socialLogin(
         accessToken: String,

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.alarmy.near.data.source.SocialLoginProcessor
 import com.alarmy.near.model.LoginResult
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.network.request.SocialLoginRequest
@@ -43,9 +44,33 @@ class AuthRepositoryImpl
     constructor(
         private val authService: AuthService,
         private val dataStore: DataStore<Preferences>,
+        private val socialLoginProcessor: SocialLoginProcessor,
+        @ApplicationContext private val context: Context,
     ) : AuthRepository {
         private val accessTokenKey = stringPreferencesKey("access_token")
         private val refreshTokenKey = stringPreferencesKey("refresh_token")
+
+        override suspend fun performSocialLogin(providerType: ProviderType): LoginResult =
+            try {
+                val result = socialLoginProcessor.processLogin(context, providerType)
+
+                if (result.isSuccess) {
+                    val accessToken = result.getOrThrow()
+                    socialLogin(accessToken, providerType)
+                } else {
+                    val providerName = providerType.name.lowercase()
+                    LoginResult(
+                        isSuccess = false,
+                        errorMessage = result.exceptionOrNull()?.message ?: "$providerName 로그인에 실패했습니다",
+                    )
+                }
+            } catch (exception: Exception) {
+                val providerName = providerType.name.lowercase()
+                LoginResult(
+                    isSuccess = false,
+                    errorMessage = exception.message ?: "$providerName 로그인 중 오류가 발생했습니다",
+                )
+            }
 
         override suspend fun socialLogin(
             accessToken: String,
@@ -87,7 +112,7 @@ class AuthRepositoryImpl
                 )
             } catch (exception: Exception) {
                 val errorMessage = exception.message ?: "알 수 없는 오류가 발생했습니다"
-                
+
                 LoginResult(
                     isSuccess = false,
                     errorMessage = errorMessage,

@@ -1,6 +1,5 @@
 package com.alarmy.near.presentation.feature.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.AuthRepository
@@ -34,19 +33,13 @@ class LoginViewModel
 
         /**
          * 소셜 로그인 수행
-         *
-         * @param accessToken 소셜 플랫폼에서 받은 Access Token
-         * @param providerType 소셜 로그인 제공자 타입
          */
-        fun performSocialLogin(
-            accessToken: String,
-            providerType: com.alarmy.near.model.ProviderType,
-        ) {
+        fun performLogin(providerType: ProviderType) {
             viewModelScope.launch {
                 try {
                     updateLoadingState(isLoading = true)
-                    
-                    val loginResult = authRepository.socialLogin(accessToken, providerType)
+
+                    val loginResult = authRepository.performSocialLogin(providerType)
 
                     updateLoadingState(isLoading = false)
 
@@ -64,41 +57,10 @@ class LoginViewModel
         }
 
         /**
-         * 카카오 토큰으로 로그인 수행
-         * UI에서 카카오 로그인을 완료한 후 토큰을 받아서 처리
-         */
-        fun performKakaoLogin(kakaoAccessToken: String) {
-            performSocialLogin(kakaoAccessToken, ProviderType.KAKAO)
-        }
-
-        /**
-         * 로그인 상태 확인
-         */
-        fun checkLoginStatus() {
-            viewModelScope.launch {
-                try {
-                    val isLoggedIn = authRepository.isLoggedIn()
-                    if (isLoggedIn) {
-                        _loginSuccessEvent.send(Unit)
-                    }
-                } catch (exception: Exception) {
-                    _errorEvent.send(exception)
-                }
-            }
-        }
-
-        /**
          * 로딩 상태 업데이트
          */
         private fun updateLoadingState(isLoading: Boolean) {
             _uiState.value = _uiState.value.copy(isLoading = isLoading)
-        }
-
-        /**
-         * 에러 상태 초기화
-         */
-        fun clearError() {
-            _uiState.value = _uiState.value.copy(hasError = false)
         }
     }
 
