@@ -1,24 +1,13 @@
 package com.alarmy.near.data.repository
 
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import com.alarmy.near.data.source.SocialLoginProcessor
+import com.alarmy.near.data.datasource.SocialLoginProcessor
+import com.alarmy.near.data.local.datastore.TokenPreferences
 import com.alarmy.near.model.LoginResult
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.network.request.SocialLoginRequest
+import com.alarmy.near.network.request.TokenRefreshRequest
 import com.alarmy.near.network.service.AuthService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -26,16 +15,12 @@ class AuthRepositoryImpl
     @Inject
     constructor(
         private val authService: AuthService,
-        private val dataStore: DataStore<Preferences>,
         private val socialLoginProcessor: SocialLoginProcessor,
-        @ApplicationContext private val context: Context,
+        private val tokenPreferences: TokenPreferences,
     ) : AuthRepository {
-        private val accessTokenKey = stringPreferencesKey("access_token")
-        private val refreshTokenKey = stringPreferencesKey("refresh_token")
-
         override suspend fun performSocialLogin(providerType: ProviderType): LoginResult =
             try {
-                val result = socialLoginProcessor.processLogin(context, providerType)
+                val result = socialLoginProcessor.processLogin(providerType)
 
                 if (result.isSuccess) {
                     val accessToken = result.getOrThrow()
@@ -69,15 +54,15 @@ class AuthRepositoryImpl
                 val response = authService.socialLogin(request)
 
                 // 토큰 저장
-                saveTokens(
+                tokenPreferences.saveTokens(
                     accessToken = response.accessToken,
-                    refreshToken = response.refreshTokenInfo?.token,
+                    refreshToken = response.refreshToken,
                 )
 
                 LoginResult(
                     isSuccess = true,
                     accessToken = response.accessToken,
-                    refreshToken = response.refreshTokenInfo?.token,
+                    refreshToken = response.refreshToken,
                 )
             } catch (exception: HttpException) {
                 val errorMessage =
@@ -104,7 +89,7 @@ class AuthRepositoryImpl
 
         override suspend fun logout() {
             try {
-                clearTokens()
+                tokenPreferences.clearAllTokens()
             } catch (exception: Exception) {
                 throw exception
             }
@@ -112,42 +97,45 @@ class AuthRepositoryImpl
 
         override suspend fun isLoggedIn(): Boolean =
             try {
-                val token = getCurrentUserToken()
-                val isLoggedIn = !token.isNullOrBlank()
-                isLoggedIn
+                tokenPreferences.hasValidTokens()
             } catch (exception: Exception) {
                 false
             }
 
         override suspend fun getCurrentUserToken(): String? =
             try {
-                val token = dataStore.data.first()[accessTokenKey]
-                token
+                tokenPreferences.getAccessToken()
             } catch (exception: Exception) {
                 null
             }
 
-        override fun observeLoginStatus(): Flow<Boolean> =
-            dataStore.data.map { preferences ->
-                !preferences[accessTokenKey].isNullOrBlank()
-            }
+        override fun observeLoginStatus(): Flow<Boolean> = tokenPreferences.observeLoginStatus()
 
-        private suspend fun saveTokens(
-            accessToken: String,
-            refreshToken: String?,
-        ) {
-            dataStore.edit { preferences ->
-                preferences[accessTokenKey] = accessToken
-                refreshToken?.let {
-                    preferences[refreshTokenKey] = it
+        override suspend fun refreshToken(): Boolean =
+            try {
+                val refreshToken = tokenPreferences.getRefreshToken() ?: return false
+
+                // 토큰 갱신 API 호출
+                val request = TokenRefreshRequest(refreshToken = refreshToken)
+                val response = authService.renewToken(request)
+
+                // 새로운 토큰 저장
+                tokenPreferences.saveTokens(
+                    accessToken = response.accessToken,
+                    refreshToken = response.refreshToken,
+                )
+
+                true
+            } catch (exception: Exception) {
+                // 토큰 갱신 실패 시 처리
+                when (exception) {
+                    is HttpException -> {
+                        if (exception.code() == 401 || exception.code() == 403) {
+                            // 리프레시 토큰도 만료된 경우 모든 토큰 삭제
+                            tokenPreferences.clearAllTokens()
+                        }
+                    }
                 }
+                false
             }
-        }
-
-        private suspend fun clearTokens() {
-            dataStore.edit { preferences ->
-                preferences.remove(accessTokenKey)
-                preferences.remove(refreshTokenKey)
-            }
-        }
     }

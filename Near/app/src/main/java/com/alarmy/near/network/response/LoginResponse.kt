@@ -8,15 +8,6 @@ import kotlinx.serialization.Serializable
 data class LoginResponse(
     @SerialName("accessToken")
     val accessToken: String,
-    @SerialName("refreshTokenInfo")
-    val refreshTokenInfo: RefreshTokenInfo? = null,
-)
-
-// 리프레시 토큰 정보
-@Serializable
-data class RefreshTokenInfo(
-    @SerialName("token")
-    val token: String,
-    @SerialName("expiresAt")
-    val expiresAt: String,
+    @SerialName("refreshToken")
+    val refreshToken: String? = null,
 )

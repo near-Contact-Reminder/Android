@@ -5,14 +5,9 @@ import com.alarmy.near.model.ProviderType
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
-    /**
-     * 소셜 로그인 수행
-     * Factory 패턴으로 ProviderType에 따라 자동 분기
-     */
-    suspend fun performSocialLogin(
-        providerType: ProviderType,
-    ): LoginResult
-    
+    // 소셜 로그인 수행
+    suspend fun performSocialLogin(providerType: ProviderType): LoginResult
+
     /**
      * 소셜 로그인 수행 (토큰 직접 전달)
      */
@@ -21,27 +16,18 @@ interface AuthRepository {
         providerType: ProviderType,
     ): LoginResult
 
-    /**
-     * 로그아웃 수행
-     * 로컬에 저장된 토큰을 삭제
-     */
+    // 로그아웃 수행
     suspend fun logout()
 
-    /**
-     * 로그인 상태 확인
-     * 저장된 토큰이 있는지 확인
-     */
+    // 로그인 상태 확인
     suspend fun isLoggedIn(): Boolean
 
-    /**
-     * 현재 사용자 토큰 가져오기
-     * 저장된 Access Token 반환
-     */
+    // 현재 사용자 토큰 가져오기
     suspend fun getCurrentUserToken(): String?
 
-    /**
-     * 로그인 상태 관찰
-     * 토큰 변화를 실시간으로 관찰
-     */
+    // 로그인 상태 확인
     fun observeLoginStatus(): Flow<Boolean>
+
+    // 토큰 갱신
+    suspend fun refreshToken(): Boolean
 }
