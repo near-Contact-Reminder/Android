@@ -21,23 +21,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import javax.inject.Inject
-import javax.inject.Singleton
-
-// DataStore 확장 프로퍼티
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth_preferences")
-
-/**
- * DataStore 제공 모듈
- */
-@Module
-@InstallIn(SingletonComponent::class)
-object DataStoreModule {
-    @Provides
-    @Singleton
-    fun provideDataStore(
-        @ApplicationContext context: Context,
-    ): DataStore<Preferences> = context.dataStore
-}
 
 class AuthRepositoryImpl
     @Inject

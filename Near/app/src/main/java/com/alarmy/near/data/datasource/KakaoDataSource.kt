@@ -1,4 +1,4 @@
-package com.alarmy.near.data.source
+package com.alarmy.near.data.datasource
 
 import android.content.Context
 import com.alarmy.near.model.ProviderType
