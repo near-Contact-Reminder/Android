@@ -3,9 +3,9 @@ package com.alarmy.near.presentation.feature.friendprofileedittor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
-import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
+import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.RouteFriendProfileEditor
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.AnniversaryUIState
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
@@ -14,7 +14,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.time.LocalDate
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,19 +27,25 @@ class FriendProfileEditorViewModel
     ) : ViewModel() {
         private val routeFriendProfileEditor: RouteFriendProfileEditor =
             savedStateHandle.toRoute<RouteFriendProfileEditor>(RouteFriendProfileEditor.routeTypeMap)
-        private val friend: Friend = routeFriendProfileEditor.friend
+        private val friend: Friend =
+            routeFriendProfileEditor.friend.apply {
+                copy()
+            }
         private val _uiState: MutableStateFlow<FriendProfileEditorUIState> =
             MutableStateFlow(friend.toUiModel())
         val uiState = _uiState.asStateFlow()
 
         fun onNameChanged(value: String) {
+            if (value.length > MAX_NAME_LENGTH) {
+                return
+            }
             _uiState.update {
                 it.copy(
                     name =
                         it.name.copy(
                             value = value,
                             isDirty = true,
-                            error = null,
+                            error = value.isEmpty(),
                         ),
                 )
             }
@@ -47,18 +55,24 @@ class FriendProfileEditorViewModel
             _uiState.update { it.copy(relation = value) }
         }
 
-        fun onContactFrequencyChanged(value: ContactFrequency) {
-            _uiState.update { it.copy(contactFrequency = value) }
+        fun onRemindIntervalChanged(value: ReminderInterval) {
+            _uiState.update {
+                it.copy(
+                    contactFrequency =
+                        it.contactFrequency.copy(
+                            reminderInterval = value,
+                        ),
+                )
+            }
         }
 
-        fun onBirthdayChanged(value: LocalDate?) {
+        fun onBirthdayChanged(value: Long) {
             _uiState.update {
                 it.copy(
                     birthday =
                         it.birthday.copy(
-                            value = "",
+                            value = convertMillisToDate(value),
                             isDirty = true,
-                            error = null,
                         ),
                 )
             }
@@ -78,7 +92,7 @@ class FriendProfileEditorViewModel
                                         this[index].title.copy(
                                             value = value,
                                             isDirty = true,
-                                            error = null,
+                                            error = value.isEmpty(),
                                         ),
                                 )
                         },
@@ -88,7 +102,7 @@ class FriendProfileEditorViewModel
 
         fun onAnniversaryDateChanged(
             index: Int,
-            value: LocalDate?,
+            value: Long,
         ) {
             _uiState.update {
                 it.copy(
@@ -98,9 +112,8 @@ class FriendProfileEditorViewModel
                                 this[index].copy(
                                     date =
                                         this[index].date.copy(
-                                            value = "",
+                                            value = convertMillisToDate(value),
                                             isDirty = true,
-                                            error = null,
                                         ),
                                 )
                         },
@@ -118,18 +131,27 @@ class FriendProfileEditorViewModel
             }
         }
 
-        fun onMemoChanged(value: String) {
+        fun onMemoChanged(value: String?) {
+            value?.length?.let {
+                if (it > MAX_MEMO_LENGTH) {
+                return
+            }
+        }
             _uiState.update {
                 it.copy(
                     memo =
                         it.memo.copy(
                             value = value,
                             isDirty = true,
-                            error = null,
                         ),
                 )
             }
         }
+
+        private fun convertMillisToDate(millis: Long): String {
+            val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+        return formatter.format(Date(millis))
+    }
 
 //        fun onSubmit() {
 //            val model = _uiState.value
@@ -162,4 +184,8 @@ class FriendProfileEditorViewModel
 //    private fun update(transform: FriendUiModel.() -> FriendUiModel) {
 //        _uiState.update { state -> state.copy(model = state.model.transform()) }
 //        }
+        companion object {
+            private const val MAX_NAME_LENGTH = 20
+    private const val MAX_MEMO_LENGTH = 200
+}
     }
