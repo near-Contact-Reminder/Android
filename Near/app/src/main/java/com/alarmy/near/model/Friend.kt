@@ -1,10 +1,13 @@
 package com.alarmy.near.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@Parcelize
 @Serializable
 data class Friend(
     val friendId: String,
@@ -17,7 +20,7 @@ data class Friend(
     val memo: String?,
     val phone: String?,
     val lastContactAt: String?, // "2025-07-16"
-) {
+) : Parcelable {
     val isContactedToday: Boolean
         get() = lastContactAt?.isToday() ?: false
 
@@ -30,14 +33,16 @@ data class Friend(
 }
 
 @Serializable
+@Parcelize
 data class ContactFrequency(
     val reminderInterval: ReminderInterval,
     val dayOfWeek: String,
-)
+) : Parcelable
 
 @Serializable
+@Parcelize
 data class Anniversary(
     val id: Int,
     val title: String,
     val date: String,
-)
+) : Parcelable
