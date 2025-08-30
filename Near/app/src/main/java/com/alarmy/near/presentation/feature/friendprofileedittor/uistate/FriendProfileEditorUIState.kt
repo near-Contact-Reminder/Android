@@ -21,7 +21,7 @@ data class AnniversaryUIState(
 
 data class InputField<T>(
     val value: T,
-    val error: String? = null, // null이면 유효한 상태
+    val error: Boolean = false, // null이면 유효한 상태
     val isDirty: Boolean = false, // 유저가 입력을 시도했는지
 )
 
@@ -29,14 +29,27 @@ fun Friend.toUiModel(): FriendProfileEditorUIState =
     FriendProfileEditorUIState(
         name = InputField(name),
         relation = relation,
-        contactFrequency = contactFrequency,
+        contactFrequency =
+            contactFrequency.copy(
+                dayOfWeek =
+                    when (contactFrequency.dayOfWeek) {
+                        "MONDAY" -> "월요일"
+                        "TUESDAY" -> "화요일"
+                        "WEDNESDAY" -> "수요일"
+                        "THURSDAY" -> "목요일"
+                        "FRIDAY" -> "금요일"
+                        "SATURDAY" -> "토요일"
+                        "SUNDAY" -> "일요일"
+                        else -> IllegalStateException("없는 타입 입니다.")
+                    } as String,
+            ),
         birthday = InputField(birthday),
         anniversaries = anniversaryList.map { it.toUiModel() },
-        memo = InputField(memo)
+        memo = InputField(memo),
     )
 
 fun Anniversary.toUiModel(): AnniversaryUIState =
     AnniversaryUIState(
         title = InputField(title),
-        date = InputField(date)
+        date = InputField(date),
     )
