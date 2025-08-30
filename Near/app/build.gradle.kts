@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt.application)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
