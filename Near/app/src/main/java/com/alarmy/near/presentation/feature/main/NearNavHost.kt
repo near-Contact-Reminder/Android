@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
+import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
 import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
@@ -45,6 +46,8 @@ internal fun NearNavHost(
                     data = "sms:$phoneNumber".toUri()
                 }
             context.startActivity(intent)
+        }, onEditFriendInfo = {
+            navController.navigateToFriendProfileEditor(friend = it)
         })
         friendProfileEditorNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
             navController.popBackStack()

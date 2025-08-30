@@ -36,9 +36,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.Relation
+import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
+import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
 import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
@@ -48,11 +54,16 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
 fun FriendProfileEditorRoute(
+    viewModel: FriendProfileEditorViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickBackButton: () -> Unit = {},
 ) {
+    val friendProfileEditorUIState = viewModel.uiState.collectAsStateWithLifecycle()
     FriendProfileEditorScreen(
         onClickBackButton = onClickBackButton,
+        onNameChanged = viewModel::onNameChanged,
+        friendProfileEditorUIState = friendProfileEditorUIState.value,
+        onRelationChanged = viewModel::onRelationChanged,
     )
 }
 
@@ -60,7 +71,10 @@ fun FriendProfileEditorRoute(
 @Composable
 fun FriendProfileEditorScreen(
     modifier: Modifier = Modifier,
+    friendProfileEditorUIState: FriendProfileEditorUIState,
     onClickBackButton: () -> Unit = {},
+    onNameChanged: (String) -> Unit = {},
+    onRelationChanged: (Relation) -> Unit = {},
 ) {
     val isErrorMessageVisible = remember { mutableStateOf(false) }
     val density = LocalDensity.current
@@ -123,8 +137,9 @@ fun FriendProfileEditorScreen(
                 Spacer(modifier = Modifier.width(55.dp))
                 NearTextField(
                     modifier = Modifier.weight(1f),
-                    value = "가나다",
+                    value = friendProfileEditorUIState.name.value,
                     onValueChange = {
+                        onNameChanged(it)
                     },
                 )
             }
@@ -156,9 +171,15 @@ fun FriendProfileEditorScreen(
                             .padding(end = 35.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier =
+                            Modifier.onNoRippleClick(onClick = {
+                                onRelationChanged(Relation.FRIEND)
+                            }),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         NearSmallRadioButton(
-                            selected = false,
+                            selected = friendProfileEditorUIState.relation == Relation.FRIEND,
                             onClick = {},
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -168,9 +189,15 @@ fun FriendProfileEditorScreen(
                             color = NearTheme.colors.BLACK_1A1A1A,
                         )
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier =
+                            Modifier.onNoRippleClick(onClick = {
+                                onRelationChanged(Relation.FAMILY)
+                            }),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         NearSmallRadioButton(
-                            selected = false,
+                            selected = friendProfileEditorUIState.relation == Relation.FAMILY,
                             onClick = {},
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -182,8 +209,8 @@ fun FriendProfileEditorScreen(
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         NearSmallRadioButton(
-                            selected = false,
-                            onClick = {},
+                            selected = friendProfileEditorUIState.relation == Relation.ACQUAINTANCE,
+                            onClick = { onRelationChanged(Relation.ACQUAINTANCE) },
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -234,7 +261,7 @@ fun FriendProfileEditorScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            "2주 (수요일 마다)",
+                            text = stringResource(friendProfileEditorUIState.contactFrequency.reminderInterval.labelRes) + "()",
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.BLACK_1A1A1A,
                         )
@@ -469,6 +496,15 @@ fun FriendProfileEditorScreen(
 @Composable
 fun FriendProfileEditorScreenPreview() {
     NearTheme {
-        FriendProfileEditorScreen()
+        FriendProfileEditorScreen(
+            friendProfileEditorUIState =
+                FriendProfileEditorUIState(
+                    contactFrequency =
+                        ContactFrequency(
+                            reminderInterval = ReminderInterval.EVERY_DAY,
+                            dayOfWeek = "2025-01-01",
+                        ),
+                ),
+        )
     }
 }
