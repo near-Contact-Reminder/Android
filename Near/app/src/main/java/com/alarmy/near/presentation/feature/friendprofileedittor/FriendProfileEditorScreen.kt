@@ -247,15 +247,13 @@ fun FriendProfileEditorScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Row(
-                                modifier =
-                                    Modifier.onNoRippleClick(onClick = {
-                                        onRelationChanged(Relation.FRIEND)
-                                    }),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 NearSmallRadioButton(
                                     selected = friendProfileEditorUIState.relation == Relation.FRIEND,
-                                    onClick = {},
+                                    onClick = {
+                                        onRelationChanged(Relation.FRIEND)
+                                    },
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -265,15 +263,13 @@ fun FriendProfileEditorScreen(
                                 )
                             }
                             Row(
-                                modifier =
-                                    Modifier.onNoRippleClick(onClick = {
-                                        onRelationChanged(Relation.FAMILY)
-                                    }),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 NearSmallRadioButton(
                                     selected = friendProfileEditorUIState.relation == Relation.FAMILY,
-                                    onClick = {},
+                                    onClick = {
+                                        onRelationChanged(Relation.FAMILY)
+                                    },
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
