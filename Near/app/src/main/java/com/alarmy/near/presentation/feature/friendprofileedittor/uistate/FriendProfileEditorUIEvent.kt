@@ -14,4 +14,6 @@ sealed interface FriendProfileEditorUIEvent {
     data object FriendProfileEditNetworkError : FriendProfileEditorUIEvent
 
     data object WarningExit : FriendProfileEditorUIEvent
+
+    data object Exit : FriendProfileEditorUIEvent
 }

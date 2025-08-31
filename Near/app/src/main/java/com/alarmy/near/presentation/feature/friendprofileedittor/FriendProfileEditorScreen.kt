@@ -1,6 +1,5 @@
 package com.alarmy.near.presentation.feature.friendprofileedittor
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,6 +46,7 @@ import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
+import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
@@ -65,11 +65,18 @@ fun FriendProfileEditorRoute(
     onSuccessEdit: (Friend) -> Unit = {},
 ) {
     val friendProfileEditorUIState = viewModel.uiState.collectAsStateWithLifecycle()
+    val warningDialogState = remember { mutableStateOf(false) }
     LaunchedEffect(viewModel.uiEvent) {
         launch {
             viewModel.uiEvent.collect { event ->
                 when (event) {
                     FriendProfileEditorUIEvent.WarningExit -> {
+                        warningDialogState.value = true
+                    }
+
+                    FriendProfileEditorUIEvent.Exit -> {
+                        warningDialogState.value = false
+                        onClickBackButton()
                     }
 
                     is FriendProfileEditorUIEvent.FriendProfileEditFailure -> {
@@ -81,7 +88,6 @@ fun FriendProfileEditorRoute(
                     }
 
                     is FriendProfileEditorUIEvent.FriendProfileEditSuccess -> {
-                        Log.d("FriendProfileEditorRoute", "FriendProfileEditSuccess")
                         onSuccessEdit(event.friend)
                     }
                 }
@@ -89,9 +95,10 @@ fun FriendProfileEditorRoute(
         }
     }
     FriendProfileEditorScreen(
-        onClickBackButton = onClickBackButton,
-        onNameChanged = viewModel::onNameChanged,
         friendProfileEditorUIState = friendProfileEditorUIState.value,
+        dialogState = warningDialogState.value,
+        onClickBackButton = viewModel::onExit,
+        onNameChanged = viewModel::onNameChanged,
         onRelationChanged = viewModel::onRelationChanged,
         onReminderIntervalChanged = viewModel::onRemindIntervalChanged,
         onBirthdayChanged = viewModel::onBirthdayChanged,
@@ -101,6 +108,8 @@ fun FriendProfileEditorRoute(
         onAddAnniversary = viewModel::onAddAnniversary,
         onMemoChanged = viewModel::onMemoChanged,
         onSubmit = viewModel::onSubmit,
+        onEditorExit = onClickBackButton,
+        onCloseDialog = { warningDialogState.value = false },
     )
 }
 
@@ -108,6 +117,7 @@ fun FriendProfileEditorRoute(
 @Composable
 fun FriendProfileEditorScreen(
     modifier: Modifier = Modifier,
+    dialogState: Boolean = false,
     friendProfileEditorUIState: FriendProfileEditorUIState,
     onClickBackButton: () -> Unit = {},
     onNameChanged: (String) -> Unit = {},
@@ -120,6 +130,8 @@ fun FriendProfileEditorScreen(
     onAddAnniversary: () -> Unit = {},
     onMemoChanged: (String) -> Unit = {},
     onSubmit: () -> Unit = {},
+    onEditorExit: () -> Unit = {},
+    onCloseDialog: () -> Unit = {},
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -131,6 +143,16 @@ fun FriendProfileEditorScreen(
             onReminderIntervalChanged(it)
             showBottomSheet.value = false
         })
+    }
+    if (dialogState) {
+        EditorExitDialog(
+            onDismissRequest = {
+                onCloseDialog()
+            },
+            onConfirm = {
+                onEditorExit()
+            },
+        )
     }
     LazyColumn(
         modifier =
