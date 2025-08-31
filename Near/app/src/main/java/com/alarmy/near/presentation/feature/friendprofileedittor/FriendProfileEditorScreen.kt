@@ -132,441 +132,445 @@ fun FriendProfileEditorScreen(
             showBottomSheet.value = false
         })
     }
-    Column(
+    LazyColumn(
         modifier =
-            modifier
+            Modifier
                 .fillMaxSize()
                 .background(NearTheme.colors.WHITE_FFFFFF),
     ) {
-        Spacer(modifier = Modifier.padding(top = statusBarHeightDp))
-        NearTopAppbar(
-            modifier = Modifier.padding(end = 24.dp),
-            title = "",
-            onClickBackButton = onClickBackButton,
-            menuButton = {
-                Text(
-                    modifier =
-                        Modifier.onNoRippleClick(onClick = {
-                            onSubmit()
-                        }),
-                    text = "완료",
-                    style = NearTheme.typography.B1_16_BOLD,
-                    color = NearTheme.colors.BLACK_1A1A1A,
-                )
-            },
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 20.dp),
-        ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
-            ) {
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text =
-                        buildAnnotatedString {
-                            append("이름")
-                            withStyle(
-                                style =
-                                    SpanStyle(
-                                        color = NearTheme.colors.BLUE01_5AA2E9,
-                                    ),
-                            ) {
-                                append("*")
-                            }
-                        },
-                    textAlign = TextAlign.Center,
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY01_888888,
-                )
-                Spacer(modifier = Modifier.width(55.dp))
-                NearTextField(
-                    modifier = Modifier.weight(1f),
-                    value = friendProfileEditorUIState.name.value,
-                    onValueChange = {
-                        onNameChanged(it)
+        if (friendProfileEditorUIState.anniversaries.isNotEmpty()) {
+            item {
+                Spacer(modifier = Modifier.padding(top = statusBarHeightDp))
+                NearTopAppbar(
+                    modifier = Modifier.padding(end = 24.dp),
+                    title = "",
+                    onClickBackButton = onClickBackButton,
+                    menuButton = {
+                        Text(
+                            modifier =
+                                Modifier.onNoRippleClick(onClick = {
+                                    onSubmit()
+                                }),
+                            text = "완료",
+                            style = NearTheme.typography.B1_16_BOLD,
+                            color = NearTheme.colors.BLACK_1A1A1A,
+                        )
                     },
                 )
-            }
-            if (friendProfileEditorUIState.name.error) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    "이름을 입력해주세요.",
-                    style = NearTheme.typography.FC_12_MEDIUM,
-                    color = NearTheme.colors.NEGATIVE_F04E4E,
-                )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    "관계",
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY01_888888,
-                )
-                Spacer(modifier = Modifier.width(72.dp))
-                Row(
+                Spacer(modifier = Modifier.height(16.dp))
+                Column(
                     modifier =
                         Modifier
-                            .weight(1f)
-                            .padding(end = 35.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Row(
-                        modifier =
-                            Modifier.onNoRippleClick(onClick = {
-                                onRelationChanged(Relation.FRIEND)
-                            }),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        NearSmallRadioButton(
-                            selected = friendProfileEditorUIState.relation == Relation.FRIEND,
-                            onClick = {},
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.friend_profile_editor_relation_freind),
-                            style = NearTheme.typography.B2_14_MEDIUM,
-                            color = NearTheme.colors.BLACK_1A1A1A,
-                        )
-                    }
-                    Row(
-                        modifier =
-                            Modifier.onNoRippleClick(onClick = {
-                                onRelationChanged(Relation.FAMILY)
-                            }),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        NearSmallRadioButton(
-                            selected = friendProfileEditorUIState.relation == Relation.FAMILY,
-                            onClick = {},
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.friend_profile_editor_relation_family),
-                            style = NearTheme.typography.B2_14_MEDIUM,
-                            color = NearTheme.colors.BLACK_1A1A1A,
-                        )
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        NearSmallRadioButton(
-                            selected = friendProfileEditorUIState.relation == Relation.ACQUAINTANCE,
-                            onClick = { onRelationChanged(Relation.ACQUAINTANCE) },
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.friend_profile_editor_relation_acquaintance),
-                            style = NearTheme.typography.B2_14_MEDIUM,
-                            color = NearTheme.colors.BLACK_1A1A1A,
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(33.dp))
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    "연락 주기",
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY01_888888,
-                )
-                Spacer(modifier = Modifier.width(35.dp))
-                Surface(
-                    modifier =
-                        modifier
-                            .weight(1f)
-                            .onNoRippleClick({
-                                showBottomSheet.value = true
-                            }),
-                    shape = RoundedCornerShape(12.dp),
-                    border =
-                        BorderStroke(
-                            width = 1.dp,
-                            color = NearTheme.colors.GRAY03_EBEBEB,
-                        ),
-                    color = NearTheme.colors.WHITE_FFFFFF,
-                ) {
-                    Row(
-                        modifier =
-                            Modifier.padding(
-                                start = 16.dp,
-                                end = 12.dp,
-                                top = 14.dp,
-                                bottom = 14.dp,
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Text(
-                            text =
-                                stringResource(friendProfileEditorUIState.contactFrequency.reminderInterval.labelRes) +
-                                    "(${friendProfileEditorUIState.contactFrequency.dayOfWeek} 마다)",
-                            style = NearTheme.typography.B2_14_MEDIUM,
-                            color = NearTheme.colors.BLACK_1A1A1A,
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_24_down),
-                            contentDescription = null,
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val birthdayDatePickerState = remember { mutableStateOf(false) }
-                val datePickerState =
-                    rememberDatePickerState()
-                if (birthdayDatePickerState.value) {
-                    NearDatePicker(
-                        datePickerState = datePickerState,
-                        onDismiss = { birthdayDatePickerState.value = false },
-                        onDateSelected = {
-                            it?.let {
-                                onBirthdayChanged(it)
-                            }
-                        },
-                    )
-                }
-                Text(
-                    "생일",
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY01_888888,
-                )
-                Spacer(modifier = Modifier.width(62.dp))
-                Surface(
-                    modifier =
-                        modifier
-                            .weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                    border =
-                        BorderStroke(
-                            width = 1.dp,
-                            color = NearTheme.colors.GRAY03_EBEBEB,
-                        ),
-                    color = NearTheme.colors.WHITE_FFFFFF,
+                            .fillMaxWidth()
+                            .padding(start = 24.dp, end = 20.dp),
                 ) {
                     Row(
                         modifier =
                             Modifier
-                                .padding(
-                                    start = 16.dp,
-                                    end = 12.dp,
-                                    top = 14.dp,
-                                    bottom = 14.dp,
-                                ).onNoRippleClick({
-                                    birthdayDatePickerState.value = true
-                                }),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                                .fillMaxWidth(),
                     ) {
                         Text(
-                            friendProfileEditorUIState.birthday.value ?: "날짜 선택",
+                            modifier = Modifier.padding(top = 16.dp),
+                            text =
+                                buildAnnotatedString {
+                                    append("이름")
+                                    withStyle(
+                                        style =
+                                            SpanStyle(
+                                                color = NearTheme.colors.BLUE01_5AA2E9,
+                                            ),
+                                    ) {
+                                        append("*")
+                                    }
+                                },
+                            textAlign = TextAlign.Center,
                             style = NearTheme.typography.B2_14_MEDIUM,
-                            color = NearTheme.colors.BLACK_1A1A1A,
+                            color = NearTheme.colors.GRAY01_888888,
                         )
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_24_down),
-                            contentDescription = null,
+                        Spacer(modifier = Modifier.width(55.dp))
+                        NearTextField(
+                            modifier = Modifier.weight(1f),
+                            value = friendProfileEditorUIState.name.value,
+                            onValueChange = {
+                                onNameChanged(it)
+                            },
                         )
                     }
-                }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = "기념일",
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY01_888888,
-                )
-                Text(
-                    modifier =
-                        Modifier.onNoRippleClick(onClick = {
-                            onAddAnniversary()
-                        }),
-                    text = "추가하기",
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.BLUE01_5AA2E9,
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        if (friendProfileEditorUIState.anniversaries.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier.background(color = NearTheme.colors.BG02_F4F9FD),
-                contentPadding =
-                    PaddingValues(
-                        top = 20.dp,
-                        bottom = 32.dp,
-                        start = 24.dp,
-                        end = 20.dp,
-                    ),
-                verticalArrangement = Arrangement.spacedBy(32.dp),
-            ) {
-                items(
-                    count = friendProfileEditorUIState.anniversaries.size,
-                ) { index ->
-                    Column {
-                        val anniversaryDatePickerState = remember { mutableStateOf(false) }
+                    if (friendProfileEditorUIState.name.error) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "이름을 입력해주세요.",
+                            style = NearTheme.typography.FC_12_MEDIUM,
+                            color = NearTheme.colors.NEGATIVE_F04E4E,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            "관계",
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Spacer(modifier = Modifier.width(72.dp))
+                        Row(
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .padding(end = 35.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Row(
+                                modifier =
+                                    Modifier.onNoRippleClick(onClick = {
+                                        onRelationChanged(Relation.FRIEND)
+                                    }),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                NearSmallRadioButton(
+                                    selected = friendProfileEditorUIState.relation == Relation.FRIEND,
+                                    onClick = {},
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.friend_profile_editor_relation_freind),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                            }
+                            Row(
+                                modifier =
+                                    Modifier.onNoRippleClick(onClick = {
+                                        onRelationChanged(Relation.FAMILY)
+                                    }),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                NearSmallRadioButton(
+                                    selected = friendProfileEditorUIState.relation == Relation.FAMILY,
+                                    onClick = {},
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.friend_profile_editor_relation_family),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                NearSmallRadioButton(
+                                    selected = friendProfileEditorUIState.relation == Relation.ACQUAINTANCE,
+                                    onClick = { onRelationChanged(Relation.ACQUAINTANCE) },
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.friend_profile_editor_relation_acquaintance),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(33.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            "연락 주기",
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Spacer(modifier = Modifier.width(35.dp))
+                        Surface(
+                            modifier =
+                                modifier
+                                    .weight(1f)
+                                    .onNoRippleClick({
+                                        showBottomSheet.value = true
+                                    }),
+                            shape = RoundedCornerShape(12.dp),
+                            border =
+                                BorderStroke(
+                                    width = 1.dp,
+                                    color = NearTheme.colors.GRAY03_EBEBEB,
+                                ),
+                            color = NearTheme.colors.WHITE_FFFFFF,
+                        ) {
+                            Row(
+                                modifier =
+                                    Modifier.padding(
+                                        start = 16.dp,
+                                        end = 12.dp,
+                                        top = 14.dp,
+                                        bottom = 14.dp,
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(
+                                    text =
+                                        stringResource(friendProfileEditorUIState.contactFrequency.reminderInterval.labelRes) +
+                                            "(${friendProfileEditorUIState.contactFrequency.dayOfWeek} 마다)",
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_24_down),
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val birthdayDatePickerState = remember { mutableStateOf(false) }
                         val datePickerState =
                             rememberDatePickerState()
-                        if (anniversaryDatePickerState.value) {
+                        if (birthdayDatePickerState.value) {
                             NearDatePicker(
                                 datePickerState = datePickerState,
-                                onDismiss = { anniversaryDatePickerState.value = false },
+                                onDismiss = { birthdayDatePickerState.value = false },
                                 onDateSelected = {
                                     it?.let {
-                                        onAnniversaryDateSelected(index, it)
+                                        onBirthdayChanged(it)
                                     }
                                 },
                             )
                         }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "기념일 이름",
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.GRAY01_888888,
-                            )
-                            Spacer(modifier = Modifier.width(23.dp))
-                            NearTextField(
-                                modifier = Modifier.weight(1f),
-                                value = friendProfileEditorUIState.anniversaries[index].title.value,
-                                onValueChange = {
-                                    onAnniversaryNameChange(index, it)
-                                },
-                            )
-                        }
-                        if (friendProfileEditorUIState.anniversaries[index].title.error) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                "이름을 입력해주세요.",
-                                style = NearTheme.typography.FC_12_MEDIUM,
-                                color = NearTheme.colors.NEGATIVE_F04E4E,
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
+                        Text(
+                            "생일",
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Spacer(modifier = Modifier.width(62.dp))
+                        Surface(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
+                                modifier
+                                    .weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            border =
+                                BorderStroke(
+                                    width = 1.dp,
+                                    color = NearTheme.colors.GRAY03_EBEBEB,
+                                ),
+                            color = NearTheme.colors.WHITE_FFFFFF,
                         ) {
-                            Text(
-                                "날짜",
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.GRAY01_888888,
-                            )
-                            Spacer(modifier = Modifier.width(62.dp))
-                            Surface(
+                            Row(
                                 modifier =
-                                    modifier
-                                        .weight(1f)
-                                        .onNoRippleClick(onClick = {
-                                            anniversaryDatePickerState.value = true
-                                        }),
-                                shape = RoundedCornerShape(12.dp),
-                                border =
-                                    BorderStroke(
-                                        width = 1.dp,
-                                        color = NearTheme.colors.GRAY03_EBEBEB,
-                                    ),
-                                color = NearTheme.colors.WHITE_FFFFFF,
-                            ) {
-                                Row(
-                                    modifier =
-                                        Modifier.padding(
+                                    Modifier
+                                        .padding(
                                             start = 16.dp,
                                             end = 12.dp,
                                             top = 14.dp,
                                             bottom = 14.dp,
-                                        ),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    Text(
-                                        friendProfileEditorUIState.anniversaries[index].date.value
-                                            ?: "날짜 선택",
-                                        style = NearTheme.typography.B2_14_MEDIUM,
-                                        color = NearTheme.colors.BLACK_1A1A1A,
-                                    )
-                                    Image(
-                                        painter = painterResource(id = R.drawable.ic_24_down),
-                                        contentDescription = null,
-                                    )
-                                }
+                                        ).onNoRippleClick({
+                                            birthdayDatePickerState.value = true
+                                        }),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(
+                                    friendProfileEditorUIState.birthday.value ?: "날짜 선택",
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_24_down),
+                                    contentDescription = null,
+                                )
                             }
                         }
-                        Spacer(modifier = Modifier.height(32.dp))
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
                         Text(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .onNoRippleClick(
-                                        onClick = {
-                                            onRemoveAnniversary(index)
-                                        },
-                                    ),
-                            textAlign = TextAlign.End,
-                            text = "삭제하기",
-                            textDecoration = TextDecoration.Underline,
+                            text = "기념일",
+                            style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )
+                        Text(
+                            modifier =
+                                Modifier.onNoRippleClick(onClick = {
+                                    onAddAnniversary()
+                                }),
+                            text = "추가하기",
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.BLUE01_5AA2E9,
+                        )
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+            items(
+                count = friendProfileEditorUIState.anniversaries.size,
+            ) { index ->
+                Column(
+                    modifier =
+                        Modifier
+                            .background(color = NearTheme.colors.BG02_F4F9FD)
+                            .padding(
+                                PaddingValues(
+                                    top = 20.dp,
+                                    bottom = 32.dp,
+                                    start = 24.dp,
+                                    end = 20.dp,
+                                ),
+                            ),
+                ) {
+                    val anniversaryDatePickerState = remember { mutableStateOf(false) }
+                    val datePickerState =
+                        rememberDatePickerState()
+                    if (anniversaryDatePickerState.value) {
+                        NearDatePicker(
+                            datePickerState = datePickerState,
+                            onDismiss = { anniversaryDatePickerState.value = false },
+                            onDateSelected = {
+                                it?.let {
+                                    onAnniversaryDateSelected(index, it)
+                                }
+                            },
+                        )
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "기념일 이름",
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Spacer(modifier = Modifier.width(23.dp))
+                        NearTextField(
+                            modifier = Modifier.weight(1f),
+                            value = friendProfileEditorUIState.anniversaries[index].title.value,
+                            onValueChange = {
+                                onAnniversaryNameChange(index, it)
+                            },
+                        )
+                    }
+                    if (friendProfileEditorUIState.anniversaries[index].title.error) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "이름을 입력해주세요.",
+                            style = NearTheme.typography.FC_12_MEDIUM,
+                            color = NearTheme.colors.NEGATIVE_F04E4E,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            "날짜",
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Spacer(modifier = Modifier.width(62.dp))
+                        Surface(
+                            modifier =
+                                modifier
+                                    .weight(1f)
+                                    .onNoRippleClick(onClick = {
+                                        anniversaryDatePickerState.value = true
+                                    }),
+                            shape = RoundedCornerShape(12.dp),
+                            border =
+                                BorderStroke(
+                                    width = 1.dp,
+                                    color = NearTheme.colors.GRAY03_EBEBEB,
+                                ),
+                            color = NearTheme.colors.WHITE_FFFFFF,
+                        ) {
+                            Row(
+                                modifier =
+                                    Modifier.padding(
+                                        start = 16.dp,
+                                        end = 12.dp,
+                                        top = 14.dp,
+                                        bottom = 14.dp,
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(
+                                    friendProfileEditorUIState.anniversaries[index].date.value
+                                        ?: "날짜 선택",
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_24_down),
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Text(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .onNoRippleClick(
+                                    onClick = {
+                                        onRemoveAnniversary(index)
+                                    },
+                                ),
+                        textAlign = TextAlign.End,
+                        text = "삭제하기",
+                        textDecoration = TextDecoration.Underline,
+                        color = NearTheme.colors.GRAY01_888888,
+                    )
                 }
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-        ) {
-            Text(
-                modifier = Modifier.padding(top = 16.dp),
-                text = "메모",
-                style = NearTheme.typography.B2_14_MEDIUM,
-                color = NearTheme.colors.GRAY01_888888,
-            )
-            Spacer(modifier = Modifier.width(23.dp))
-            NearLimitedTextField(
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(
                 modifier =
                     Modifier
-                        .weight(1f)
-                        .height(180.dp),
-                value = friendProfileEditorUIState.memo.value ?: "",
-                onValueChange = {
-                    onMemoChanged(it)
-                },
-                placeHolderText =
-                    "꼭 기억해야 할 내용을 기록해보세요.\n" +
-                        "예) 날생선 X, 작년 생일에\n" +
-                        "키링 선물함 등",
-                maxTextCount = 100,
-            )
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = "메모",
+                    style = NearTheme.typography.B2_14_MEDIUM,
+                    color = NearTheme.colors.GRAY01_888888,
+                )
+                Spacer(modifier = Modifier.width(23.dp))
+                NearLimitedTextField(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .height(180.dp),
+                    value = friendProfileEditorUIState.memo.value ?: "",
+                    onValueChange = {
+                        onMemoChanged(it)
+                    },
+                    placeHolderText =
+                        "꼭 기억해야 할 내용을 기록해보세요.\n" +
+                            "예) 날생선 X, 작년 생일에\n" +
+                            "키링 선물함 등",
+                    maxTextCount = 100,
+                )
+            }
+            Spacer(modifier = Modifier.height(80.dp))
         }
-        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 

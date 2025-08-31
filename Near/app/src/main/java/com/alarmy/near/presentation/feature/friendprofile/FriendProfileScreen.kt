@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -151,12 +153,14 @@ fun FriendProfileScreen(
     ) {
         when (friendState) {
             is FriendState.Success -> {
+                val scrollState = rememberScrollState()
                 val friend = friendState.friend
                 Column(
                     modifier =
                         Modifier
                             .align(Alignment.TopStart)
                             .fillMaxSize()
+                            .verticalScroll(scrollState)
                             .background(NearTheme.colors.WHITE_FFFFFF),
                 ) {
                     if (recordSuccessDialogState) {
@@ -397,6 +401,7 @@ fun FriendProfileScreen(
                     } else {
                         RecordTab(friendShipRecordState = friendShipRecordState)
                     }
+                    Spacer(modifier = Modifier.height(60.dp))
                 }
                 NearSolidTypeButton(
                     modifier =
