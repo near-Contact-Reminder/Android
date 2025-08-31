@@ -71,6 +71,7 @@ fun FriendProfileEditorRoute(
         onRemoveAnniversary = viewModel::onRemoveAnniversary,
         onAddAnniversary = viewModel::onAddAnniversary,
         onMemoChanged = viewModel::onMemoChanged,
+        onSubmit = viewModel::onSubmit,
     )
 }
 
@@ -89,6 +90,7 @@ fun FriendProfileEditorScreen(
     onRemoveAnniversary: (index: Int) -> Unit = { _ -> },
     onAddAnniversary: () -> Unit = {},
     onMemoChanged: (String) -> Unit = {},
+    onSubmit: () -> Unit = {},
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
@@ -114,6 +116,10 @@ fun FriendProfileEditorScreen(
             onClickBackButton = onClickBackButton,
             menuButton = {
                 Text(
+                    modifier =
+                        Modifier.onNoRippleClick(onClick = {
+                            onSubmit()
+                        }),
                     text = "완료",
                     style = NearTheme.typography.B1_16_BOLD,
                     color = NearTheme.colors.BLACK_1A1A1A,
@@ -337,8 +343,7 @@ fun FriendProfileEditorScreen(
                                     end = 12.dp,
                                     top = 14.dp,
                                     bottom = 14.dp,
-                                )
-                                .onNoRippleClick({
+                                ).onNoRippleClick({
                                     birthdayDatePickerState.value = true
                                 }),
                         verticalAlignment = Alignment.CenterVertically,

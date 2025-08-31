@@ -2,18 +2,22 @@ package com.alarmy.near.presentation.feature.friendprofileedittor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.RouteFriendProfileEditor
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.AnniversaryUIState
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
+import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.toModel
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,6 +28,7 @@ class FriendProfileEditorViewModel
     @Inject
     constructor(
         savedStateHandle: SavedStateHandle,
+        private val friendRepository: FriendRepository,
     ) : ViewModel() {
         private val routeFriendProfileEditor: RouteFriendProfileEditor =
             savedStateHandle.toRoute<RouteFriendProfileEditor>(RouteFriendProfileEditor.routeTypeMap)
@@ -134,9 +139,9 @@ class FriendProfileEditorViewModel
         fun onMemoChanged(value: String?) {
             value?.length?.let {
                 if (it > MAX_MEMO_LENGTH) {
-                return
+                    return
+                }
             }
-        }
             _uiState.update {
                 it.copy(
                     memo =
@@ -150,10 +155,33 @@ class FriendProfileEditorViewModel
 
         private fun convertMillisToDate(millis: Long): String {
             val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-        return formatter.format(Date(millis))
-    }
+            return formatter.format(Date(millis))
+        }
 
-//        fun onSubmit() {
+        fun onSubmit() {
+            val updatedFriend = _uiState.value
+            if (updatedFriend.name.error || updatedFriend.anniversaries.any { it.title.error }) {
+                // error
+                return
+            }
+
+            viewModelScope.launch {
+                friendRepository
+                    .updateFriend(
+                        friendId = friend.friendId,
+                        friend =
+                            updatedFriend.toModel(
+                                friendId = friend.friendId,
+                                imageUrl = friend.imageUrl ?: "",
+                                phone = friend.phone ?: "",
+                                lastContactAt = friend.lastContactAt ?: "",
+                            ),
+                    ).collect {
+                    }
+            }
+        }
+
+        //                fun onSubmit() {
 //            val model = _uiState.value
 //            val validated =
 //                model.copy(
@@ -186,6 +214,6 @@ class FriendProfileEditorViewModel
 //        }
         companion object {
             private const val MAX_NAME_LENGTH = 20
-    private const val MAX_MEMO_LENGTH = 200
-}
+            private const val MAX_MEMO_LENGTH = 200
+        }
     }

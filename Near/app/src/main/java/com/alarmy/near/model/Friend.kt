@@ -42,7 +42,7 @@ data class ContactFrequency(
 @Serializable
 @Parcelize
 data class Anniversary(
-    val id: Int,
+    val id: Int? = null,
     val title: String,
-    val date: String,
+    val date: String? = null,
 ) : Parcelable
