@@ -24,9 +24,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -499,7 +497,11 @@ private fun RecordTab(
                 contentPadding = PaddingValues(bottom = 60.dp),
             ) {
                 items(friendShipRecordState.records.size) {
-                    RecordItem(friendRecord = friendShipRecordState.records[it], index = it)
+                    RecordItem(
+                        friendRecord = friendShipRecordState.records[friendShipRecordState.records.size - 1 - it],
+                        index =
+                            friendShipRecordState.records.size - it,
+                    )
                 }
             }
         }
@@ -541,7 +543,7 @@ private fun RecordItem(
                     contentDescription = null,
                 )
                 Text(
-                    "${index + 1}번째 챙김",
+                    "${index}번째 챙김",
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.BLUE01_5AA2E9,
                 )
