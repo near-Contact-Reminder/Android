@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.alarmy.near.data.repository.FriendRepository
+import com.alarmy.near.model.Friend
 import com.alarmy.near.model.FriendRecord
 import com.alarmy.near.presentation.feature.friendprofile.navigation.RouteFriendProfile
 import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendProfileUIEvent
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -32,7 +34,8 @@ class FriendProfileViewModel
         savedStateHandle: SavedStateHandle,
         private val friendRepository: FriendRepository,
     ) : ViewModel() {
-        private val friendId: String = savedStateHandle.toRoute<RouteFriendProfile>().friendId
+        private val friendId: String =
+            savedStateHandle.toRoute<RouteFriendProfile>().friendId
         private val _uiEvent = Channel<FriendProfileUIEvent>()
         val uiEvent = _uiEvent.receiveAsFlow()
         private val _friendFlow: MutableStateFlow<FriendState> = MutableStateFlow(FriendState.Loading)
@@ -133,5 +136,11 @@ class FriendProfileViewModel
             val today = LocalDate.now()
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREA)
             return today.format(formatter)
-    }
+        }
+
+        fun updateFriend(friend: Friend) {
+            if (_friendFlow.value is FriendState.Success) {
+                _friendFlow.update { (it as FriendState.Success).copy(friend = friend) }
+            }
+        }
     }
