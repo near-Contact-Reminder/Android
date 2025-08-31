@@ -14,6 +14,8 @@ import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.frie
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
 import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
@@ -48,7 +50,18 @@ internal fun NearNavHost(
                 }
             context.startActivity(intent)
         }, onEditFriendInfo = {
-            navController.navigateToFriendProfileEditor(friend = it)
+            navController.navigateToFriendProfileEditor(
+                friend =
+                    it.copy(
+                        imageUrl =
+                            it.imageUrl?.let { imageUrl ->
+                                URLEncoder.encode(
+                                    imageUrl,
+                                    StandardCharsets.UTF_8.toString(),
+                                )
+                            },
+                    ),
+            )
         })
         friendProfileEditorNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
         }, onSuccessEdit = {
