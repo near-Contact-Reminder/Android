@@ -53,3 +53,41 @@ fun Anniversary.toUiModel(): AnniversaryUIState =
         title = InputField(title),
         date = InputField(date),
     )
+
+fun FriendProfileEditorUIState.toModel(
+    friendId: String,
+    imageUrl: String,
+    phone: String,
+    lastContactAt: String,
+): Friend =
+    Friend(
+        name = name.value,
+        relation = relation,
+        contactFrequency =
+            contactFrequency.copy(
+                dayOfWeek =
+                    when (contactFrequency.dayOfWeek) {
+                        "월요일" -> "MONDAY"
+                        "화요일" -> "TUESDAY"
+                        "수요일" -> "WEDNESDAY"
+                        "목요일" -> "THURSDAY"
+                        "금요일" -> "FRIDAY"
+                        "토요일" -> "SATURDAY"
+                        "일요일" -> "SUNDAY"
+                        else -> IllegalStateException("없는 타입 입니다.")
+                    } as String,
+            ),
+        birthday = birthday.value?.replace(".", "-"),
+        anniversaryList =
+            anniversaries.map {
+                Anniversary(
+                    title = it.title.value,
+                    date = it.date.value?.replace(".", "-"),
+                )
+            },
+        friendId = friendId,
+        imageUrl = imageUrl,
+        memo = memo.value,
+        phone = phone,
+        lastContactAt = lastContactAt,
+    )

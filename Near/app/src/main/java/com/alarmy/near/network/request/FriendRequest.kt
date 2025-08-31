@@ -21,7 +21,7 @@ data class ContactFrequencyRequest(
 
 @Serializable
 data class AnniversaryRequest(
-    val id: Int,
+    val id: Int? = null,
     val title: String,
-    val date: String,
+    val date: String? = null,
 )
