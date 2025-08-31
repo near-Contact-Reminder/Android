@@ -61,6 +61,7 @@ internal fun NearNavHost(
             )
         })
         friendProfileEditorNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
+            navController.popBackStack()
         }, onSuccessEdit = {
             navController.previousBackStackEntry?.savedStateHandle?.set(
                 FRIEND_PROFILE_EDIT_COMPLETE_KEY,

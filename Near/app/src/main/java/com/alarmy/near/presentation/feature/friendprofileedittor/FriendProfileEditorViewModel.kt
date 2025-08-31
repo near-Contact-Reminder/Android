@@ -163,10 +163,15 @@ class FriendProfileEditorViewModel
         }
 
         fun onExit() {
-            if (uiState.value.anniversaries.any { it.title.isDirty || it.date.isDirty } ||
-                uiState.value.name.isDirty || uiState.value.memo.isDirty ||
-                uiState.value.contactFrequency != friend.contactFrequency || uiState.value.birthday.isDirty
-            ) {
+            viewModelScope.launch {
+                if (uiState.value.anniversaries.any { it.title.isDirty || it.date.isDirty } ||
+                    uiState.value.name.isDirty || uiState.value.memo.isDirty ||
+                    uiState.value.birthday.isDirty
+                ) {
+                    _uiEvent.send(FriendProfileEditorUIEvent.WarningExit)
+                } else {
+                    _uiEvent.send(FriendProfileEditorUIEvent.Exit)
+                }
             }
         }
 

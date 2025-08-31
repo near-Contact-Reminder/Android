@@ -153,14 +153,12 @@ fun FriendProfileScreen(
     ) {
         when (friendState) {
             is FriendState.Success -> {
-                val scrollState = rememberScrollState()
                 val friend = friendState.friend
                 Column(
                     modifier =
                         Modifier
                             .align(Alignment.TopStart)
                             .fillMaxSize()
-                            .verticalScroll(scrollState)
                             .background(NearTheme.colors.WHITE_FFFFFF),
                 ) {
                     if (recordSuccessDialogState) {
@@ -496,7 +494,7 @@ private fun RecordTab(
         } else {
             Spacer(modifier = Modifier.height(13.dp))
             LazyVerticalGrid(
-                GridCells.Fixed(3),
+                columns = GridCells.Fixed(3),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 contentPadding = PaddingValues(bottom = 60.dp),
             ) {
