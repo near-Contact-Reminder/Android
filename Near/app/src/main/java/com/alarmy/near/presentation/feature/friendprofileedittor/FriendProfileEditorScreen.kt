@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.feature.friendprofileedittor
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,10 +42,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
+import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
@@ -51,14 +55,39 @@ import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
 import com.alarmy.near.presentation.ui.component.textfield.NearTextField
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun FriendProfileEditorRoute(
     viewModel: FriendProfileEditorViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickBackButton: () -> Unit = {},
+    onSuccessEdit: (Friend) -> Unit = {},
 ) {
     val friendProfileEditorUIState = viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(viewModel.uiEvent) {
+        launch {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    FriendProfileEditorUIEvent.WarningExit -> {
+                    }
+
+                    is FriendProfileEditorUIEvent.FriendProfileEditFailure -> {
+                        onShowErrorSnackBar(event.throwable)
+                    }
+
+                    FriendProfileEditorUIEvent.FriendProfileEditNetworkError -> {
+                        onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
+                    }
+
+                    is FriendProfileEditorUIEvent.FriendProfileEditSuccess -> {
+                        Log.d("FriendProfileEditorRoute", "FriendProfileEditSuccess")
+                        onSuccessEdit(event.friend)
+                    }
+                }
+            }
+        }
+    }
     FriendProfileEditorScreen(
         onClickBackButton = onClickBackButton,
         onNameChanged = viewModel::onNameChanged,

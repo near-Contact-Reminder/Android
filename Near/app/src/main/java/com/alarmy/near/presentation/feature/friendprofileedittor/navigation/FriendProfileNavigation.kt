@@ -17,6 +17,8 @@ import kotlinx.serialization.json.Json
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
+const val FRIEND_PROFILE_EDIT_COMPLETE_KEY = "FRIEND_PROFILE_EDIT_COMPLETE_KEY"
+
 @Serializable
 @Parcelize
 data class RouteFriendProfileEditor(
@@ -45,6 +47,7 @@ fun NavController.navigateToFriendProfileEditor(
 fun NavGraphBuilder.friendProfileEditorNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickBackButton: () -> Unit = {},
+    onSuccessEdit: (Friend) -> Unit = {},
 ) {
     composable<RouteFriendProfileEditor>(
         typeMap =
@@ -53,6 +56,7 @@ fun NavGraphBuilder.friendProfileEditorNavGraph(
         FriendProfileEditorRoute(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onClickBackButton = onClickBackButton,
+            onSuccessEdit = onSuccessEdit,
         )
     }
 }

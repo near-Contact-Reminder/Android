@@ -10,12 +10,16 @@ import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.RouteFriendProfileEditor
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.AnniversaryUIState
+import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.toModel
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -30,15 +34,15 @@ class FriendProfileEditorViewModel
         savedStateHandle: SavedStateHandle,
         private val friendRepository: FriendRepository,
     ) : ViewModel() {
-        private val routeFriendProfileEditor: RouteFriendProfileEditor =
-            savedStateHandle.toRoute<RouteFriendProfileEditor>(RouteFriendProfileEditor.routeTypeMap)
         private val friend: Friend =
-            routeFriendProfileEditor.friend.apply {
-                copy()
-            }
+            savedStateHandle.toRoute<RouteFriendProfileEditor>(RouteFriendProfileEditor.routeTypeMap).friend
+
         private val _uiState: MutableStateFlow<FriendProfileEditorUIState> =
             MutableStateFlow(friend.toUiModel())
         val uiState = _uiState.asStateFlow()
+
+        private val _uiEvent = Channel<FriendProfileEditorUIEvent>()
+        val uiEvent = _uiEvent.receiveAsFlow()
 
         fun onNameChanged(value: String) {
             if (value.length > MAX_NAME_LENGTH) {
@@ -158,9 +162,17 @@ class FriendProfileEditorViewModel
             return formatter.format(Date(millis))
         }
 
+        fun onExit() {
+            if (uiState.value.anniversaries.any { it.title.isDirty || it.date.isDirty } ||
+                uiState.value.name.isDirty || uiState.value.memo.isDirty ||
+                uiState.value.contactFrequency != friend.contactFrequency || uiState.value.birthday.isDirty
+            ) {
+            }
+        }
+
         fun onSubmit() {
             val updatedFriend = _uiState.value
-            if (updatedFriend.name.error || updatedFriend.anniversaries.any { it.title.error }) {
+            if ((updatedFriend.name.error || updatedFriend.anniversaries.any { it.title.error })) {
                 // error
                 return
             }
@@ -176,42 +188,13 @@ class FriendProfileEditorViewModel
                                 phone = friend.phone ?: "",
                                 lastContactAt = friend.lastContactAt ?: "",
                             ),
-                    ).collect {
+                    ).catch {
+                    }.collect {
+                        _uiEvent.send(FriendProfileEditorUIEvent.FriendProfileEditSuccess(it))
                     }
             }
         }
 
-        //                fun onSubmit() {
-//            val model = _uiState.value
-//            val validated =
-//                model.copy(
-//                    name = model.name.copy(error = if (model.name.value.isBlank()) "이름을 입력해주세요." else null),
-//                    anniversaries =
-//                        model.anniversaries.map { anniversary ->
-//                            anniversary.copy(
-//                                title = anniversary.title.copy(error = if (anniversary.title.value.isBlank()) "기념일 이름을 입력해주세요." else null),
-//                                date = anniversary.date.copy(error = if (anniversary.date.value == null) "날짜를 선택해주세요." else null),
-//                            )
-//                        },
-//                )
-//
-// //            _uiState.update { it.copy( = validated) }
-//
-//            // Validation 성공 시 Repository 저장
-//        if (validated.name.error == null &&
-//            validated.anniversaries.all { it.title.error == null && it.date.error == null }
-//        ) {
-//            _uiState.update { it.copy(isSubmitting = true) }
-//            viewModelScope.launch {
-//                // repository.save(validated.toDomain())
-//                _uiState.update { it.copy(isSubmitting = false, isSuccess = true) }
-//            }
-//        }
-//    }
-//
-//    private fun update(transform: FriendUiModel.() -> FriendUiModel) {
-//        _uiState.update { state -> state.copy(model = state.model.transform()) }
-//        }
         companion object {
             private const val MAX_NAME_LENGTH = 20
             private const val MAX_MEMO_LENGTH = 200
