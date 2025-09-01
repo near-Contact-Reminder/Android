@@ -1,5 +1,6 @@
 package com.alarmy.near.network.response
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,6 +8,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class TokenRefreshResponse(
+    @SerialName("accessToken")
     val accessToken: String,
-    val refreshToken: String? = null
+    @SerialName("refreshTokenInfo")
+    val refreshTokenInfo: RefreshTokenInfo? = null,
 )
