@@ -29,9 +29,9 @@ class KakaoDataSource
             try {
                 val token =
                     if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-                        loginWithKakaoTalk(context)
+                        loginWithKakaoTalk()
                     } else {
-                        loginWithKakaoAccount(context)
+                        loginWithKakaoAccount()
                     }
 
                 if (token.isNotEmpty()) {
@@ -43,7 +43,7 @@ class KakaoDataSource
                 Result.failure(exception)
             }
 
-        private suspend fun loginWithKakaoTalk(context: Context): String =
+        private suspend fun loginWithKakaoTalk(): String =
             suspendCancellableCoroutine { continuation ->
                 UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                     when {
@@ -62,7 +62,7 @@ class KakaoDataSource
                 }
             }
 
-        private suspend fun loginWithKakaoAccount(context: Context): String =
+        private suspend fun loginWithKakaoAccount(): String =
             suspendCancellableCoroutine { continuation ->
                 UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
                     handleLoginResult(token, error, continuation)
