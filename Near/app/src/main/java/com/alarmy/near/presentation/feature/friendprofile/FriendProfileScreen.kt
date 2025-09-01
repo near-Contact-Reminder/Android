@@ -185,7 +185,7 @@ fun FriendProfileScreen(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    "더 가까워졌어요!",
+                                    stringResource(R.string.friend_profile_info_contact_success_text),
                                     style = NearTheme.typography.B1_16_BOLD,
                                     color = Color(0xff222222),
                                 )
@@ -219,7 +219,7 @@ fun FriendProfileScreen(
                                         },
                                         text = {
                                             Text(
-                                                "수정",
+                                                stringResource(R.string.friend_profile_info_edit),
                                                 style = NearTheme.typography.B2_14_MEDIUM,
                                                 color = NearTheme.colors.BLACK_1A1A1A,
                                             )
@@ -232,7 +232,7 @@ fun FriendProfileScreen(
                                         },
                                         text = {
                                             Text(
-                                                "삭제",
+                                                stringResource(R.string.friend_profile_info_delete),
                                                 style = NearTheme.typography.B2_14_MEDIUM,
                                                 color = NearTheme.colors.BLACK_1A1A1A,
                                             )
@@ -484,7 +484,7 @@ private fun RecordTab(
                 Image(painterResource(R.drawable.img_100_character_empty), contentDescription = null)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    "이번달은 챙길 사람이 없네요.",
+                    stringResource(R.string.friend_profile_info_empty_contact_friend),
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.GRAY01_888888,
                 )
@@ -543,7 +543,7 @@ private fun RecordItem(
                     contentDescription = null,
                 )
                 Text(
-                    "${index}번째 챙김",
+                    stringResource(R.string.friend_profile_info_contact_record_text, index),
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.BLUE01_5AA2E9,
                 )
