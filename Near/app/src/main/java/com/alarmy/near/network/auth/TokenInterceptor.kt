@@ -1,12 +1,10 @@
 package com.alarmy.near.network.auth
 
 import com.alarmy.near.data.local.datastore.TokenPreferences
-import com.alarmy.near.data.repository.AuthRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -22,13 +20,12 @@ class TokenInterceptor
 @Inject
 constructor(
     private val tokenPreferences: TokenPreferences,
-    private val authRepository: AuthRepository,
 ) : Interceptor {
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var currentToken: String? = null
     private var tokenExpiresAt: Long? = null
-    private var isRefreshing = false
+
 
     init {
         observeTokenChanges()
@@ -55,23 +52,9 @@ constructor(
         // 첫 번째 요청 시도
         val response = chain.proceed(requestWithAuth)
 
-        // 401 에러인 경우 자동 토큰 갱신 시도
+        // 401 에러인 경우 토큰 삭제
         if (response.code == 401 && validToken != null) {
-            val refreshed = attemptTokenRefresh()
-            if (refreshed) {
-                // 토큰 갱신 성공 시 원래 요청 재시도
-                val newToken = getValidToken()
-                if (newToken != null) {
-                    val retryRequest = originalRequest
-                        .newBuilder()
-                        .header("Authorization", "Bearer $newToken")
-                        .build()
-                    return chain.proceed(retryRequest)
-                }
-            } else {
-                // 토큰 갱신 실패 시 토큰 삭제
-                handleTokenExpired()
-            }
+            handleTokenExpired()
         }
 
         return response
@@ -124,26 +107,6 @@ constructor(
     private fun isTokenExpired(expiresAt: Long?): Boolean {
         if (expiresAt == null) return true
         return System.currentTimeMillis() >= expiresAt
-    }
-
-    /**
-     * 자동 토큰 갱신 시도 (빅테크 수준)
-     */
-    private fun attemptTokenRefresh(): Boolean {
-        if (isRefreshing) {
-            return false // 이미 갱신 중이면 대기
-        }
-
-        return runBlocking {
-            try {
-                isRefreshing = true
-                authRepository.refreshToken()
-            } catch (e: Exception) {
-                false
-            } finally {
-                isRefreshing = false
-            }
-        }
     }
 
     /**
