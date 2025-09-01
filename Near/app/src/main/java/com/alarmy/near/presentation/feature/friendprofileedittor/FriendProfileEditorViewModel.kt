@@ -177,7 +177,7 @@ class FriendProfileEditorViewModel
 
         fun onSubmit() {
             val updatedFriend = _uiState.value
-            if ((updatedFriend.name.error || updatedFriend.anniversaries.any { it.title.error })) {
+            if ((updatedFriend.name.error || updatedFriend.anniversaries.any { it.title.error || it.title.value.isBlank() })) {
                 // error
                 return
             }
