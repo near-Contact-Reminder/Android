@@ -49,15 +49,8 @@ constructor(
             originalRequest
         }
 
-        // 첫 번째 요청 시도
-        val response = chain.proceed(requestWithAuth)
-
-        // 401 에러인 경우 토큰 삭제
-        if (response.code == 401 && validToken != null) {
-            handleTokenExpired()
-        }
-
-        return response
+        // 요청 실행 (401 에러는 Authenticator에서 처리)
+        return chain.proceed(requestWithAuth)
     }
 
     /**
@@ -109,16 +102,7 @@ constructor(
         return System.currentTimeMillis() >= expiresAt
     }
 
-    /**
-     * 토큰 만료 처리
-     */
-    private fun handleTokenExpired() {
-        currentToken = null
-        tokenExpiresAt = null
-        coroutineScope.launch {
-            tokenPreferences.clearAllTokens()
-        }
-    }
+
 
     /**
      * 인증이 필요없는 요청인지 확인
