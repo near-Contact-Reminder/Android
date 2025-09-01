@@ -59,8 +59,13 @@ class TokenPreferences
          * 토큰 존재 여부 확인
          */
         suspend fun hasValidTokens(): Boolean {
-            val accessToken = getAccessToken()
-            return !accessToken.isNullOrBlank() && !isTokenExpired()
+            val prefs = dataStore.data.first()
+            val accessToken = prefs[accessTokenKey]
+            if (accessToken.isNullOrBlank()) return false
+
+            val expiresAt = prefs[expiresAtKey]
+            val isExpired = expiresAt == null || System.currentTimeMillis() >= expiresAt
+            return !isExpired
         }
 
         /**
