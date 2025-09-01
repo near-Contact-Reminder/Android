@@ -87,11 +87,7 @@ constructor(
         }
 
     override suspend fun logout() {
-        try {
-            tokenManager.clearAllTokens()
-        } catch (exception: Exception) {
-            throw exception
-        }
+        tokenManager.clearAllTokens()
     }
 
     override suspend fun isLoggedIn(): Boolean =
