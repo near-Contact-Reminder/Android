@@ -1,17 +1,13 @@
 package com.alarmy.near.data.repository
 
 import com.alarmy.near.data.datasource.SocialLoginProcessor
-import com.alarmy.near.data.local.datastore.TokenPreferences
 import com.alarmy.near.model.LoginResult
 import com.alarmy.near.model.ProviderType
+import com.alarmy.near.network.auth.TokenManager
 import com.alarmy.near.network.request.SocialLoginRequest
-import com.alarmy.near.network.request.TokenRefreshRequest
 import com.alarmy.near.network.service.AuthService
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 
 class AuthRepositoryImpl
@@ -19,7 +15,7 @@ class AuthRepositoryImpl
 constructor(
     private val authService: AuthService,
     private val socialLoginProcessor: SocialLoginProcessor,
-    private val tokenPreferences: TokenPreferences,
+    private val tokenManager: TokenManager,
 ) : AuthRepository {
     override suspend fun performSocialLogin(providerType: ProviderType): LoginResult =
         try {
@@ -56,9 +52,8 @@ constructor(
             val response = authService.socialLogin(request)
 
             // 토큰 저장
-            val expiresIn = calculateExpiresIn(response.refreshTokenInfo?.expiresAt)
-
-            tokenPreferences.saveTokens(
+            val expiresIn = tokenManager.calculateExpiresIn(response.refreshTokenInfo?.expiresAt)
+            tokenManager.saveTokens(
                 accessToken = response.accessToken,
                 refreshToken = response.refreshTokenInfo?.token,
                 expiresIn = expiresIn,
@@ -93,7 +88,7 @@ constructor(
 
     override suspend fun logout() {
         try {
-            tokenPreferences.clearAllTokens()
+            tokenManager.clearAllTokens()
         } catch (exception: Exception) {
             throw exception
         }
@@ -101,79 +96,19 @@ constructor(
 
     override suspend fun isLoggedIn(): Boolean =
         try {
-            tokenPreferences.hasValidTokens()
+            tokenManager.hasValidToken()
         } catch (exception: Exception) {
             false
         }
 
     override suspend fun getCurrentUserToken(): String? =
         try {
-            tokenPreferences.getAccessToken()
+            tokenManager.getAccessToken()
         } catch (exception: Exception) {
             null
         }
 
-    override fun observeLoginStatus(): Flow<Boolean> = tokenPreferences.observeLoginStatus()
+    override fun observeLoginStatus(): Flow<Boolean> = tokenManager.observeLoginStatus()
 
-    override suspend fun refreshToken(): Boolean = refreshTokenWithRetry()
-
-    /**
-     * 토큰 갱신 (재시도 로직 포함)
-     */
-    private suspend fun refreshTokenWithRetry(maxRetries: Int = 3): Boolean {
-        repeat(maxRetries) { attempt ->
-            try {
-                val refreshToken = tokenPreferences.getRefreshToken() ?: return false
-
-                // 토큰 갱신 API 호출
-                val request = TokenRefreshRequest(refreshToken = refreshToken)
-                val response = authService.renewToken(request)
-
-                // 새로운 토큰 저장
-                val expiresIn = calculateExpiresIn(response.refreshTokenInfo?.expiresAt)
-
-                tokenPreferences.saveTokens(
-                    accessToken = response.accessToken,
-                    refreshToken = response.refreshTokenInfo?.token,
-                    expiresIn = expiresIn,
-                )
-
-                return true
-            } catch (exception: Exception) {
-                when (exception) {
-                    is HttpException -> {
-                        when (exception.code()) {
-                            401, 403 -> {
-                                // 리프레시 토큰도 만료된 경우 모든 토큰 삭제
-                                tokenPreferences.clearAllTokens()
-                                return false // 재시도 불가
-                            }
-
-                            else -> return false
-                        }
-                    }
-
-                    else -> {
-                        if (attempt < maxRetries - 1) {
-                            delay(1000L * (attempt + 1))
-                            return@repeat
-                        }
-                    }
-                }
-            }
-        }
-        return false
-    }
-
-    /**
-     * 만료 시간 계산 (초 단위)
-     */
-    private fun calculateExpiresIn(expiresAtString: String?): Long? {
-        return expiresAtString?.let { expiresAt ->
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            val expiresAtTime = dateFormat.parse(expiresAt)
-            val currentTime = System.currentTimeMillis()
-            ((expiresAtTime?.time ?: currentTime) - currentTime) / 1000 // 초 단위로 변환
-        }
-    }
+    override suspend fun refreshToken(): Boolean = tokenManager.refreshToken()
 }

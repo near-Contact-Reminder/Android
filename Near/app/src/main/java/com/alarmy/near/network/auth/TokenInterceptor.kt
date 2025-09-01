@@ -1,10 +1,6 @@
 package com.alarmy.near.network.auth
 
-import com.alarmy.near.data.local.datastore.TokenPreferences
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -19,17 +15,8 @@ import javax.inject.Singleton
 class TokenInterceptor
 @Inject
 constructor(
-    private val tokenPreferences: TokenPreferences,
+    private val tokenManager: TokenManager,
 ) : Interceptor {
-
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private var currentToken: String? = null
-    private var tokenExpiresAt: Long? = null
-
-
-    init {
-        observeTokenChanges()
-    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
@@ -38,12 +25,12 @@ constructor(
             return chain.proceed(originalRequest)
         }
 
-        // 현재 토큰 사용
-        val validToken = getValidToken()
-        val requestWithAuth = if (validToken != null) {
+        // 현재 토큰을 헤더에 추가
+        val token = runBlocking { tokenManager.getAccessToken() }
+        val requestWithAuth = if (token != null) {
             originalRequest
                 .newBuilder()
-                .header("Authorization", "Bearer $validToken")
+                .header("Authorization", "Bearer $token")
                 .build()
         } else {
             originalRequest
@@ -53,58 +40,7 @@ constructor(
         return chain.proceed(requestWithAuth)
     }
 
-    /**
-     * 토큰 변화 관찰
-     */
-    private fun observeTokenChanges() {
-        coroutineScope.launch {
-            try {
-                // 초기 토큰 로드
-                currentToken = tokenPreferences.getAccessToken()
-                tokenExpiresAt = tokenPreferences.getTokenExpiresAt()
-
-                // 토큰 변화 실시간 관찰
-                tokenPreferences.observeAccessToken().collect { token ->
-                    currentToken = token
-                    // 토큰이 변경되면 만료 시간도 다시 로드
-                    if (token != null) {
-                        tokenExpiresAt = tokenPreferences.getTokenExpiresAt()
-                    } else {
-                        tokenExpiresAt = null
-                    }
-                }
-            } catch (e: Exception) {
-                currentToken = null
-                tokenExpiresAt = null
-            }
-        }
-    }
-
-    /**
-     * 유효한 토큰 반환 (만료 검사 포함)
-     */
-    private fun getValidToken(): String? {
-        val token = currentToken
-        val expiresAt = tokenExpiresAt
-
-        return if (token != null && !isTokenExpired(expiresAt)) {
-            token
-        } else {
-            null
-        }
-    }
-
-    /**
-     * 토큰 만료 검사
-     */
-    private fun isTokenExpired(expiresAt: Long?): Boolean {
-        if (expiresAt == null) return true
-        return System.currentTimeMillis() >= expiresAt
-    }
-
-
-
-    /**
+        /**
      * 인증이 필요없는 요청인지 확인
      */
     private fun isAuthExcludedRequest(request: Request): Boolean {
