@@ -1,5 +1,6 @@
 package com.alarmy.near.network.auth
 
+import com.alarmy.near.network.model.AuthEndpoint
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -40,25 +41,11 @@ constructor(
         return chain.proceed(requestWithAuth)
     }
 
-        /**
+    /**
      * 인증이 필요없는 요청인지 확인
      */
     private fun isAuthExcludedRequest(request: Request): Boolean {
         val url = request.url.toString()
-        return AuthEndpoint.EXCLUDED_PATHS.any { url.contains(it) }
-    }
-
-    companion object {
-        enum class AuthEndpoint(val path: String) {
-            SOCIAL_LOGIN("/auth/social"),
-            TOKEN_RENEW("/auth/renew");
-
-            companion object {
-                val EXCLUDED_PATHS = listOf(
-                    SOCIAL_LOGIN.path,
-                    TOKEN_RENEW.path,
-                )
-            }
-        }
+        return AuthEndpoint.excludedPaths.any { url.contains(it) }
     }
 }
