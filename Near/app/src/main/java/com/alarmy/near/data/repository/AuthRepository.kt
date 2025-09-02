@@ -1,12 +1,11 @@
 package com.alarmy.near.data.repository
 
-import com.alarmy.near.model.LoginResult
 import com.alarmy.near.model.ProviderType
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     // 소셜 로그인 수행
-    suspend fun performSocialLogin(providerType: ProviderType): LoginResult
+    suspend fun performSocialLogin(providerType: ProviderType): Result<Unit>
 
     /**
      * 소셜 로그인 수행 (토큰 직접 전달)
@@ -14,7 +13,7 @@ interface AuthRepository {
     suspend fun socialLogin(
         accessToken: String,
         providerType: ProviderType,
-    ): LoginResult
+    ): Result<Unit>
 
     // 로그아웃 수행
     suspend fun logout()

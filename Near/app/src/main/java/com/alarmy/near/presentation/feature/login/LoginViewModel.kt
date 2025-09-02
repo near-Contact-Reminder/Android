@@ -36,23 +36,17 @@ class LoginViewModel
          */
         fun performLogin(providerType: ProviderType) {
             viewModelScope.launch {
-                try {
-                    updateLoadingState(isLoading = true)
+                updateLoadingState(isLoading = true)
 
-                    val loginResult = authRepository.performSocialLogin(providerType)
-
-                    updateLoadingState(isLoading = false)
-
-                    if (loginResult.isSuccess) {
+                authRepository.performSocialLogin(providerType)
+                    .onSuccess {
+                        updateLoadingState(isLoading = false)
                         _loginSuccessEvent.send(Unit)
-                    } else {
-                        val errorMsg = loginResult.errorMessage ?: "로그인에 실패했습니다"
-                        _errorEvent.send(Exception(errorMsg))
                     }
-                } catch (exception: Exception) {
-                    updateLoadingState(isLoading = false)
-                    _errorEvent.send(exception)
-                }
+                    .onFailure { exception ->
+                        updateLoadingState(isLoading = false)
+                        _errorEvent.send(exception)
+                    }
             }
         }
 
