@@ -32,10 +32,14 @@ android {
             )
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_PROD_URL"))
             buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
+            buildConfigField("String", "KAKAO_NATIVE_APP_KEY", getProperty("KAKAO_NATIVE_APP_KEY"))
+            manifestPlaceholders["kakaoAppKey"] = getProperty("KAKAO_NATIVE_APP_KEY").replace("\"", "")
         }
         debug {
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_DEV_URL"))
             buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
+            buildConfigField("String", "KAKAO_NATIVE_APP_KEY", getProperty("KAKAO_NATIVE_APP_KEY"))
+            manifestPlaceholders["kakaoAppKey"] = getProperty("KAKAO_NATIVE_APP_KEY").replace("\"", "")
         }
     }
     compileOptions {
@@ -88,6 +92,12 @@ dependencies {
     implementation(libs.navigation.compose)
     // Serialization
     implementation(libs.kotlin.serialization.json)
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.core)
+
+    // Kakao Module
+    implementation(libs.v2.all)
 }
 
 fun getProperty(propertyKey: String): String = gradleLocalProperties(rootDir, providers).getProperty(propertyKey)

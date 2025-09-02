@@ -1,9 +1,13 @@
 package com.alarmy.near.presentation.ui.theme
 
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 val LocalCustomColors =
     staticCompositionLocalOf {
@@ -30,6 +34,20 @@ fun NearTheme(
         LocalCustomTypography provides Typography,
         content = content,
     )
+
+/* 스크린에서 상태바 아이콘 색상
+*  */
+    val view = LocalView.current
+//    val isDarkTheme = isSystemInDarkTheme() 시스템 다크 모드 여부를 Boolean으로 반환
+    val isDarkTheme = false
+
+    SideEffect {
+        if (!view.isInEditMode) {
+            val window = (view.context as Activity).window
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            insetsController.isAppearanceLightStatusBars = !isDarkTheme
+        }
+    }
 }
 
 object NearTheme {

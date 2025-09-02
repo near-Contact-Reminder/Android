@@ -43,6 +43,12 @@ jobs:
         run: |
           echo "TEMP_TOKEN=\"TEMP_TOKEN\"" >> local.properties
 
+      - name: Access Kakao KAKAO_NATIVE_APP_KEY
+          env:
+            KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
+          run: |
+            echo "KAKAO_NATIVE_APP_KEY=\"$KAKAO_NATIVE_APP_KEY\"" >> local.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
