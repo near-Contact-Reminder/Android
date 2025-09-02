@@ -4,52 +4,38 @@ import android.util.Log
 import com.alarmy.near.BuildConfig
 
 private const val TAG = "Near"
-private const val STACK_TRACE_INDEX = 5
+private const val LOGGER_FILE_NAME = "NearLog.kt"
 
-/**
- * 호출자 정보를 포함한 로그 메시지를 생성합니다
- * 스택 트레이스 추출에 실패하면 원본 메시지를 반환합니다
- */
 private fun buildLogMessage(message: String): String {
     return try {
         val stackTrace = Thread.currentThread().stackTrace
 
-        // 실제 호출자를 찾기 위해 스택을 순회
-        for (i in 4 until stackTrace.size) {
-            val element = stackTrace[i]
-            val fileName = element.fileName ?: continue
-            val methodName = element.methodName ?: continue
-
-            // 로그 관련 메서드들을 건너뛰고 실제 호출자 찾기
-            if (!methodName.startsWith("log") &&
-                !methodName.contains("\$default") &&
-                !fileName.contains("Log")
-            ) {
-                val cleanFileName =
-                    fileName
-                        .replace(".java", "")
-                        .replace(".kt", "")
-
-                return "[$cleanFileName::$methodName (${element.fileName}:${element.lineNumber})] $message"
+        // 스택 트레이스를 순회하며 로거 파일이 아닌 첫 번째 호출자를 찾습니다
+        // 인덱스 0: Thread.getStackTrace()
+        // 인덱스 1: 현재 함수 (buildLogMessage)
+        // 인덱스 2~: 로그 함수들 (logd, loge 등)
+        // 그 이후: 실제 호출자
+        val callerElement =
+            stackTrace.drop(2).firstOrNull { element ->
+                element.fileName != LOGGER_FILE_NAME
             }
+
+        if (callerElement == null) {
+            return "[CallerNotFound] $message"
         }
 
-        // 찾지 못하면 기본 인덱스 사용
-        if (stackTrace.size > STACK_TRACE_INDEX) {
-            val element = stackTrace[STACK_TRACE_INDEX]
-            val fileName =
-                element.fileName
-                    ?.replace(".java", "")
-                    ?.replace(".kt", "")
-                    ?: "Unknown"
+        val fileName =
+            callerElement.fileName
+                ?.substringBeforeLast('.')
+                ?: "Unknown"
 
-            "[$fileName::${element.methodName} (${element.fileName}:${element.lineNumber})] $message"
-        } else {
-            message
-        }
+        val methodName = callerElement.methodName ?: "unknownMethod"
+        val lineNumber = callerElement.lineNumber
+        val originalFileName = callerElement.fileName ?: "Unknown"
+
+        "[$fileName::$methodName ($originalFileName:$lineNumber)] $message"
     } catch (exception: Exception) {
-        // 스택 트레이스 추출 실패 시 원본 메시지 반환
-        message
+        "[LogError:${exception.javaClass.simpleName}] $message"
     }
 }
 
