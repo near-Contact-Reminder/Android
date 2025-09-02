@@ -3,119 +3,97 @@ package com.alarmy.near.utils.logger
 import android.util.Log
 import com.alarmy.near.BuildConfig
 
-private const val TAG = "Near"
-private const val LOGGER_FILE_NAME = "NearLog.kt"
+object NearLog {
+    private const val TAG = "Near"
+    private const val LOGGER_FILE_NAME = "NearLog.kt"
 
-private fun buildLogMessage(message: String): String {
-    return try {
-        val stackTrace = Thread.currentThread().stackTrace
+    private fun buildLogMessage(message: String): String =
+        runCatching {
+            val stackTrace = Thread.currentThread().stackTrace
 
-        // 스택 트레이스를 순회하며 로거 파일이 아닌 첫 번째 호출자를 찾습니다
-        // 인덱스 0: Thread.getStackTrace()
-        // 인덱스 1: 현재 함수 (buildLogMessage)
-        // 인덱스 2~: 로그 함수들 (logd, loge 등)
-        // 그 이후: 실제 호출자
-        val callerElement =
-            stackTrace.drop(2).firstOrNull { element ->
-                element.fileName != LOGGER_FILE_NAME
-            }
+            // 스택 트레이스를 순회하며 로거 파일이 아닌 첫 번째 호출자를 찾습니다
+            // 인덱스 0: Thread.getStackTrace()
+            // 인덱스 1: 현재 함수 (buildLogMessage)
+            // 인덱스 2~: 로그 함수들 (d, e 등)
+            // 그 이후: 실제 호출자
+            val callerElement =
+                stackTrace.drop(2).firstOrNull { element ->
+                    element.fileName != LOGGER_FILE_NAME
+                } ?: throw IllegalStateException("Caller not found")
 
-        if (callerElement == null) {
-            return "[CallerNotFound] $message"
+            val fileName =
+                callerElement.fileName
+                    ?.substringBeforeLast('.')
+                    ?: "Unknown"
+
+            val methodName = callerElement.methodName ?: "unknownMethod"
+            val lineNumber = callerElement.lineNumber
+            val originalFileName = callerElement.fileName ?: "Unknown"
+
+            "[$fileName::$methodName ($originalFileName:$lineNumber)] $message"
+        }.getOrElse { exception ->
+            // 스택 트레이스 분석 실패 시 간단한 포맷으로 대체하여 로깅 기능 유지
+            "[LogError:${exception.javaClass.simpleName}] $message"
         }
 
-        val fileName =
-            callerElement.fileName
-                ?.substringBeforeLast('.')
-                ?: "Unknown"
+    // 디버그 모드 확인
+    private fun isLoggingEnabled(): Boolean = BuildConfig.DEBUG
 
-        val methodName = callerElement.methodName ?: "unknownMethod"
-        val lineNumber = callerElement.lineNumber
-        val originalFileName = callerElement.fileName ?: "Unknown"
+    /**
+     * 공통 로그 출력 함수
+     * 모든 로그 레벨에서 공통으로 사용되는 로직을 통합합니다
+     */
+    private fun writeLog(
+        level: Int,
+        tag: String,
+        message: String,
+        throwable: Throwable? = null,
+    ) {
+        if (!isLoggingEnabled()) return
 
-        "[$fileName::$methodName ($originalFileName:$lineNumber)] $message"
-    } catch (exception: Exception) {
-        "[LogError:${exception.javaClass.simpleName}] $message"
+        val formattedMessage = buildLogMessage(message)
+
+        when (level) {
+            Log.VERBOSE -> Log.v(tag, formattedMessage)
+            Log.DEBUG -> Log.d(tag, formattedMessage)
+            Log.INFO -> Log.i(tag, formattedMessage)
+            Log.WARN -> Log.w(tag, formattedMessage)
+            Log.ERROR -> Log.e(tag, formattedMessage, throwable)
+        }
     }
-}
 
-/**
- * 디버그 모드인지 확인합니다
- */
-private fun isLoggingEnabled(): Boolean = BuildConfig.DEBUG
+    // Verbose 로그
+    fun v(
+        message: String,
+        tag: String = TAG,
+    ) = writeLog(Log.VERBOSE, tag, message)
 
-// Verbose 로그
-fun logv(
-    message: String,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.v(tag, buildLogMessage(message))
-}
+    // Debug 로그
+    fun d(
+        message: String,
+        tag: String = TAG,
+    ) = writeLog(Log.DEBUG, tag, message)
 
-// Debug 로그
-fun logd(
-    message: String,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.d(tag, buildLogMessage(message))
-}
+    // Info 로그
+    fun i(
+        message: String,
+        tag: String = TAG,
+    ) = writeLog(Log.INFO, tag, message)
 
-// Info 로그
-fun logi(
-    message: String,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.i(tag, buildLogMessage(message))
-}
+    // Warning 로그
+    fun w(
+        message: String,
+        tag: String = TAG,
+    ) = writeLog(Log.WARN, tag, message)
 
-// Warning 로그
-fun logw(
-    message: String,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.w(tag, buildLogMessage(message))
-}
-
-// Error 로그
-fun loge(
-    message: String,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.e(tag, buildLogMessage(message))
-}
-
-// Error 로그 (이름 포함)
-fun loge(
-    name: String,
-    message: String,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.e(tag, buildLogMessage("$name: $message"))
-}
-
-// Error 로그 (예외 포함)
-fun loge(
-    message: String,
-    throwable: Throwable,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.e(tag, buildLogMessage(message), throwable)
-}
-
-// Error 로그 (이름과 예외 모두 포함)
-fun loge(
-    name: String,
-    message: String,
-    throwable: Throwable,
-    tag: String = TAG,
-) {
-    if (!isLoggingEnabled()) return
-    Log.e(tag, buildLogMessage("$name: $message"), throwable)
+    // Error 로그
+    fun e(
+        message: String,
+        throwable: Throwable? = null,
+        name: String? = null,
+        tag: String = TAG,
+    ) {
+        val finalMessage = if (name != null) "$name: $message" else message
+        writeLog(Log.ERROR, tag, finalMessage, throwable)
+    }
 }
