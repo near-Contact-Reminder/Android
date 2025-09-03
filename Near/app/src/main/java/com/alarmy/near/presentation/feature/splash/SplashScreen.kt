@@ -4,19 +4,34 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.alarmy.near.R
 
 @Composable
 fun SplashScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit,
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.checkLoginStatusAndNavigate(
+            onNavigateToLogin = onNavigateToLogin,
+            onNavigateToHome = onNavigateToHome,
+        )
+    }
+
+    SplashContent()
+}
+
+@Composable
+private fun SplashContent() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -24,7 +39,7 @@ fun SplashScreen(
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(id = R.drawable.img_bg),
-            contentDescription = "스플래쉬 배경",
+            contentDescription = stringResource(R.string.near_splash_background),
             contentScale = ContentScale.Crop,
         )
 
@@ -39,5 +54,5 @@ fun SplashScreen(
 @Preview
 @Composable
 fun SplashScreenPreview() {
-    SplashScreen(onNavigateToLogin = {}, onNavigateToHome = {})
+    SplashContent()
 }

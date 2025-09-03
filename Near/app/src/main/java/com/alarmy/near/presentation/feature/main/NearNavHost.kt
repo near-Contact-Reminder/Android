@@ -4,14 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
-import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
+import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
+import com.alarmy.near.presentation.feature.splash.navigation.RouteSplash
+import com.alarmy.near.presentation.feature.splash.navigation.splashNavGraph
 
 @Composable
 internal fun NearNavHost(
@@ -25,20 +28,39 @@ internal fun NearNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = RouteLogin,
+        startDestination = RouteSplash,
     ) {
+
+        // 스플래쉬 화면 NavGraph
+        splashNavGraph(
+            onNavigateToLogin = {
+                navController.navigateToLogin(
+                    navOptions = navOptions {
+                        popUpTo(RouteSplash) { inclusive = true }
+                    }
+                )
+            },
+            onNavigateToHome = {
+                navController.navigateToHome(
+                    navOptions = navOptions {
+                        popUpTo(RouteSplash) { inclusive = true }
+                    }
+                )
+            }
+        )
+
         // 로그인 화면 NavGraph
         loginNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
             onNavigateToHome = {
                 navController.navigateToHome(
-                    navOptions = androidx.navigation.navOptions {
+                    navOptions = navOptions {
                         popUpTo(RouteLogin) { inclusive = true }
                     }
                 )
             }
         )
-        
+
         // 홈 화면 NavGraph
         homeNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
@@ -49,7 +71,7 @@ internal fun NearNavHost(
             onAlarmClick = {},
             onAddContactClick = {},
         )
-        
+
         // 친구 프로필 화면 NavGraph
         friendProfileNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
@@ -57,7 +79,7 @@ internal fun NearNavHost(
                 navController.popBackStack()
             }
         )
-        
+
         // 친구 프로필 편집 화면 NavGraph
         friendProfileEditorNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
