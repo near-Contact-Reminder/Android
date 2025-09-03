@@ -21,11 +21,14 @@ fun SplashScreen(
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.checkLoginStatusAndNavigate(
-            onNavigateToLogin = onNavigateToLogin,
-            onNavigateToHome = onNavigateToHome,
-        )
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is SplashEffect.NavigateToHome -> onNavigateToHome()
+                is SplashEffect.NavigateToLogin -> onNavigateToLogin()
+            }
+        }
     }
+
 
     SplashContent()
 }
