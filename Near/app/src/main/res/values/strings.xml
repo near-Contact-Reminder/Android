@@ -7,6 +7,13 @@
     <string name="common_back_button_description">뒤로 가기</string>
     <string name="common_menu_button_description">메뉴</string>
 
+    <!--  온보딩 (Onboarding)  -->
+    <string name="first_onboarding_title">소중한 사람들과\n더 가까워질 수 있도록</string>
+    <string name="second_onboarding_title">연락처와 카카오톡으로\n챙길 사람 등록하기</string>
+    <string name="third_onboarding_title">챙기고 싶은 날에\n알림 받기</string>
+    <string name="fourth_onboarding_title">오늘도 잘 챙겼는지\n기록 남기기</string>
+    <string name="fifth_onboarding_title">더 잘 챙길 수 있게\n메시지 추천 받기</string>
+
     <!--  로그인 (Login)  -->
     <string name="near_logo">Near 로고</string>
     <string name="near_logo_title">Near 타이틀</string>
