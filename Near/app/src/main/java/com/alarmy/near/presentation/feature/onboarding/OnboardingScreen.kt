@@ -1,0 +1,175 @@
+package com.alarmy.near.presentation.feature.onboarding
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.onboarding.components.OnboardingButton
+import com.alarmy.near.presentation.feature.onboarding.components.PageIndicator
+import com.alarmy.near.presentation.feature.onboarding.model.OnboardingPage
+import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
+
+/**
+ * 온보딩 화면 메인 컴포넌트
+ * 5페이지로 구성된 뷰페이저 형태의 온보딩 화면
+ */
+@Composable
+fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
+    // 온보딩 페이지 데이터
+    val pages =
+        listOf(
+            OnboardingPage(
+                title = stringResource(R.string.first_onboarding_title),
+            ),
+            OnboardingPage(
+                title = stringResource(R.string.second_onboarding_title),
+            ),
+            OnboardingPage(
+                title = stringResource(R.string.third_onboarding_title),
+            ),
+            OnboardingPage(
+                title = stringResource(R.string.fourth_onboarding_title),
+            ),
+            OnboardingPage(
+                title = stringResource(R.string.fifth_onboarding_title),
+            ),
+        )
+
+    // 페이저 상태 관리
+    val pagerState = rememberPagerState(pageCount = { pages.size })
+    val scope = rememberCoroutineScope()
+
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .systemBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        // 뷰페이저
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1f),
+        ) { page ->
+            OnboardingPageContent(
+                page = pages[page],
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+
+        // 페이지 인디케이터
+        PageIndicator(
+            pageCount = pages.size,
+            currentPage = pagerState.currentPage,
+            modifier = Modifier.padding(top = 60.dp, bottom = 32.dp),
+        )
+
+        // 다음/완료 버튼
+        OnboardingButton(
+            currentPage = pagerState.currentPage,
+            totalPages = pages.size,
+            onNextClick = {
+                if (pagerState.currentPage < pages.size - 1) {
+                    scope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
+                } else {
+                    onNavigateToLogin()
+                }
+            },
+        )
+        Spacer(modifier = Modifier.size(24.dp))
+    }
+}
+
+/**
+ * 온보딩 페이지 콘텐츠 컴포넌트
+ * 각 페이지의 제목과 설명을 표시
+ */
+@Composable
+private fun OnboardingPageContent(
+    page: OnboardingPage,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        // 각 온보딩 페이지 타이틀
+        Text(
+            modifier = Modifier.padding(top = 45.dp),
+            text = createAnnotatedText(page.title),
+            textAlign = TextAlign.Center,
+            style =
+                NearTheme.typography.H1_24_BOLD.copy(
+                    fontSize = 20.sp,
+                    lineHeight = 30.sp,
+                ),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+/**
+ * \n 이후 텍스트에 다른 색상을 적용하는 AnnotatedString 생성
+ * 현 페이지에서 \n 이후 텍스트 색상이 다른 규칙이 있습니다.
+ */
+@Composable
+private fun createAnnotatedText(
+    text: String,
+    defaultColor: Color = NearTheme.colors.BLACK_1A1A1A,
+    highlightColor: Color = NearTheme.colors.BLUE01_5AA2E9,
+): AnnotatedString =
+    buildAnnotatedString {
+        val newLineIndex = text.indexOf("\n")
+
+        if (newLineIndex != -1) {
+            // \n 이전 텍스트 (기본 색상)
+            withStyle(style = SpanStyle(color = defaultColor)) {
+                append(text.substring(0, newLineIndex))
+            }
+
+            // \n 이후 텍스트 (강조 색상)
+            withStyle(style = SpanStyle(color = highlightColor)) {
+                append(text.substring(newLineIndex))
+            }
+        } else {
+            // 텍스트에 \n가 없는 경우
+            withStyle(style = SpanStyle(color = defaultColor)) {
+                append(text)
+            }
+        }
+    }
+
+@Preview
+@Composable
+fun OnboardingScreenPreview() {
+    NearTheme {
+        OnboardingScreen(
+            onNavigateToLogin = {},
+        )
+    }
+}
