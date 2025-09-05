@@ -19,6 +19,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 fun OnboardingButton(
     currentPage: Int,
     totalPages: Int,
+    isLoading: Boolean = false,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -31,6 +32,7 @@ fun OnboardingButton(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
         onClick = onNextClick,
+        enabled = !isLoading,
         contentPadding = PaddingValues(vertical = 17.dp),
     ) {
         Text(
