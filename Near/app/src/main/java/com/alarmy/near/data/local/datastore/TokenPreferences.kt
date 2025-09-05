@@ -5,9 +5,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.alarmy.near.data.di.AuthDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,11 +16,9 @@ import javax.inject.Singleton
  * 액세스 토큰과 리프레시 토큰의 저장, 조회, 삭제를 담당
  */
 @Singleton
-class TokenPreferences
-    @Inject
-    constructor(
-        private val dataStore: DataStore<Preferences>,
-    ) {
+class TokenPreferences @Inject constructor(
+    @AuthDataStore private val dataStore: DataStore<Preferences>,
+) {
         private val accessTokenKey = stringPreferencesKey("access_token")
         private val refreshTokenKey = stringPreferencesKey("refresh_token")
         private val expiresAtKey = longPreferencesKey("expires_at")
