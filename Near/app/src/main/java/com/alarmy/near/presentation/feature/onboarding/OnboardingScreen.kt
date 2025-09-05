@@ -30,6 +30,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.onboarding.components.BackgroundArea
 import com.alarmy.near.presentation.feature.onboarding.components.OnboardingButton
@@ -43,7 +44,10 @@ import kotlinx.coroutines.launch
  * 5페이지로 구성된 뷰페이저 형태의 온보딩 화면
  */
 @Composable
-fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
+fun OnboardingScreen(
+    onNavigateToLogin: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+) {
     // 온보딩 페이지 데이터
     val pages =
         listOf(
@@ -118,7 +122,10 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 } else {
-                    onNavigateToLogin()
+                    scope.launch {
+                        viewModel.completeOnboarding()
+                        onNavigateToLogin()
+                    }
                 }
             },
         )
