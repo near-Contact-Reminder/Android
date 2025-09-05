@@ -1,8 +1,10 @@
 package com.alarmy.near.presentation.feature.onboarding
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -42,18 +45,23 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
         listOf(
             OnboardingPage(
                 title = stringResource(R.string.first_onboarding_title),
+                image = R.drawable.img_onboarding_page_first,
             ),
             OnboardingPage(
                 title = stringResource(R.string.second_onboarding_title),
+                image = R.drawable.img_onboarding_page_second,
             ),
             OnboardingPage(
                 title = stringResource(R.string.third_onboarding_title),
+                image = R.drawable.img_onboarding_page_third,
             ),
             OnboardingPage(
                 title = stringResource(R.string.fourth_onboarding_title),
+                image = R.drawable.img_onboarding_page_forth,
             ),
             OnboardingPage(
                 title = stringResource(R.string.fifth_onboarding_title),
+                image = R.drawable.img_onboarding_page_fifth,
             ),
         )
 
@@ -71,11 +79,11 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
         // 뷰페이저
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth(),
         ) { page ->
             OnboardingPageContent(
                 page = pages[page],
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 
@@ -83,7 +91,7 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
         PageIndicator(
             pageCount = pages.size,
             currentPage = pagerState.currentPage,
-            modifier = Modifier.padding(top = 60.dp, bottom = 32.dp),
+            modifier = Modifier.padding(top = 25.dp, bottom = 32.dp),
         )
 
         // 다음/완료 버튼
@@ -114,7 +122,7 @@ private fun OnboardingPageContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(32.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // 각 온보딩 페이지 타이틀
@@ -129,7 +137,13 @@ private fun OnboardingPageContent(
                 ),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Image(
+            painter = painterResource(page.image),
+            contentDescription = null,
+        )
+
     }
 }
 
@@ -164,7 +178,7 @@ private fun createAnnotatedText(
         }
     }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
     NearTheme {
