@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -17,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -79,7 +79,7 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
         // 뷰페이저
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.weight(1f),
         ) { page ->
             OnboardingPageContent(
                 page = pages[page],
@@ -87,12 +87,16 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
             )
         }
 
+        Spacer(modifier = Modifier.size(25.dp))
+
         // 페이지 인디케이터
         PageIndicator(
             pageCount = pages.size,
             currentPage = pagerState.currentPage,
-            modifier = Modifier.padding(top = 25.dp, bottom = 32.dp),
+            modifier = Modifier.padding(),
         )
+
+        Spacer(modifier = Modifier.size(32.dp))
 
         // 다음/완료 버튼
         OnboardingButton(
@@ -122,12 +126,13 @@ private fun OnboardingPageContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(modifier = Modifier.size(45.dp))
+
         // 각 온보딩 페이지 타이틀
         Text(
-            modifier = Modifier.padding(top = 45.dp),
             text = createAnnotatedText(page.title),
             textAlign = TextAlign.Center,
             style =
@@ -137,11 +142,13 @@ private fun OnboardingPageContent(
                 ),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.size(24.dp))
 
         Image(
+            modifier = Modifier.weight(1f),
             painter = painterResource(page.image),
             contentDescription = null,
+            contentScale = ContentScale.Crop,
         )
 
     }
