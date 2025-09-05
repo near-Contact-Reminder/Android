@@ -99,7 +99,6 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
         PageIndicator(
             pageCount = pages.size,
             currentPage = pagerState.currentPage,
-            modifier = Modifier.padding(),
         )
 
         Spacer(modifier = Modifier.size(32.dp))
