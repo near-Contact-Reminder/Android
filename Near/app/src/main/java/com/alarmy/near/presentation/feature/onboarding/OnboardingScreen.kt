@@ -4,11 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -67,19 +69,22 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
             ),
         )
 
+    // 상태바와 네비게이션 바 높이 계산
+    val density = LocalDensity.current
+    val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
+    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+
     // 페이저 상태 관리
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .systemBarsPadding()
+        modifier = Modifier.fillMaxSize(),
     ) {
         BackgroundArea()
-
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(top = statusBarHeightDp, bottom = navigationBarHeightDp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
         // 뷰페이저
@@ -89,7 +94,7 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
         ) { page ->
             OnboardingPageContent(
                 page = pages[page],
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxSize(),
             )
         }
 
@@ -132,7 +137,7 @@ private fun OnboardingPageContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.size(45.dp))
