@@ -1,6 +1,7 @@
 package com.alarmy.near.presentation.feature.onboarding
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.onboarding.components.BackgroundArea
 import com.alarmy.near.presentation.feature.onboarding.components.OnboardingButton
 import com.alarmy.near.presentation.feature.onboarding.components.PageIndicator
 import com.alarmy.near.presentation.feature.onboarding.model.OnboardingPage
@@ -69,13 +71,17 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .systemBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
     ) {
+        BackgroundArea()
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
         // 뷰페이저
         HorizontalPager(
             state = pagerState,
@@ -113,6 +119,7 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
             },
         )
         Spacer(modifier = Modifier.size(24.dp))
+        }
     }
 }
 
