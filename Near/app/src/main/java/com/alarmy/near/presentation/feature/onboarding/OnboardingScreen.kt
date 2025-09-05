@@ -14,6 +14,9 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +51,20 @@ fun OnboardingScreen(
     onNavigateToLogin: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
+    // UI 상태 관찰
+    val uiState by viewModel.uiState.collectAsState()
+    
+    // 사이드 이펙트 처리
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is OnboardingEffect.NavigateToLogin -> {
+                    onNavigateToLogin()
+                }
+            }
+        }
+    }
+    
     // 온보딩 페이지 데이터
     val pages =
         listOf(
@@ -116,16 +133,15 @@ fun OnboardingScreen(
         OnboardingButton(
             currentPage = pagerState.currentPage,
             totalPages = pages.size,
+            isLoading = uiState.isLoading,
             onNextClick = {
                 if (pagerState.currentPage < pages.size - 1) {
                     scope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 } else {
-                    scope.launch {
-                        viewModel.completeOnboarding()
-                        onNavigateToLogin()
-                    }
+                    // 온보딩 완료 시 DataStore에 저장
+                    viewModel.completeOnboarding()
                 }
             },
         )
