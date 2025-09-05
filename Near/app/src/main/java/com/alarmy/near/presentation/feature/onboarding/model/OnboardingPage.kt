@@ -6,4 +6,5 @@ package com.alarmy.near.presentation.feature.onboarding.model
  */
 data class OnboardingPage(
     val title: String,
+    val image: Int,
 )
