@@ -25,7 +25,9 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 @Composable
 fun BackgroundArea() {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(NearTheme.colors.WHITE_FFFFFF),
     ) {
         BackgroundEllipse(
             modifier = Modifier.offset(x = (-78).dp),
@@ -38,6 +40,7 @@ fun BackgroundArea() {
         )
     }
 }
+
 @Composable
 fun BackgroundEllipse(
     modifier: Modifier = Modifier,
