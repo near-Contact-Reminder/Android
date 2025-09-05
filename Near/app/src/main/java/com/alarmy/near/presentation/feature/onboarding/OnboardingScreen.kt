@@ -180,21 +180,23 @@ private fun createAnnotatedText(
 
         if (newLineIndex != -1) {
             // \n 이전 텍스트 (기본 색상)
-            withStyle(style = SpanStyle(color = defaultColor)) {
-                append(text.substring(0, newLineIndex))
-            }
-
+            appendStyledText(text.substring(0, newLineIndex), defaultColor)
             // \n 이후 텍스트 (강조 색상)
-            withStyle(style = SpanStyle(color = highlightColor)) {
-                append(text.substring(newLineIndex))
-            }
+            appendStyledText(text.substring(newLineIndex), highlightColor)
         } else {
             // 텍스트에 \n가 없는 경우
-            withStyle(style = SpanStyle(color = defaultColor)) {
-                append(text)
-            }
+            appendStyledText(text, defaultColor)
         }
     }
+
+/**
+ * 지정된 색상으로 텍스트를 추가하는 함수
+ */
+private fun AnnotatedString.Builder.appendStyledText(text: String, color: Color) {
+    withStyle(style = SpanStyle(color = color)) {
+        append(text)
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
