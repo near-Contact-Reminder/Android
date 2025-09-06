@@ -36,7 +36,7 @@ fun BackgroundArea() {
         BackgroundEllipse(
             modifier = Modifier.offset(x = 201.dp, y = 155.dp),
             opacity = 0.2f,
-            color = Color(0xFF4E3EC7),
+            color = NearTheme.colors.PURPLE01_4E3EC7,
         )
     }
 }
@@ -44,7 +44,7 @@ fun BackgroundArea() {
 @Composable
 fun BackgroundEllipse(
     modifier: Modifier = Modifier,
-    color: Color = Color(0xFF58ABEC),
+    color: Color = NearTheme.colors.BLUE03_58ABEC,
     blurRadius: Float = 200f,
     size: Dp = 251.dp,
     opacity: Float = 0.3f,
