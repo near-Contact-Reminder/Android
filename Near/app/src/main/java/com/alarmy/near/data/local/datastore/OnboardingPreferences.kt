@@ -18,14 +18,16 @@ import javax.inject.Singleton
 class OnboardingPreferences @Inject constructor(
     @OnboardingDataStore private val dataStore: DataStore<Preferences>,
 ) {
-    private val onboardingCompletedKey = booleanPreferencesKey("onboarding_completed")
+    companion object {
+        private val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
+    }
 
     /**
      * 온보딩 완료 여부를 확인하는 Flow
      * true: 온보딩 완료됨, false: 온보딩 미완료
      */
     val isOnboardingCompleted: Flow<Boolean> = dataStore.data.map { preferences ->
-        preferences[onboardingCompletedKey] ?: false
+        preferences[ONBOARDING_COMPLETED_KEY] ?: false
     }
 
     /**
@@ -33,7 +35,7 @@ class OnboardingPreferences @Inject constructor(
      */
     suspend fun setOnboardingCompleted(completed: Boolean) {
         dataStore.edit { preferences ->
-            preferences[onboardingCompletedKey] = completed
+            preferences[ONBOARDING_COMPLETED_KEY] = completed
         }
     }
 
