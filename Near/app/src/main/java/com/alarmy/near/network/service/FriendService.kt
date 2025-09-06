@@ -1,6 +1,5 @@
 package com.alarmy.near.network.service
 
-import androidx.room.Delete
 import com.alarmy.near.network.request.FriendRequest
 import com.alarmy.near.network.response.CommonMessageEntity
 import com.alarmy.near.network.response.FriendEntity
@@ -8,6 +7,7 @@ import com.alarmy.near.network.response.FriendRecordEntity
 import com.alarmy.near.network.response.FriendSummaryEntity
 import com.alarmy.near.network.response.MonthlyFriendEntity
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -31,7 +31,7 @@ interface FriendService {
         @Body friendRequest: FriendRequest,
     ): FriendEntity
 
-    @Delete
+    @DELETE("/friend/{friendId}")
     suspend fun deleteFriend(
         @Path("friendId") friendId: String,
     )
