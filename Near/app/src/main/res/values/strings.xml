@@ -13,6 +13,8 @@
     <string name="third_onboarding_title">챙기고 싶은 날에\n알림 받기</string>
     <string name="fourth_onboarding_title">오늘도 잘 챙겼는지\n기록 남기기</string>
     <string name="fifth_onboarding_title">더 잘 챙길 수 있게\n메시지 추천 받기</string>
+    <string name="onboarding_auth_button_text">로그인/회원가입</string>
+    <string name="onboarding_next_button_text">다음</string>
 
     <!--  로그인 (Login)  -->
     <string name="near_logo">Near 로고</string>
