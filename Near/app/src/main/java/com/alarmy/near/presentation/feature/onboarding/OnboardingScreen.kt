@@ -54,7 +54,7 @@ fun OnboardingScreen(
 ) {
     // UI 상태 관찰
     val uiState by viewModel.uiState.collectAsState()
-    
+
     // 사이드 이펙트 처리
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -169,7 +169,7 @@ private fun OnboardingPageContent(
 
         // 각 온보딩 페이지 타이틀
         Text(
-            text = createAnnotatedText(page.title),
+            text = createAnnotatedText(stringResource(page.titleResId)),
             textAlign = TextAlign.Center,
             style =
                 NearTheme.typography.H1_24_BOLD.copy(
