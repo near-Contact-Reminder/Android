@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -24,7 +26,7 @@ fun OnboardingButton(
     modifier: Modifier = Modifier,
 ) {
     val isLastPage = currentPage == totalPages - 1
-    val buttonText = if (isLastPage) "로그인/회원가입" else "다음"
+    val buttonText = if (isLastPage) stringResource(R.string.onboarding_auth_button_text) else stringResource(R.string.onboarding_next_button_text)
 
     NearBasicButton(
         modifier =
