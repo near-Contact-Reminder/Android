@@ -99,7 +99,7 @@ internal fun NearNavHost(
             onNavigateToHome = {
                 navController.navigateToHome(
                     navOptions =
-                        androidx.navigation.navOptions {
+                        navOptions {
                             popUpTo(RouteLogin) { inclusive = true }
                         },
                     navOptions = navOptions {
