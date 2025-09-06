@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,31 +65,32 @@ fun OnboardingScreen(
             }
         }
     }
-    
-    // 온보딩 페이지 데이터
-    val pages =
+
+    // 온보딩 페이지 데이터 - remember로 성능 최적화
+    val pages = remember {
         listOf(
             OnboardingPage(
-                title = stringResource(R.string.first_onboarding_title),
+                titleResId = R.string.first_onboarding_title,
                 image = R.drawable.img_onboarding_page_first,
             ),
             OnboardingPage(
-                title = stringResource(R.string.second_onboarding_title),
+                titleResId = R.string.second_onboarding_title,
                 image = R.drawable.img_onboarding_page_second,
             ),
             OnboardingPage(
-                title = stringResource(R.string.third_onboarding_title),
+                titleResId = R.string.third_onboarding_title,
                 image = R.drawable.img_onboarding_page_third,
             ),
             OnboardingPage(
-                title = stringResource(R.string.fourth_onboarding_title),
+                titleResId = R.string.fourth_onboarding_title,
                 image = R.drawable.img_onboarding_page_forth,
             ),
             OnboardingPage(
-                title = stringResource(R.string.fifth_onboarding_title),
+                titleResId = R.string.fifth_onboarding_title,
                 image = R.drawable.img_onboarding_page_fifth,
             ),
         )
+    }
 
     // 상태바와 네비게이션 바 높이 계산
     val density = LocalDensity.current
