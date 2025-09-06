@@ -2,7 +2,7 @@ package com.alarmy.near.presentation.feature.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alarmy.near.data.local.datastore.OnboardingPreferences
+import com.alarmy.near.data.repository.OnBoardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,11 +14,10 @@ import javax.inject.Inject
 
 /**
  * 온보딩 화면의 상태와 로직을 관리하는 ViewModel
- *  * 온보딩 완료 상태를 DataStore에 저장
  */
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val onboardingPreferences: OnboardingPreferences,
+    private val onBoardingRepository: OnBoardingRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
@@ -34,7 +33,7 @@ class OnboardingViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             runCatching {
-                onboardingPreferences.markOnboardingAsCompleted()
+                onBoardingRepository.markOnboardingAsCompleted()
             }.onSuccess {
                 _effect.emit(OnboardingEffect.NavigateToLogin)
             }.onFailure { exception ->
