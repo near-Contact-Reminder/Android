@@ -40,9 +40,7 @@ fun OnboardingButton(
         Text(
             text = buttonText,
             style =
-                NearTheme.typography.B1_16_BOLD.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                NearTheme.typography.B1_16_BOLD,
         )
     }
 }
