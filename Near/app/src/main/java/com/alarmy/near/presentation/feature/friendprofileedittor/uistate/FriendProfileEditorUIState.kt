@@ -29,20 +29,7 @@ fun Friend.toUiModel(): FriendProfileEditorUIState =
     FriendProfileEditorUIState(
         name = InputField(name),
         relation = relation,
-        contactFrequency =
-            contactFrequency.copy(
-                dayOfWeek =
-                    when (contactFrequency.dayOfWeek) {
-                        "MONDAY" -> "월요일"
-                        "TUESDAY" -> "화요일"
-                        "WEDNESDAY" -> "수요일"
-                        "THURSDAY" -> "목요일"
-                        "FRIDAY" -> "금요일"
-                        "SATURDAY" -> "토요일"
-                        "SUNDAY" -> "일요일"
-                        else -> IllegalStateException("없는 타입 입니다.")
-                    } as String,
-            ),
+        contactFrequency = contactFrequency,
         birthday = InputField(birthday),
         anniversaries = anniversaryList.map { it.toUiModel() },
         memo = InputField(memo),
@@ -64,19 +51,7 @@ fun FriendProfileEditorUIState.toModel(
         name = name.value,
         relation = relation,
         contactFrequency =
-            contactFrequency.copy(
-                dayOfWeek =
-                    when (contactFrequency.dayOfWeek) {
-                        "월요일" -> "MONDAY"
-                        "화요일" -> "TUESDAY"
-                        "수요일" -> "WEDNESDAY"
-                        "목요일" -> "THURSDAY"
-                        "금요일" -> "FRIDAY"
-                        "토요일" -> "SATURDAY"
-                        "일요일" -> "SUNDAY"
-                        else -> IllegalStateException("없는 타입 입니다.")
-                    } as String,
-            ),
+        contactFrequency,
         birthday = birthday.value?.replace(".", "-"),
         anniversaryList =
             anniversaries.map {
