@@ -52,6 +52,7 @@ import com.alarmy.near.presentation.feature.friendprofileedittor.component.Remin
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
+import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
 import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
@@ -138,9 +139,6 @@ fun FriendProfileEditorScreen(
     onEditorExit: () -> Unit = {},
     onCloseDialog: () -> Unit = {},
 ) {
-    val density = LocalDensity.current
-    val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
     val showBottomSheet = remember { mutableStateOf(false) }
     if (showBottomSheet.value) {
         ReminderIntervalBottomSheet(onDismissRequest = {
@@ -160,342 +158,73 @@ fun FriendProfileEditorScreen(
             },
         )
     }
-    LazyColumn(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(NearTheme.colors.WHITE_FFFFFF)
-                .padding(top = statusBarHeightDp, bottom = navigationBarHeightDp),
-    ) {
-        item {
-            NearTopAppbar(
-                modifier = Modifier.padding(end = 24.dp),
-                title = "",
-                onClickBackButton = onClickBackButton,
-                menuButton = {
-                    Text(
-                        modifier =
-                            Modifier.onNoRippleClick(onClick = {
-                                onSubmit()
-                            }),
-                        text = stringResource(R.string.friend_profile_editor_edit_complete_text),
-                        style = NearTheme.typography.B1_16_BOLD,
-                        color = NearTheme.colors.BLACK_1A1A1A,
-                    )
-                },
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(start = 24.dp, end = 20.dp),
-            ) {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth(),
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = 16.dp),
-                        text =
-                            buildAnnotatedString {
-                                append(stringResource(R.string.friend_profile_editor_name))
-                                withStyle(
-                                    style =
-                                        SpanStyle(
-                                            color = NearTheme.colors.BLUE01_5AA2E9,
-                                        ),
-                                ) {
-                                    append("*")
-                                }
-                            },
-                        textAlign = TextAlign.Center,
-                        style = NearTheme.typography.B2_14_MEDIUM,
-                        color = NearTheme.colors.GRAY01_888888,
-                    )
-                    Spacer(modifier = Modifier.width(55.dp))
-                    NearTextField(
-                        modifier = Modifier.weight(1f),
-                        value = friendProfileEditorUIState.name.value,
-                        onValueChange = {
-                            onNameChanged(it)
-                        },
-                    )
-                }
-                if (friendProfileEditorUIState.name.error) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        stringResource(R.string.friend_profile_editor_enter_name),
-                        style = NearTheme.typography.FC_12_MEDIUM,
-                        color = NearTheme.colors.NEGATIVE_F04E4E,
-                    )
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        stringResource(R.string.friend_profile_editor_relation),
-                        style = NearTheme.typography.B2_14_MEDIUM,
-                        color = NearTheme.colors.GRAY01_888888,
-                    )
-                    Spacer(modifier = Modifier.width(72.dp))
-                    Row(
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .padding(end = 35.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            NearSmallRadioButton(
-                                selected = friendProfileEditorUIState.relation == Relation.FRIEND,
-                                onClick = {
-                                    onRelationChanged(Relation.FRIEND)
-                                },
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(R.string.friend_profile_editor_relation_friend),
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.BLACK_1A1A1A,
-                            )
-                        }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            NearSmallRadioButton(
-                                selected = friendProfileEditorUIState.relation == Relation.FAMILY,
-                                onClick = {
-                                    onRelationChanged(Relation.FAMILY)
-                                },
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(R.string.friend_profile_editor_relation_family),
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.BLACK_1A1A1A,
-                            )
-                        }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            NearSmallRadioButton(
-                                selected = friendProfileEditorUIState.relation == Relation.ACQUAINTANCE,
-                                onClick = { onRelationChanged(Relation.ACQUAINTANCE) },
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(R.string.friend_profile_editor_relation_acquaintance),
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.BLACK_1A1A1A,
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(33.dp))
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        stringResource(R.string.friend_profile_editor_contact_period),
-                        style = NearTheme.typography.B2_14_MEDIUM,
-                        color = NearTheme.colors.GRAY01_888888,
-                    )
-                    Spacer(modifier = Modifier.width(35.dp))
-                    Surface(
-                        modifier =
-                            modifier
-                                .weight(1f)
-                                .onNoRippleClick({
-                                    showBottomSheet.value = true
+    NearFrame(modifier = modifier) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item {
+                NearTopAppbar(
+                    modifier = Modifier.padding(end = 24.dp),
+                    title = "",
+                    onClickBackButton = onClickBackButton,
+                    menuButton = {
+                        Text(
+                            modifier =
+                                Modifier.onNoRippleClick(onClick = {
+                                    onSubmit()
                                 }),
-                        shape = RoundedCornerShape(12.dp),
-                        border =
-                            BorderStroke(
-                                width = 1.dp,
-                                color = NearTheme.colors.GRAY03_EBEBEB,
-                            ),
-                        color = NearTheme.colors.WHITE_FFFFFF,
-                    ) {
-                        Row(
-                            modifier =
-                                Modifier.padding(
-                                    start = 16.dp,
-                                    end = 12.dp,
-                                    top = 14.dp,
-                                    bottom = 14.dp,
-                                ),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                text =
-                                    stringResource(friendProfileEditorUIState.contactFrequency.reminderInterval.labelRes) +
-                                        stringResource(
-                                            R.string.friend_profile_editor_contact_period_format,
-                                            stringResource(friendProfileEditorUIState.contactFrequency.dayOfWeek.resId),
-                                        ),
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.BLACK_1A1A1A,
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_24_down),
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val birthdayDatePickerState = remember { mutableStateOf(false) }
-                    val datePickerState =
-                        rememberDatePickerState()
-                    if (birthdayDatePickerState.value) {
-                        NearDatePicker(
-                            datePickerState = datePickerState,
-                            onDismiss = { birthdayDatePickerState.value = false },
-                            onDateSelected = {
-                                it?.let {
-                                    onBirthdayChanged(it)
-                                }
-                            },
+                            text = stringResource(R.string.friend_profile_editor_edit_complete_text),
+                            style = NearTheme.typography.B1_16_BOLD,
+                            color = NearTheme.colors.BLACK_1A1A1A,
                         )
-                    }
-                    Text(
-                        stringResource(R.string.friend_profile_editor_birthday),
-                        style = NearTheme.typography.B2_14_MEDIUM,
-                        color = NearTheme.colors.GRAY01_888888,
-                    )
-                    Spacer(modifier = Modifier.width(62.dp))
-                    Surface(
-                        modifier =
-                            modifier
-                                .weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        border =
-                            BorderStroke(
-                                width = 1.dp,
-                                color = NearTheme.colors.GRAY03_EBEBEB,
-                            ),
-                        color = NearTheme.colors.WHITE_FFFFFF,
-                    ) {
-                        Row(
-                            modifier =
-                                Modifier
-                                    .padding(
-                                        start = 16.dp,
-                                        end = 12.dp,
-                                        top = 14.dp,
-                                        bottom = 14.dp,
-                                    ).onNoRippleClick({
-                                        birthdayDatePickerState.value = true
-                                    }),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                friendProfileEditorUIState.birthday.value ?: stringResource(R.string.friend_profile_editor_select_date),
-                                style = NearTheme.typography.B2_14_MEDIUM,
-                                color = NearTheme.colors.BLACK_1A1A1A,
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_24_down),
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = stringResource(R.string.friend_profile_editor_anniversary),
-                        style = NearTheme.typography.B2_14_MEDIUM,
-                        color = NearTheme.colors.GRAY01_888888,
-                    )
-                    Text(
-                        modifier =
-                            Modifier.onNoRippleClick(onClick = {
-                                onAddAnniversary()
-                            }),
-                        text = stringResource(R.string.friend_profile_editor_anniversary_add),
-                        style = NearTheme.typography.B2_14_MEDIUM,
-                        color = NearTheme.colors.BLUE01_5AA2E9,
-                    )
-                }
+                    },
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-        if (friendProfileEditorUIState.anniversaries.isNotEmpty()) {
-            items(
-                count = friendProfileEditorUIState.anniversaries.size,
-            ) { index ->
                 Column(
                     modifier =
                         Modifier
-                            .background(color = NearTheme.colors.BG02_F4F9FD)
-                            .padding(
-                                PaddingValues(
-                                    top = 20.dp,
-                                    bottom = 32.dp,
-                                    start = 24.dp,
-                                    end = 20.dp,
-                                ),
-                            ),
+                            .fillMaxWidth()
+                            .padding(start = 24.dp, end = 20.dp),
                 ) {
-                    val anniversaryDatePickerState = remember { mutableStateOf(false) }
-                    val datePickerState =
-                        rememberDatePickerState()
-                    if (anniversaryDatePickerState.value) {
-                        NearDatePicker(
-                            datePickerState = datePickerState,
-                            onDismiss = { anniversaryDatePickerState.value = false },
-                            onDateSelected = {
-                                it?.let {
-                                    onAnniversaryDateSelected(index, it)
-                                }
-                            },
-                        )
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                    ) {
                         Text(
-                            text = stringResource(R.string.friend_profile_editor_anniversary_name),
+                            modifier = Modifier.padding(top = 16.dp),
+                            text =
+                                buildAnnotatedString {
+                                    append(stringResource(R.string.friend_profile_editor_name))
+                                    withStyle(
+                                        style =
+                                            SpanStyle(
+                                                color = NearTheme.colors.BLUE01_5AA2E9,
+                                            ),
+                                    ) {
+                                        append("*")
+                                    }
+                                },
+                            textAlign = TextAlign.Center,
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )
-                        Spacer(modifier = Modifier.width(23.dp))
+                        Spacer(modifier = Modifier.width(55.dp))
                         NearTextField(
                             modifier = Modifier.weight(1f),
-                            value = friendProfileEditorUIState.anniversaries[index].title.value,
+                            value = friendProfileEditorUIState.name.value,
                             onValueChange = {
-                                onAnniversaryNameChange(index, it)
+                                onNameChanged(it)
                             },
                         )
                     }
-                    if (friendProfileEditorUIState.anniversaries[index].title.error) {
+                    if (friendProfileEditorUIState.name.error) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            stringResource(R.string.friend_profile_editor_name_hint_text),
+                            stringResource(R.string.friend_profile_editor_enter_name),
                             style = NearTheme.typography.FC_12_MEDIUM,
                             color = NearTheme.colors.NEGATIVE_F04E4E,
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
                     Row(
                         modifier =
                             Modifier
@@ -503,17 +232,83 @@ fun FriendProfileEditorScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            stringResource(R.string.friend_profile_editor_date),
+                            stringResource(R.string.friend_profile_editor_relation),
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )
-                        Spacer(modifier = Modifier.width(62.dp))
+                        Spacer(modifier = Modifier.width(72.dp))
+                        Row(
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .padding(end = 35.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                NearSmallRadioButton(
+                                    selected = friendProfileEditorUIState.relation == Relation.FRIEND,
+                                    onClick = {
+                                        onRelationChanged(Relation.FRIEND)
+                                    },
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.friend_profile_editor_relation_friend),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                NearSmallRadioButton(
+                                    selected = friendProfileEditorUIState.relation == Relation.FAMILY,
+                                    onClick = {
+                                        onRelationChanged(Relation.FAMILY)
+                                    },
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.friend_profile_editor_relation_family),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                NearSmallRadioButton(
+                                    selected = friendProfileEditorUIState.relation == Relation.ACQUAINTANCE,
+                                    onClick = { onRelationChanged(Relation.ACQUAINTANCE) },
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.friend_profile_editor_relation_acquaintance),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(33.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            stringResource(R.string.friend_profile_editor_contact_period),
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Spacer(modifier = Modifier.width(35.dp))
                         Surface(
                             modifier =
-                                modifier
+                                Modifier
                                     .weight(1f)
-                                    .onNoRippleClick(onClick = {
-                                        anniversaryDatePickerState.value = true
+                                    .onNoRippleClick({
+                                        showBottomSheet.value = true
                                     }),
                             shape = RoundedCornerShape(12.dp),
                             border =
@@ -535,7 +330,77 @@ fun FriendProfileEditorScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Text(
-                                    friendProfileEditorUIState.anniversaries[index].date.value
+                                    text =
+                                        stringResource(friendProfileEditorUIState.contactFrequency.reminderInterval.labelRes) +
+                                            stringResource(
+                                                R.string.friend_profile_editor_contact_period_format,
+                                                stringResource(friendProfileEditorUIState.contactFrequency.dayOfWeek.resId),
+                                            ),
+                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                    color = NearTheme.colors.BLACK_1A1A1A,
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_24_down),
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val birthdayDatePickerState = remember { mutableStateOf(false) }
+                        val datePickerState =
+                            rememberDatePickerState()
+                        if (birthdayDatePickerState.value) {
+                            NearDatePicker(
+                                datePickerState = datePickerState,
+                                onDismiss = { birthdayDatePickerState.value = false },
+                                onDateSelected = {
+                                    it?.let {
+                                        onBirthdayChanged(it)
+                                    }
+                                },
+                            )
+                        }
+                        Text(
+                            stringResource(R.string.friend_profile_editor_birthday),
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Spacer(modifier = Modifier.width(62.dp))
+                        Surface(
+                            modifier =
+                                Modifier
+                                    .weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            border =
+                                BorderStroke(
+                                    width = 1.dp,
+                                    color = NearTheme.colors.GRAY03_EBEBEB,
+                                ),
+                            color = NearTheme.colors.WHITE_FFFFFF,
+                        ) {
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .padding(
+                                            start = 16.dp,
+                                            end = 12.dp,
+                                            top = 14.dp,
+                                            bottom = 14.dp,
+                                        ).onNoRippleClick({
+                                            birthdayDatePickerState.value = true
+                                        }),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(
+                                    friendProfileEditorUIState.birthday.value
                                         ?: stringResource(R.string.friend_profile_editor_select_date),
                                     style = NearTheme.typography.B2_14_MEDIUM,
                                     color = NearTheme.colors.BLACK_1A1A1A,
@@ -548,52 +413,182 @@ fun FriendProfileEditorScreen(
                         }
                     }
                     Spacer(modifier = Modifier.height(32.dp))
-                    Text(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .onNoRippleClick(
-                                    onClick = {
-                                        onRemoveAnniversary(index)
-                                    },
-                                ),
-                        textAlign = TextAlign.End,
-                        text = stringResource(R.string.friend_profile_editor_delete),
-                        textDecoration = TextDecoration.Underline,
-                        color = NearTheme.colors.GRAY01_888888,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.friend_profile_editor_anniversary),
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                        Text(
+                            modifier =
+                                Modifier.onNoRippleClick(onClick = {
+                                    onAddAnniversary()
+                                }),
+                            text = stringResource(R.string.friend_profile_editor_anniversary_add),
+                            style = NearTheme.typography.B2_14_MEDIUM,
+                            color = NearTheme.colors.BLUE01_5AA2E9,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-        }
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-            ) {
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = stringResource(R.string.friend_profile_editor_memo),
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY01_888888,
-                )
-                Spacer(modifier = Modifier.width(23.dp))
-                NearLimitedTextField(
+            if (friendProfileEditorUIState.anniversaries.isNotEmpty()) {
+                items(
+                    count = friendProfileEditorUIState.anniversaries.size,
+                ) { index ->
+                    Column(
+                        modifier =
+                            Modifier
+                                .background(color = NearTheme.colors.BG02_F4F9FD)
+                                .padding(
+                                    PaddingValues(
+                                        top = 20.dp,
+                                        bottom = 32.dp,
+                                        start = 24.dp,
+                                        end = 20.dp,
+                                    ),
+                                ),
+                    ) {
+                        val anniversaryDatePickerState = remember { mutableStateOf(false) }
+                        val datePickerState =
+                            rememberDatePickerState()
+                        if (anniversaryDatePickerState.value) {
+                            NearDatePicker(
+                                datePickerState = datePickerState,
+                                onDismiss = { anniversaryDatePickerState.value = false },
+                                onDateSelected = {
+                                    it?.let {
+                                        onAnniversaryDateSelected(index, it)
+                                    }
+                                },
+                            )
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = stringResource(R.string.friend_profile_editor_anniversary_name),
+                                style = NearTheme.typography.B2_14_MEDIUM,
+                                color = NearTheme.colors.GRAY01_888888,
+                            )
+                            Spacer(modifier = Modifier.width(23.dp))
+                            NearTextField(
+                                modifier = Modifier.weight(1f),
+                                value = friendProfileEditorUIState.anniversaries[index].title.value,
+                                onValueChange = {
+                                    onAnniversaryNameChange(index, it)
+                                },
+                            )
+                        }
+                        if (friendProfileEditorUIState.anniversaries[index].title.error) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                stringResource(R.string.friend_profile_editor_name_hint_text),
+                                style = NearTheme.typography.FC_12_MEDIUM,
+                                color = NearTheme.colors.NEGATIVE_F04E4E,
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                stringResource(R.string.friend_profile_editor_date),
+                                style = NearTheme.typography.B2_14_MEDIUM,
+                                color = NearTheme.colors.GRAY01_888888,
+                            )
+                            Spacer(modifier = Modifier.width(62.dp))
+                            Surface(
+                                modifier =
+                                    Modifier
+                                        .weight(1f)
+                                        .onNoRippleClick(onClick = {
+                                            anniversaryDatePickerState.value = true
+                                        }),
+                                shape = RoundedCornerShape(12.dp),
+                                border =
+                                    BorderStroke(
+                                        width = 1.dp,
+                                        color = NearTheme.colors.GRAY03_EBEBEB,
+                                    ),
+                                color = NearTheme.colors.WHITE_FFFFFF,
+                            ) {
+                                Row(
+                                    modifier =
+                                        Modifier.padding(
+                                            start = 16.dp,
+                                            end = 12.dp,
+                                            top = 14.dp,
+                                            bottom = 14.dp,
+                                        ),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Text(
+                                        friendProfileEditorUIState.anniversaries[index].date.value
+                                            ?: stringResource(R.string.friend_profile_editor_select_date),
+                                        style = NearTheme.typography.B2_14_MEDIUM,
+                                        color = NearTheme.colors.BLACK_1A1A1A,
+                                    )
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_24_down),
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Text(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .onNoRippleClick(
+                                        onClick = {
+                                            onRemoveAnniversary(index)
+                                        },
+                                    ),
+                            textAlign = TextAlign.End,
+                            text = stringResource(R.string.friend_profile_editor_delete),
+                            textDecoration = TextDecoration.Underline,
+                            color = NearTheme.colors.GRAY01_888888,
+                        )
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+                Row(
                     modifier =
                         Modifier
-                            .weight(1f)
-                            .height(180.dp),
-                    value = friendProfileEditorUIState.memo.value ?: "",
-                    onValueChange = {
-                        onMemoChanged(it)
-                    },
-                    placeHolderText =
-                        stringResource(R.string.friend_profile_editor_memo_default_text),
-                    maxTextCount = 100,
-                )
-                Spacer(modifier = Modifier.height(80.dp))
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = stringResource(R.string.friend_profile_editor_memo),
+                        style = NearTheme.typography.B2_14_MEDIUM,
+                        color = NearTheme.colors.GRAY01_888888,
+                    )
+                    Spacer(modifier = Modifier.width(23.dp))
+                    NearLimitedTextField(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .height(180.dp),
+                        value = friendProfileEditorUIState.memo.value ?: "",
+                        onValueChange = {
+                            onMemoChanged(it)
+                        },
+                        placeHolderText =
+                            stringResource(R.string.friend_profile_editor_memo_default_text),
+                        maxTextCount = 100,
+                    )
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
         }
     }
