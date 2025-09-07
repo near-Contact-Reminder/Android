@@ -69,12 +69,14 @@ class FriendProfileViewModel
                     _friendShipRecordStateFlow.update {
                         it.copy(
                             records = records.filter { record -> record.isChecked },
+                            isEmpty = records.isEmpty(),
                             isLoading = false,
                         )
                     }
                 }.catch { error ->
                     _friendShipRecordStateFlow.update {
                         it.copy(
+                            isEmpty = true,
                             isLoading = false,
                         )
                     }
