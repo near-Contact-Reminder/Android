@@ -1,6 +1,7 @@
 package com.alarmy.near.network.di
 
 import com.alarmy.near.BuildConfig
+import com.alarmy.near.network.auth.TestTokenInterceptor
 import com.alarmy.near.network.auth.TokenAuthenticator
 import com.alarmy.near.network.auth.TokenInterceptor
 import dagger.Module
@@ -34,12 +35,14 @@ object NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor,
         tokenInterceptor: TokenInterceptor,
         tokenAuthenticator: TokenAuthenticator,
+        testTokenInterceptor: TestTokenInterceptor,
     ): OkHttpClient =
         OkHttpClient
             .Builder()
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(tokenInterceptor)
-            .authenticator(tokenAuthenticator)
+            .addInterceptor(testTokenInterceptor)
+//            .addInterceptor(tokenInterceptor)
+//            .authenticator(tokenAuthenticator)
             .build()
 
     @Provides

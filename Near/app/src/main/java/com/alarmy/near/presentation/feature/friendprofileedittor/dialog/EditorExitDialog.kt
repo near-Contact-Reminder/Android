@@ -6,8 +6,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -20,27 +22,26 @@ internal fun EditorExitDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         title = {
-            Text(text = "수정을 그만두시나요?")
+            Text(text = stringResource(R.string.editor_exit_title))
         },
         text = {
             Text(
                 text =
-                    "화면을 나가면 \n" +
-                        "수정 내용은 저장되지 않아요.",
+                    stringResource(R.string.editor_exit_content),
             )
         },
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
             ) {
-                Text("확인")
+                Text(stringResource(R.string.editor_exit_confirm))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismissRequest,
             ) {
-                Text("취소")
+                Text(stringResource(R.string.editor_exit_dismiss))
             }
         },
         shape = RoundedCornerShape(24.dp),

@@ -1,7 +1,10 @@
 package com.alarmy.near.data.repository
 
 import com.alarmy.near.data.mapper.toModel
-import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.data.mapper.toRequest
+import com.alarmy.near.model.Friend
+import com.alarmy.near.model.FriendRecord
+import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
 import com.alarmy.near.network.service.FriendService
 import kotlinx.coroutines.flow.Flow
@@ -29,5 +32,35 @@ class DefaultFriendRepository
                         it.toModel()
                     },
                 )
+            }
+
+        override fun fetchFriendById(friendId: String): Flow<Friend> =
+            flow {
+                emit(friendService.fetchFriendById(friendId).toModel())
+            }
+
+        override fun updateFriend(
+            friendId: String,
+            friend: Friend,
+        ): Flow<Friend> =
+            flow {
+                emit(friendService.updateFriend(friendId, friend.toRequest()).toModel())
+            }
+
+        override fun deleteFriend(friendId: String): Flow<Unit> =
+            flow {
+                friendService.deleteFriend(friendId)
+                emit(Unit)
+            }
+
+        override fun fetchFriendRecord(friendId: String): Flow<List<FriendRecord>> =
+            flow {
+                emit(friendService.fetchFriendRecord(friendId).map { it.toModel() })
+            }
+
+        override fun recordContact(friendId: String): Flow<String> =
+            flow {
+                val response = friendService.recordContact(friendId)
+                emit(response.message) // CommonMessageEntity.message 라고 가정
             }
     }

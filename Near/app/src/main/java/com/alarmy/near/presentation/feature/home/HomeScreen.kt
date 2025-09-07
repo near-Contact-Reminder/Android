@@ -22,8 +22,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,11 +50,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
-import com.alarmy.near.model.ContactFrequency
-import com.alarmy.near.model.FriendSummary
+import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
+import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
 import com.alarmy.near.model.monthly.MonthlyFriendType
 import com.alarmy.near.presentation.feature.home.component.MyContacts
+import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenu
+import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenuItem
 import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
@@ -311,24 +311,16 @@ internal fun HomeScreen(
                             painter = painterResource(R.drawable.ic_32_menu),
                             contentDescription = stringResource(R.string.home_my_people_setting),
                         )
-                        DropdownMenu(
-                            modifier = Modifier.background(color = NearTheme.colors.WHITE_FFFFFF),
+                        NearDropdownMenu(
                             expanded = dropdownState.value,
-                            shape = RoundedCornerShape(12.dp),
                             onDismissRequest = { dropdownState.value = false },
                         ) {
-                            DropdownMenuItem(
+                            NearDropdownMenuItem(
                                 onClick = {
                                     // TODO 연락처 화면 이동
                                     dropdownState.value = false
                                 },
-                                text = {
-                                    Text(
-                                        stringResource(R.string.home_menu_text_add_friend),
-                                        style = NearTheme.typography.B2_14_MEDIUM,
-                                        color = NearTheme.colors.BLACK_1A1A1A,
-                                    )
-                                },
+                                text = stringResource(R.string.home_menu_text_add_friend),
                             )
                         }
                     }
@@ -388,7 +380,7 @@ internal fun HomeScreenPreview() {
                         profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
                         lastContactedAt = "2025-07-16",
                         isContacted = false,
-                        contactFrequency = ContactFrequency.HIGH,
+                        contactFrequencyLevel = ContactFrequencyLevel.HIGH,
                     )
                 },
             monthlyFriends =

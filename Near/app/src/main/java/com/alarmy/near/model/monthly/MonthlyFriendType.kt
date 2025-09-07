@@ -3,6 +3,7 @@ package com.alarmy.near.model.monthly
 import androidx.annotation.DrawableRes
 import com.alarmy.near.R
 
+// TODO Drawable Res UI-Layer 이동
 enum class MonthlyFriendType(
     @param:DrawableRes val imageSrc: Int,
 ) {
