@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,6 +67,8 @@ fun FriendProfileEditorRoute(
 ) {
     val friendProfileEditorUIState = viewModel.uiState.collectAsStateWithLifecycle()
     val warningDialogState = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     LaunchedEffect(viewModel.uiEvent) {
         launch {
             viewModel.uiEvent.collect { event ->
@@ -84,7 +87,7 @@ fun FriendProfileEditorRoute(
                     }
 
                     FriendProfileEditorUIEvent.FriendProfileEditNetworkError -> {
-                        onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
+                        onShowErrorSnackBar(IllegalStateException(context.getString(R.string.network_error_message)))
                     }
 
                     is FriendProfileEditorUIEvent.FriendProfileEditSuccess -> {
@@ -172,7 +175,7 @@ fun FriendProfileEditorScreen(
                             Modifier.onNoRippleClick(onClick = {
                                 onSubmit()
                             }),
-                        text = "완료",
+                        text = context.getString(R.string.friend_profile_editor_edit_complete_text),
                         style = NearTheme.typography.B1_16_BOLD,
                         color = NearTheme.colors.BLACK_1A1A1A,
                     )
@@ -194,7 +197,7 @@ fun FriendProfileEditorScreen(
                         modifier = Modifier.padding(top = 16.dp),
                         text =
                             buildAnnotatedString {
-                                append("이름")
+                                append(stringResource(R.string.friend_profile_editor_name))
                                 withStyle(
                                     style =
                                         SpanStyle(
@@ -220,7 +223,7 @@ fun FriendProfileEditorScreen(
                 if (friendProfileEditorUIState.name.error) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "이름을 입력해주세요.",
+                        stringResource(R.string.friend_profile_editor_enter_name),
                         style = NearTheme.typography.FC_12_MEDIUM,
                         color = NearTheme.colors.NEGATIVE_F04E4E,
                     )
@@ -233,7 +236,7 @@ fun FriendProfileEditorScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        "관계",
+                        stringResource(R.string.friend_profile_editor_relation),
                         style = NearTheme.typography.B2_14_MEDIUM,
                         color = NearTheme.colors.GRAY01_888888,
                     )
@@ -498,7 +501,7 @@ fun FriendProfileEditorScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            "날짜",
+                            stringResource(R.string.friend_profile_editor_date),
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )
@@ -531,7 +534,7 @@ fun FriendProfileEditorScreen(
                             ) {
                                 Text(
                                     friendProfileEditorUIState.anniversaries[index].date.value
-                                        ?: "날짜 선택",
+                                        ?: stringResource(R.string.friend_profile_editor_select_date),
                                     style = NearTheme.typography.B2_14_MEDIUM,
                                     color = NearTheme.colors.BLACK_1A1A1A,
                                 )
@@ -570,7 +573,7 @@ fun FriendProfileEditorScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(top = 16.dp),
-                    text = "메모",
+                    text = stringResource(R.string.friend_profile_editor_memo),
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.GRAY01_888888,
                 )
@@ -585,9 +588,7 @@ fun FriendProfileEditorScreen(
                         onMemoChanged(it)
                     },
                     placeHolderText =
-                        stringResource(R.string.friend_profile_editor_memo_default_text) +
-                            "예) 날생선 X, 작년 생일에\n" +
-                            "키링 선물함 등",
+                        stringResource(R.string.friend_profile_editor_memo_default_text),
                     maxTextCount = 100,
                 )
                 Spacer(modifier = Modifier.height(80.dp))
