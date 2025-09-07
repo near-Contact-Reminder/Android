@@ -1,7 +1,10 @@
 package com.alarmy.near.presentation.feature.main
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
@@ -19,14 +22,33 @@ internal fun NearNavHost(
     navController: NavHostController,
     onShowSnackbar: (Throwable?) -> Unit = { _ -> },
 ) {
+    val context = LocalContext.current
     /*
      * 화면 이동 및 구성을 위한 컴포저블 함수입니다.
      * */
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = RouteLogin,
+        startDestination = RouteHome,
     ) {
+        friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
+            navController.popBackStack()
+        }, onClickCallButton = { phoneNumber ->
+            val intent =
+                Intent(Intent.ACTION_DIAL).apply {
+                    data = "tel:$phoneNumber".toUri()
+                }
+            context.startActivity(intent)
+        }, onClickMessageButton = { phoneNumber ->
+            val intent =
+                Intent(Intent.ACTION_VIEW).apply {
+                    data = "sms:$phoneNumber".toUri()
+                }
+            context.startActivity(intent)
+        })
+        friendProfileEditorNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
+            navController.popBackStack()
+        })
         // 로그인 화면 NavGraph
         loginNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
@@ -38,7 +60,7 @@ internal fun NearNavHost(
                 )
             }
         )
-        
+
         // 홈 화면 NavGraph
         homeNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
@@ -48,22 +70,6 @@ internal fun NearNavHost(
             onMyPageClick = {},
             onAlarmClick = {},
             onAddContactClick = {},
-        )
-        
-        // 친구 프로필 화면 NavGraph
-        friendProfileNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onClickBackButton = {
-                navController.popBackStack()
-            }
-        )
-        
-        // 친구 프로필 편집 화면 NavGraph
-        friendProfileEditorNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onClickBackButton = {
-                navController.popBackStack()
-            }
         )
     }
 }

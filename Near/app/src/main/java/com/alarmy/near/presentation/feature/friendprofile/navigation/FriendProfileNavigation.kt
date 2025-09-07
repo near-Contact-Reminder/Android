@@ -24,12 +24,16 @@ fun NavGraphBuilder.friendProfileNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickBackButton: () -> Unit,
     onEditFriendInfo: (Friend) -> Unit = {},
+    onClickCallButton: (phoneNumber: String) -> Unit = {},
+    onClickMessageButton: (phoneNumber: String) -> Unit = {},
 ) {
     composable<RouteFriendProfile> { backStackEntry ->
         FriendProfileRoute(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onClickBackButton = onClickBackButton,
             onEditFriendInfo = onEditFriendInfo,
+            onClickCallButton = onClickCallButton,
+            onClickMessageButton = onClickMessageButton,
         )
     }
 }
