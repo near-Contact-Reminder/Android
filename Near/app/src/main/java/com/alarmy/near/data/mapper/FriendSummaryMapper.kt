@@ -4,6 +4,10 @@ import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
 import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.network.response.FriendSummaryEntity
 
+private val CONTACT_FREQUENCY_LOW_RANGE = 0..29
+private val CONTACT_FREQUENCY_MIDDLE_RANGE = 30..69
+private val CONTACT_FREQUENCY_HIGH_RANGE = 70..100
+
 fun FriendSummaryEntity.toModel(): FriendSummary =
     FriendSummary(
         id = friendId,
@@ -13,9 +17,9 @@ fun FriendSummaryEntity.toModel(): FriendSummary =
         isContacted = true,
         contactFrequencyLevel =
             when (checkRate) {
-                in 0..29 -> ContactFrequencyLevel.LOW
-                in 30..69 -> ContactFrequencyLevel.MIDDLE
-                in 70..100 -> ContactFrequencyLevel.HIGH
+                in CONTACT_FREQUENCY_LOW_RANGE -> ContactFrequencyLevel.LOW
+                in CONTACT_FREQUENCY_MIDDLE_RANGE -> ContactFrequencyLevel.MIDDLE
+                in CONTACT_FREQUENCY_HIGH_RANGE -> ContactFrequencyLevel.HIGH
                 else -> ContactFrequencyLevel.LOW
             },
     )
