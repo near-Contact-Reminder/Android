@@ -481,7 +481,7 @@ private fun RecordTab(
             style = NearTheme.typography.B2_14_BOLD,
             color = NearTheme.colors.BLACK_1A1A1A,
         )
-        if (friendShipRecordState.records.isEmpty()) {
+        if (friendShipRecordState.isEmpty) {
             Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.height(60.dp))
                 Image(painterResource(R.drawable.img_100_character_empty), contentDescription = null)
