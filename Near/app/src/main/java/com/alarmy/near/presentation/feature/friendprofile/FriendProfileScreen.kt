@@ -474,7 +474,7 @@ private fun RecordTab(
     Column(modifier = modifier.padding(horizontal = 24.dp)) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            "챙김 기록",
+            stringResource(R.string.friend_profile_info_record_title_text),
             style = NearTheme.typography.B2_14_BOLD,
             color = NearTheme.colors.BLACK_1A1A1A,
         )
