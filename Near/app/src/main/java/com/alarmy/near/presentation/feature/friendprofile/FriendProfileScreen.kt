@@ -73,6 +73,8 @@ import com.alarmy.near.presentation.feature.friendprofile.uistate.FriendState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
+import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenu
+import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenuItem
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.delay
@@ -204,37 +206,23 @@ fun FriendProfileScreen(
                                         painter = painterResource(R.drawable.ic_32_menu),
                                         contentDescription = stringResource(R.string.common_menu_button_description),
                                     )
-                                    DropdownMenu(
-                                        modifier = Modifier.background(color = NearTheme.colors.WHITE_FFFFFF),
+                                    NearDropdownMenu(
                                         expanded = dropdownState.value,
-                                        shape = RoundedCornerShape(12.dp),
                                         onDismissRequest = { dropdownState.value = false },
                                     ) {
-                                        DropdownMenuItem(
+                                        NearDropdownMenuItem(
                                             onClick = {
                                                 onEditFriendInfo(friend)
                                                 dropdownState.value = false
                                             },
-                                            text = {
-                                                Text(
-                                                    stringResource(R.string.friend_profile_info_edit),
-                                                    style = NearTheme.typography.B2_14_MEDIUM,
-                                                    color = NearTheme.colors.BLACK_1A1A1A,
-                                                )
-                                            },
+                                            text = stringResource(R.string.friend_profile_info_edit)
                                         )
-                                        DropdownMenuItem(
+                                        NearDropdownMenuItem(
                                             onClick = {
                                                 onDeleteFriend(friend.friendId)
                                                 dropdownState.value = false
                                             },
-                                            text = {
-                                                Text(
-                                                    stringResource(R.string.friend_profile_info_delete),
-                                                    style = NearTheme.typography.B2_14_MEDIUM,
-                                                    color = NearTheme.colors.BLACK_1A1A1A,
-                                                )
-                                            },
+                                            text = stringResource(R.string.friend_profile_info_delete)
                                         )
                                     }
                                 }
