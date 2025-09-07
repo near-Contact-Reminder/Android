@@ -80,5 +80,12 @@
     <string name="editor_exit_content">화면을 나가면 \n수정 내용은 저장되지 않아요.</string>
     <string name="editor_exit_confirm">확인</string>
     <string name="editor_exit_dismiss">취소</string>
+    <string name="day_of_week_monday">월요일</string>
+    <string name="day_of_week_tuesday">화요일</string>
+    <string name="day_of_week_wednesday">수요일</string>
+    <string name="day_of_week_thursday">목요일</string>
+    <string name="day_of_week_friday">금요일</string>
+    <string name="day_of_week_saturday">토요일</string>
+    <string name="day_of_week_sunday">일요일</string>
 
 </resources>

@@ -59,6 +59,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.DayOfWeek
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.FriendRecord
 import com.alarmy.near.model.Relation
@@ -701,7 +702,7 @@ fun FriendProfileScreenPreview() {
                         contactFrequency =
                             ContactFrequency(
                                 reminderInterval = ReminderInterval.EVERY_TWO_WEEK,
-                                dayOfWeek = "MONDAY",
+                                dayOfWeek = DayOfWeek.THURSDAY,
                             ),
                         birthday = "1998-11-13",
                         anniversaryList = listOf(),

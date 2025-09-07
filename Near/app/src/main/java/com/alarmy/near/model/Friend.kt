@@ -1,6 +1,8 @@
 package com.alarmy.near.model
 
 import android.os.Parcelable
+import androidx.annotation.StringRes
+import com.alarmy.near.R
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -36,7 +38,7 @@ data class Friend(
 @Parcelize
 data class ContactFrequency(
     val reminderInterval: ReminderInterval,
-    val dayOfWeek: String,
+    val dayOfWeek: DayOfWeek,
 ) : Parcelable
 
 @Serializable
@@ -46,3 +48,16 @@ data class Anniversary(
     val title: String,
     val date: String? = null,
 ) : Parcelable
+
+@Serializable
+enum class DayOfWeek(
+    @param:StringRes val resId: Int,
+) {
+    MONDAY(R.string.day_of_week_monday),
+    TUESDAY(R.string.day_of_week_tuesday),
+    WEDNESDAY(R.string.day_of_week_wednesday),
+    THURSDAY(R.string.day_of_week_thursday),
+    FRIDAY(R.string.day_of_week_friday),
+    SATURDAY(R.string.day_of_week_saturday),
+    SUNDAY(R.string.day_of_week_sunday),
+}

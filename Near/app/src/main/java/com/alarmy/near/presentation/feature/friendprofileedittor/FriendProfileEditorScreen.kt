@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
@@ -42,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.DayOfWeek
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
@@ -138,6 +140,7 @@ fun FriendProfileEditorScreen(
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
+    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
     val showBottomSheet = remember { mutableStateOf(false) }
     if (showBottomSheet.value) {
         ReminderIntervalBottomSheet(onDismissRequest = {
@@ -161,10 +164,10 @@ fun FriendProfileEditorScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(NearTheme.colors.WHITE_FFFFFF),
+                .background(NearTheme.colors.WHITE_FFFFFF)
+                .padding(top = statusBarHeightDp, bottom = navigationBarHeightDp),
     ) {
         item {
-            Spacer(modifier = Modifier.padding(top = statusBarHeightDp))
             NearTopAppbar(
                 modifier = Modifier.padding(end = 24.dp),
                 title = "",
@@ -338,7 +341,7 @@ fun FriendProfileEditorScreen(
                                     stringResource(friendProfileEditorUIState.contactFrequency.reminderInterval.labelRes) +
                                         stringResource(
                                             R.string.friend_profile_editor_contact_period_format,
-                                            friendProfileEditorUIState.contactFrequency.dayOfWeek,
+                                            stringResource(friendProfileEditorUIState.contactFrequency.dayOfWeek.resId),
                                         ),
                                 style = NearTheme.typography.B2_14_MEDIUM,
                                 color = NearTheme.colors.BLACK_1A1A1A,
@@ -606,7 +609,7 @@ fun FriendProfileEditorScreenPreview() {
                     contactFrequency =
                         ContactFrequency(
                             reminderInterval = ReminderInterval.EVERY_DAY,
-                            dayOfWeek = "2025-01-01",
+                            dayOfWeek = DayOfWeek.SATURDAY,
                         ),
                 ),
         )

@@ -1,5 +1,6 @@
 package com.alarmy.near.network.response
 
+import com.alarmy.near.model.DayOfWeek
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -2,6 +2,7 @@ package com.alarmy.near.data.mapper
 
 import com.alarmy.near.model.Anniversary
 import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.DayOfWeek
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
@@ -29,7 +30,7 @@ fun FriendEntity.toModel(): Friend =
 fun ContactFrequencyEntity.toModel(): ContactFrequency =
     ContactFrequency(
         reminderInterval = ReminderInterval.valueOf(contactWeek),
-        dayOfWeek = dayOfWeek,
+        dayOfWeek = DayOfWeek.valueOf(dayOfWeek),
     )
 
 fun AnniversaryEntity.toModel(): Anniversary =
@@ -53,7 +54,7 @@ fun Friend.toRequest(): FriendRequest =
 fun ContactFrequency.toRequest(): ContactFrequencyRequest =
     ContactFrequencyRequest(
         contactWeek = reminderInterval.toString(),
-        dayOfWeek = dayOfWeek,
+        dayOfWeek = dayOfWeek.toString(),
     )
 
 fun Anniversary.toRequest(): AnniversaryRequest =
