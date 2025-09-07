@@ -175,7 +175,7 @@ fun FriendProfileEditorScreen(
                             Modifier.onNoRippleClick(onClick = {
                                 onSubmit()
                             }),
-                        text = context.getString(R.string.friend_profile_editor_edit_complete_text),
+                        text = stringResource(R.string.friend_profile_editor_edit_complete_text),
                         style = NearTheme.typography.B1_16_BOLD,
                         color = NearTheme.colors.BLACK_1A1A1A,
                     )
@@ -397,8 +397,7 @@ fun FriendProfileEditorScreen(
                                         end = 12.dp,
                                         top = 14.dp,
                                         bottom = 14.dp,
-                                    )
-                                    .onNoRippleClick({
+                                    ).onNoRippleClick({
                                         birthdayDatePickerState.value = true
                                     }),
                             verticalAlignment = Alignment.CenterVertically,
