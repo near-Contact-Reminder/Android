@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -142,13 +143,14 @@ fun FriendProfileScreen(
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
+    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
     val currentTabPosition = remember { mutableIntStateOf(0) }
     val dropdownState = remember { mutableStateOf(false) }
     Box(
         modifier =
             modifier
                 .background(NearTheme.colors.WHITE_FFFFFF)
-                .padding(top = statusBarHeightDp, bottom = 24.dp),
+                .padding(top = statusBarHeightDp, bottom = navigationBarHeightDp + 24.dp),
     ) {
         when (friendState) {
             is FriendState.Success -> {
