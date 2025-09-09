@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".NearApplication"
@@ -20,7 +21,7 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${kakaoAppKey}" />
-            
+
         <!-- 카카오톡 로그인 콜백을 위한 Activity -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -33,7 +34,7 @@
                       android:scheme="kakao${kakaoAppKey}" />
             </intent-filter>
         </activity>
-        
+
         <activity
             android:name=".presentation.feature.main.MainActivity"
             android:exported="true"
