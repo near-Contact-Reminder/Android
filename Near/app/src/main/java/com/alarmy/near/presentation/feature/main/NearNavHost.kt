@@ -20,7 +20,7 @@ import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
 import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
 import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToMyProfile
-import com.alarmy.near.presentation.feature.myprofile.navigation.RouteMyProfile
+import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToWithdraw
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -107,9 +107,12 @@ internal fun NearNavHost(
             onNavigateToLogin = {
                 navController.navigateToLogin(
                     navOptions = androidx.navigation.navOptions {
-                        popUpTo(RouteMyProfile) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 )
+            },
+            onNavigateToWithdraw = {
+                navController.navigateToWithdraw()
             },
             onShowErrorSnackBar = onShowSnackbar,
         )

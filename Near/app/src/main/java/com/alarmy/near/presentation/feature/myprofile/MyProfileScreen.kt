@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.feature.myprofile.components.NearLogoutButton
 import com.alarmy.near.presentation.feature.myprofile.components.NearServiceInfoRow
 import com.alarmy.near.presentation.feature.myprofile.components.NearSocialLoginBadge
@@ -42,6 +43,7 @@ internal fun MyProfileRoute(
     viewModel: MyProfileViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToWithdraw: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -68,6 +70,10 @@ internal fun MyProfileRoute(
                 is MyProfileUiEvent.Logout -> {
                     onNavigateToLogin()
                 }
+
+                is MyProfileUiEvent.NavigateToWithdraw -> {
+                    onNavigateToWithdraw()
+                }
             }
         }
     }
@@ -89,6 +95,7 @@ internal fun MyProfileRoute(
             uiState = uiState,
             onNavigateBack = { viewModel.onNavigateBack() },
             onLogout = { viewModel.onLogout() },
+            onWithdraw = { viewModel.onWithdraw() },
         )
     }
 }
@@ -98,6 +105,7 @@ fun MyProfileScreen(
     uiState: MyProfileUiState,
     onNavigateBack: () -> Unit = {},
     onLogout: () -> Unit = {},
+    onWithdraw: () -> Unit = {},
 ) {
     NearFrame {
         // 앱바
@@ -117,7 +125,7 @@ fun MyProfileScreen(
                     .padding(horizontal = 24.dp),
         ) {
             MyProfileGeneralSection(uiState)
-            MyProfileServiceInfoSection(onLogout)
+            MyProfileServiceInfoSection(onLogout, onWithdraw)
         }
     }
 }
@@ -202,7 +210,10 @@ private fun MyProfileGeneralSection(uiState: MyProfileUiState) {
 }
 
 @Composable
-private fun ColumnScope.MyProfileServiceInfoSection(onLogout: () -> Unit) {
+private fun ColumnScope.MyProfileServiceInfoSection(
+    onLogout: () -> Unit,
+    onWithdraw: () -> Unit,
+) {
     Text(
         text = "서비스 정보",
         style = NearTheme.typography.B1_16_BOLD,
@@ -240,6 +251,7 @@ private fun ColumnScope.MyProfileServiceInfoSection(onLogout: () -> Unit) {
     Spacer(modifier = Modifier.size(24.dp))
 
     Text(
+        modifier = Modifier.onNoRippleClick(onClick = onWithdraw),
         text = "탈퇴하기",
         textDecoration = TextDecoration.Underline,
         style =
@@ -270,6 +282,7 @@ fun ProfileScreenPreview() {
                 ),
             onNavigateBack = {},
             onLogout = {},
+            onWithdraw = {},
         )
     }
 }
