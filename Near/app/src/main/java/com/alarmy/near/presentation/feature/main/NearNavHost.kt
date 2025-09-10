@@ -102,6 +102,7 @@ internal fun NearNavHost(
             onNavigateBack = {
                 navController.popBackStack()
             },
+            onShowErrorSnackBar = onShowSnackbar,
         )
     }
 }

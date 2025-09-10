@@ -13,10 +13,14 @@ fun NavController.navigateToMyProfile() {
     navigate(RouteMyProfile)
 }
 
-fun NavGraphBuilder.myProfileNavGraph(onNavigateBack: () -> Unit) {
+fun NavGraphBuilder.myProfileNavGraph(
+    onNavigateBack: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+) {
     composable<RouteMyProfile> {
         MyProfileRoute(
             onNavigateBack = onNavigateBack,
+            onShowErrorSnackBar = onShowErrorSnackBar,
         )
     }
 }

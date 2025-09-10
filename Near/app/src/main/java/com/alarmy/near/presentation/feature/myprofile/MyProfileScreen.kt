@@ -35,8 +35,20 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 internal fun MyProfileRoute(
     viewModel: MyProfileViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
-    MyProfileScreen()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // 에러 이벤트 처리
+    LaunchedEffect(viewModel.errorEvent) {
+        viewModel.errorEvent.collect { throwable ->
+            throwable?.let { onShowErrorSnackBar(it) }
+        }
+    }
+
+    MyProfileScreen(
+        uiState = uiState,
+    )
 }
 
 @Composable
