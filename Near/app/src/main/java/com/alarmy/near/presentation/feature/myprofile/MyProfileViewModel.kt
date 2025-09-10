@@ -2,8 +2,10 @@ package com.alarmy.near.presentation.feature.myprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.data.mapper.toMyProfileInfo
 import com.alarmy.near.data.repository.MemberRepository
-import com.alarmy.near.model.member.MemberInfo
+import com.alarmy.near.presentation.feature.myprofile.model.LoginType
+import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,13 +22,13 @@ class MyProfileViewModel
     constructor(
         memberRepository: MemberRepository,
     ) : ViewModel() {
-    // 에러 이벤트 관리
-    private val _errorEvent = Channel<Throwable?>()
-    val errorEvent = _errorEvent.receiveAsFlow()
+        // 에러 이벤트 관리
+        private val _errorEvent = Channel<Throwable?>()
+        val errorEvent = _errorEvent.receiveAsFlow()
 
-    // UI 이벤트 관리
-    private val _uiEvent = Channel<MyProfileUiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
+        // UI 이벤트 관리
+        private val _uiEvent = Channel<MyProfileUiEvent>()
+        val uiEvent = _uiEvent.receiveAsFlow()
 
         // UI 상태 관리
         val uiState: StateFlow<MyProfileUiState> =
@@ -37,7 +39,7 @@ class MyProfileViewModel
                 }.map { memberInfo ->
                     MyProfileUiState(
                         isLoading = false,
-                        memberInfo = memberInfo,
+                        memberInfo = memberInfo.toMyProfileInfo(),
                         error = null,
                     )
                 }.stateIn(
@@ -47,31 +49,29 @@ class MyProfileViewModel
                         MyProfileUiState(
                             isLoading = true,
                             memberInfo =
-                                MemberInfo(
-                                    memberId = "",
-                                    username = "",
+                                MyProfileInfo(
                                     nickname = "",
                                     imageUrl = null,
                                     notificationAgreedAt = null,
-                                    providerType = "",
+                                    providerType = LoginType.KAKAO,
                                 ),
-                 ),
-             )
+                        ),
+                )
 
-    /**
-     * 백 네비게이션 이벤트 발생
-     */
-    fun onNavigateBack() {
-        _uiEvent.trySend(MyProfileUiEvent.NavigateBack)
+        /**
+         * 백 네비게이션 이벤트 발생
+         */
+        fun onNavigateBack() {
+            _uiEvent.trySend(MyProfileUiEvent.NavigateBack)
+        }
     }
-}
 
 /**
  * MyProfile UI 상태
  */
 data class MyProfileUiState(
     val isLoading: Boolean = false,
-    val memberInfo: MemberInfo,
+    val memberInfo: MyProfileInfo,
     val error: String? = null,
 )
 

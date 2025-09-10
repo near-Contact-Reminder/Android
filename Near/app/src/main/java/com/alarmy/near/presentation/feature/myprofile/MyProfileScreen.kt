@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alarmy.near.model.member.MemberInfo
 import com.alarmy.near.presentation.feature.myprofile.components.NearLogoutButton
 import com.alarmy.near.presentation.feature.myprofile.components.NearServiceInfoRow
 import com.alarmy.near.presentation.feature.myprofile.components.NearSocialLoginBadge
 import com.alarmy.near.presentation.feature.myprofile.components.NearSwitch
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
+import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.extension.ImageLoader
@@ -154,7 +154,7 @@ fun MyProfileScreen(
 
                 // 로그인 타입에 따른 뱃지
                 NearSocialLoginBadge(
-                    loginType = LoginType.KAKAO,
+                    loginType = uiState.memberInfo.providerType,
                 )
             }
 
@@ -239,13 +239,11 @@ fun ProfileScreenPreview() {
                 MyProfileUiState(
                     isLoading = false,
                     memberInfo =
-                        MemberInfo(
-                            memberId = "test-id",
-                            username = "test@example.com",
+                        MyProfileInfo(
                             nickname = "테스트유저",
                             imageUrl = null,
                             notificationAgreedAt = null,
-                            providerType = "KAKAO",
+                            providerType = LoginType.KAKAO,
                         ),
                 ),
             onNavigateBack = {},
