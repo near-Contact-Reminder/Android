@@ -26,6 +26,7 @@ import com.alarmy.near.presentation.feature.myprofile.components.NearLogoutButto
 import com.alarmy.near.presentation.feature.myprofile.components.NearServiceInfoRow
 import com.alarmy.near.presentation.feature.myprofile.components.NearSocialLoginBadge
 import com.alarmy.near.presentation.feature.myprofile.components.NearSwitch
+import com.alarmy.near.presentation.feature.myprofile.model.LoginType
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -164,10 +165,11 @@ fun MyProfileScreen() {
             Text(
                 text = "탈퇴하기",
                 textDecoration = TextDecoration.Underline,
-                style = NearTheme.typography.H1_24_REGULAR.copy(
-                    fontSize = 14.sp,
-                    color = NearTheme.colors.GRAY01_888888,
-                ),
+                style =
+                    NearTheme.typography.H1_24_REGULAR.copy(
+                        fontSize = 14.sp,
+                        color = NearTheme.colors.GRAY01_888888,
+                    ),
             )
 
             Spacer(modifier = Modifier.weight(1f))

@@ -1,4 +1,4 @@
-package com.alarmy.near.presentation.feature.myprofile
+package com.alarmy.near.presentation.feature.myprofile.model
 
 import androidx.annotation.StringRes
 import com.alarmy.near.R
