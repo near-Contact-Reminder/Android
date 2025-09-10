@@ -1,8 +1,7 @@
 package com.alarmy.near.presentation.feature.myprofile
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,25 +9,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.alarmy.near.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.alarmy.near.model.member.MemberInfo
 import com.alarmy.near.presentation.feature.myprofile.components.NearLogoutButton
 import com.alarmy.near.presentation.feature.myprofile.components.NearServiceInfoRow
 import com.alarmy.near.presentation.feature.myprofile.components.NearSocialLoginBadge
 import com.alarmy.near.presentation.feature.myprofile.components.NearSwitch
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
+import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
+import com.alarmy.near.presentation.ui.extension.ImageLoader
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -52,13 +57,8 @@ internal fun MyProfileRoute(
 }
 
 @Composable
-fun MyProfileScreen() {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(NearTheme.colors.WHITE_FFFFFF),
-    ) {
+fun MyProfileScreen(uiState: MyProfileUiState) {
+    NearFrame {
         // 앱바
         NearTopAppbar(
             modifier = Modifier.fillMaxWidth(),
@@ -89,19 +89,20 @@ fun MyProfileScreen() {
                 modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterHorizontally),
             )
 
-        Spacer(modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.size(16.dp))
 
-        // 프로필 네임 - 가운데 정렬
-        Text(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-            text = "신짱구",
-            style = NearTheme.typography.B1_16_BOLD,
-            color = NearTheme.colors.BLACK_1A1A1A,
-            textAlign = TextAlign.Center,
-        )
+            // 프로필 네임 - 가운데 정렬
+            Text(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                text = uiState.memberInfo.nickname,
+                style = NearTheme.typography.B1_16_BOLD,
+                color = NearTheme.colors.BLACK_1A1A1A,
+                textAlign = TextAlign.Center,
+            )
+        }
 
         Spacer(modifier = Modifier.size(40.dp))
 
@@ -214,6 +215,18 @@ fun MyProfileScreen() {
 @Composable
 fun ProfileScreenPreview() {
     NearTheme {
-        MyProfileScreen()
+        MyProfileScreen(
+            uiState = MyProfileUiState(
+                isLoading = false,
+                memberInfo = MemberInfo(
+                    memberId = "test-id",
+                    username = "test@example.com",
+                    nickname = "테스트유저",
+                    imageUrl = null,
+                    notificationAgreedAt = null,
+                    providerType = "KAKAO"
+                )
+            ),
+        )
     }
 }
