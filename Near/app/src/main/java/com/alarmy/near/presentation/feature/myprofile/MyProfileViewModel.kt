@@ -20,9 +20,13 @@ class MyProfileViewModel
     constructor(
         memberRepository: MemberRepository,
     ) : ViewModel() {
-        // 에러 이벤트 관리
-        private val _errorEvent = Channel<Throwable?>()
-        val errorEvent = _errorEvent.receiveAsFlow()
+    // 에러 이벤트 관리
+    private val _errorEvent = Channel<Throwable?>()
+    val errorEvent = _errorEvent.receiveAsFlow()
+
+    // UI 이벤트 관리
+    private val _uiEvent = Channel<MyProfileUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
         // UI 상태 관리
         val uiState: StateFlow<MyProfileUiState> =
@@ -51,9 +55,16 @@ class MyProfileViewModel
                                     notificationAgreedAt = null,
                                     providerType = "",
                                 ),
-                        ),
-                )
+                 ),
+             )
+
+    /**
+     * 백 네비게이션 이벤트 발생
+     */
+    fun onNavigateBack() {
+        _uiEvent.trySend(MyProfileUiEvent.NavigateBack)
     }
+}
 
 /**
  * MyProfile UI 상태
@@ -71,4 +82,6 @@ sealed class MyProfileUiEvent {
     data class ShowError(
         val throwable: Throwable,
     ) : MyProfileUiEvent()
+
+    object NavigateBack : MyProfileUiEvent()
 }

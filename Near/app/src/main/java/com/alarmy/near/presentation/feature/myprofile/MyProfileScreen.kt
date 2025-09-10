@@ -51,18 +51,37 @@ internal fun MyProfileRoute(
         }
     }
 
+    // UI 이벤트 처리
+    LaunchedEffect(viewModel.uiEvent) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is MyProfileUiEvent.NavigateBack -> {
+                    onNavigateBack()
+                }
+                is MyProfileUiEvent.ShowError -> {
+                    onShowErrorSnackBar(event.throwable)
+                }
+            }
+        }
+    }
+
     MyProfileScreen(
         uiState = uiState,
+        onNavigateBack = { viewModel.onNavigateBack() },
     )
 }
 
 @Composable
-fun MyProfileScreen(uiState: MyProfileUiState) {
+fun MyProfileScreen(
+    uiState: MyProfileUiState,
+    onNavigateBack: () -> Unit = {},
+) {
     NearFrame {
         // 앱바
         NearTopAppbar(
             modifier = Modifier.fillMaxWidth(),
             title = "MY",
+            onClickBackButton = onNavigateBack,
         )
 
         Spacer(modifier = Modifier.size(16.dp))
@@ -216,17 +235,20 @@ fun MyProfileScreen(uiState: MyProfileUiState) {
 fun ProfileScreenPreview() {
     NearTheme {
         MyProfileScreen(
-            uiState = MyProfileUiState(
-                isLoading = false,
-                memberInfo = MemberInfo(
-                    memberId = "test-id",
-                    username = "test@example.com",
-                    nickname = "테스트유저",
-                    imageUrl = null,
-                    notificationAgreedAt = null,
-                    providerType = "KAKAO"
-                )
-            ),
+            uiState =
+                MyProfileUiState(
+                    isLoading = false,
+                    memberInfo =
+                        MemberInfo(
+                            memberId = "test-id",
+                            username = "test@example.com",
+                            nickname = "테스트유저",
+                            imageUrl = null,
+                            notificationAgreedAt = null,
+                            providerType = "KAKAO",
+                        ),
+                ),
+            onNavigateBack = {},
         )
     }
 }
