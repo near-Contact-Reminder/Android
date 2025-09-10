@@ -3,6 +3,7 @@ package com.alarmy.near.local.contact
 import android.content.ContentResolver
 import android.provider.ContactsContract
 import com.alarmy.near.local.entity.ContactEntity
+import com.alarmy.near.local.entity.ImportantDate
 import javax.inject.Inject
 
 class ContactLocalDataSource
@@ -16,9 +17,9 @@ class ContactLocalDataSource
             val cursor =
                 contentResolver.query(
                     ContactsContract.Contacts.CONTENT_URI,
-                    null, // projection
-                    null, // selection
-                    null, // selectionArgs
+                    null,
+                    null,
+                    null,
                     "${ContactsContract.Contacts.DISPLAY_NAME} ASC",
                 )
 
@@ -34,7 +35,7 @@ class ContactLocalDataSource
                     val hasPhone = it.getInt(hasPhoneIndex) > 0
                     val photoUri = it.getString(photoIndex)
 
-                    // 전화번호 가져오기
+                    // 전화번호
                     val phones = mutableListOf<String>()
                     if (hasPhone) {
                         val phoneCursor =
@@ -54,7 +55,7 @@ class ContactLocalDataSource
                         }
                     }
 
-                    // 메모(Note) 가져오기
+                    // 메모
                     var memo: String? = null
                     val noteCursor =
                         contentResolver.query(
@@ -70,7 +71,7 @@ class ContactLocalDataSource
                         }
                     }
 
-                    // 생일(Birthday) 가져오기
+                    // 생일
                     var birthDay: String? = null
                     val birthdayCursor =
                         contentResolver.query(
@@ -91,7 +92,104 @@ class ContactLocalDataSource
                         }
                     }
 
-                    contacts.add(ContactEntity(id, name, phones, photoUri, birthDay, memo))
+                    // 그룹
+                    val groups = mutableListOf<String>()
+                    val groupCursor =
+                        contentResolver.query(
+                            ContactsContract.Data.CONTENT_URI,
+                            arrayOf(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID),
+                            "${ContactsContract.Data.CONTACT_ID} = ? AND ${ContactsContract.Data.MIMETYPE} = ?",
+                            arrayOf(
+                                id.toString(),
+                                ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE,
+                            ),
+                            null,
+                        )
+                    groupCursor?.use { gc ->
+                        val groupIdIndex =
+                            gc.getColumnIndex(
+                                ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID,
+                            )
+                        while (gc.moveToNext()) {
+                            val groupId = gc.getLong(groupIdIndex)
+                            val groupNameCursor =
+                                contentResolver.query(
+                                    ContactsContract.Groups.CONTENT_URI,
+                                    arrayOf(ContactsContract.Groups.TITLE),
+                                    "${ContactsContract.Groups._ID} = ?",
+                                    arrayOf(groupId.toString()),
+                                    null,
+                                )
+                            groupNameCursor?.use { gnc ->
+                                if (gnc.moveToFirst()) {
+                                    groups.add(gnc.getString(0))
+                                }
+                            }
+                        }
+                    }
+
+                    // 중요한 날 (기념일)
+                    val importantDates = mutableListOf<ImportantDate>()
+                    val eventCursor =
+                        contentResolver.query(
+                            ContactsContract.Data.CONTENT_URI,
+                            arrayOf(
+                                ContactsContract.CommonDataKinds.Event.START_DATE,
+                                ContactsContract.CommonDataKinds.Event.TYPE,
+                                ContactsContract.CommonDataKinds.Event.LABEL,
+                            ),
+                            "${ContactsContract.Data.CONTACT_ID} = ? AND ${ContactsContract.Data.MIMETYPE} = ?",
+                            arrayOf(
+                                id.toString(),
+                                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+                            ),
+                            null,
+                        )
+                    eventCursor?.use { ec ->
+                        val dateIndex =
+                            ec.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE)
+                        val typeIndex =
+                            ec.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE)
+                        val labelIndex =
+                            ec.getColumnIndex(ContactsContract.CommonDataKinds.Event.LABEL)
+
+                        while (ec.moveToNext()) {
+                            val date = ec.getString(dateIndex)
+                            val type = ec.getInt(typeIndex)
+                            val customLabel = ec.getString(labelIndex)
+
+                            val label =
+                                when (type) {
+                                    ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY -> {
+                                        continue // 위에서 생일은 포함했으므로 스킵
+                                    }
+
+                                    ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY -> "기념일"
+                                    ContactsContract.CommonDataKinds.Event.TYPE_OTHER ->
+                                        customLabel
+                                            ?: "기타"
+
+                                    else -> "알 수 없음"
+                                }
+
+                            if (date != null) {
+                                importantDates.add(ImportantDate(label, date))
+                            }
+                        }
+                    }
+
+                    contacts.add(
+                        ContactEntity(
+                            id = id,
+                            name = name,
+                            phones = phones,
+                            photoUri = photoUri,
+                            birthDay = birthDay,
+                            memo = memo,
+                            groups = groups,
+                            importantDates = importantDates,
+                        ),
+                    )
                 }
             }
 
