@@ -3,6 +3,7 @@ package com.alarmy.near.presentation.feature.myprofile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -106,32 +107,7 @@ fun MyProfileScreen(
             onClickBackButton = onNavigateBack,
         )
 
-        Spacer(modifier = Modifier.size(16.dp))
-
-        ImageLoader(
-            uri = uiState.memberInfo.imageUrl,
-            contentScale = ContentScale.Crop,
-            contentDescription = "프로필 이미지",
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .align(Alignment.CenterHorizontally),
-        )
-
-        Spacer(modifier = Modifier.size(16.dp))
-
-        // 프로필 네임 - 가운데 정렬
-        Text(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-            text = uiState.memberInfo.nickname,
-            style = NearTheme.typography.B1_16_BOLD,
-            color = NearTheme.colors.BLACK_1A1A1A,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.size(40.dp))
+        MyProfileInfoSection(uiState)
 
         // 일반 정보 섹션
         Column(
@@ -139,103 +115,141 @@ fun MyProfileScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.Start,
         ) {
-            Text(
-                text = "일반",
-                style = NearTheme.typography.B1_16_BOLD,
-                color = NearTheme.colors.BLACK_1A1A1A,
-            )
-
-            Spacer(modifier = Modifier.size(32.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "연결계정",
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.BLACK_1A1A1A,
-                )
-
-                // 로그인 타입에 따른 뱃지
-                NearSocialLoginBadge(
-                    loginType = uiState.memberInfo.providerType,
-                )
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 16.dp),
-                color = NearTheme.colors.GRAY03_EBEBEB,
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "알림 설정",
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.BLACK_1A1A1A,
-                )
-
-                NearSwitch { }
-            }
-
-            Spacer(modifier = Modifier.size(64.dp))
-
-            Text(
-                text = "서비스 정보",
-                style = NearTheme.typography.B1_16_BOLD,
-                color = NearTheme.colors.BLACK_1A1A1A,
-            )
-
-            Spacer(modifier = Modifier.size(32.dp))
-
-            // 서비스 이용 약관
-            NearServiceInfoRow(
-                label = "서비스 이용 약관",
-                onClick = { /* 서비스 이용 약관 클릭 처리 */ },
-            )
-
-            // 개인정보 수집 및 이용 동의서
-            NearServiceInfoRow(
-                label = "개인정보 수집 및 이용 동의서",
-                onClick = { /* 개인정보 수집 및 이용 동의서 클릭 처리 */ },
-            )
-
-            // 개인정보 처리방침
-            NearServiceInfoRow(
-                label = "개인정보 처리방침",
-                onClick = { /* 개인정보 처리방침 클릭 처리 */ },
-                showDivider = false, // 마지막 항목이므로 구분선 제거
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            NearLogoutButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onLogout,
-            )
-
-            Spacer(modifier = Modifier.size(24.dp))
-
-            Text(
-                text = "탈퇴하기",
-                textDecoration = TextDecoration.Underline,
-                style =
-                    NearTheme.typography.H1_24_REGULAR.copy(
-                        fontSize = 14.sp,
-                        color = NearTheme.colors.GRAY01_888888,
-                    ),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
+            MyProfileGeneralSection(uiState)
+            MyProfileServiceInfoSection(onLogout)
         }
     }
+}
+
+@Composable
+private fun ColumnScope.MyProfileInfoSection(uiState: MyProfileUiState) {
+    Spacer(modifier = Modifier.size(16.dp))
+
+    ImageLoader(
+        uri = uiState.memberInfo.imageUrl,
+        contentScale = ContentScale.Crop,
+        contentDescription = "프로필 이미지",
+        modifier = Modifier
+            .padding(horizontal = 24.dp)
+            .align(Alignment.CenterHorizontally),
+    )
+
+    Spacer(modifier = Modifier.size(16.dp))
+
+    // 프로필 네임 - 가운데 정렬
+    Text(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+        text = uiState.memberInfo.nickname,
+        style = NearTheme.typography.B1_16_BOLD,
+        color = NearTheme.colors.BLACK_1A1A1A,
+        textAlign = TextAlign.Center,
+    )
+
+    Spacer(modifier = Modifier.size(40.dp))
+}
+
+@Composable
+private fun MyProfileGeneralSection(uiState: MyProfileUiState) {
+    Text(
+        text = "일반",
+        style = NearTheme.typography.B1_16_BOLD,
+        color = NearTheme.colors.BLACK_1A1A1A,
+    )
+
+    Spacer(modifier = Modifier.size(32.dp))
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "연결계정",
+            style = NearTheme.typography.B2_14_MEDIUM,
+            color = NearTheme.colors.BLACK_1A1A1A,
+        )
+
+        // 로그인 타입에 따른 뱃지
+        NearSocialLoginBadge(
+            loginType = uiState.memberInfo.providerType,
+        )
+    }
+
+    HorizontalDivider(
+        modifier = Modifier.padding(vertical = 16.dp),
+        color = NearTheme.colors.GRAY03_EBEBEB,
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "알림 설정",
+            style = NearTheme.typography.B2_14_MEDIUM,
+            color = NearTheme.colors.BLACK_1A1A1A,
+        )
+
+        NearSwitch { }
+    }
+
+    Spacer(modifier = Modifier.size(64.dp))
+}
+
+@Composable
+private fun ColumnScope.MyProfileServiceInfoSection(onLogout: () -> Unit) {
+    Text(
+        text = "서비스 정보",
+        style = NearTheme.typography.B1_16_BOLD,
+        color = NearTheme.colors.BLACK_1A1A1A,
+    )
+
+    Spacer(modifier = Modifier.size(32.dp))
+
+    // 서비스 이용 약관
+    NearServiceInfoRow(
+        label = "서비스 이용 약관",
+        onClick = { /* 서비스 이용 약관 클릭 처리 */ },
+    )
+
+    // 개인정보 수집 및 이용 동의서
+    NearServiceInfoRow(
+        label = "개인정보 수집 및 이용 동의서",
+        onClick = { /* 개인정보 수집 및 이용 동의서 클릭 처리 */ },
+    )
+
+    // 개인정보 처리방침
+    NearServiceInfoRow(
+        label = "개인정보 처리방침",
+        onClick = { /* 개인정보 처리방침 클릭 처리 */ },
+        showDivider = false, // 마지막 항목이므로 구분선 제거
+    )
+
+    Spacer(modifier = Modifier.weight(1f))
+
+    NearLogoutButton(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onLogout,
+    )
+
+    Spacer(modifier = Modifier.size(24.dp))
+
+    Text(
+        text = "탈퇴하기",
+        textDecoration = TextDecoration.Underline,
+        style =
+            NearTheme.typography.H1_24_REGULAR.copy(
+                fontSize = 14.sp,
+                color = NearTheme.colors.GRAY01_888888,
+            ),
+    )
+
+    Spacer(modifier = Modifier.weight(1f))
 }
 
 @Preview(showBackground = true)
