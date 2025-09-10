@@ -14,11 +14,13 @@ import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.frie
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
 import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
+import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
+import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToMyProfile
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 internal fun NearNavHost(
@@ -77,11 +79,12 @@ internal fun NearNavHost(
             onShowErrorSnackBar = onShowSnackbar,
             onNavigateToHome = {
                 navController.navigateToHome(
-                    navOptions = androidx.navigation.navOptions {
-                        popUpTo(RouteLogin) { inclusive = true }
-                    }
+                    navOptions =
+                        androidx.navigation.navOptions {
+                            popUpTo(RouteLogin) { inclusive = true }
+                        },
                 )
-            }
+            },
         )
 
         // 홈 화면 NavGraph
@@ -90,9 +93,15 @@ internal fun NearNavHost(
             onContactClick = { contactId ->
                 navController.navigateToFriendProfile(friendId = contactId)
             },
-            onMyPageClick = {},
+            onMyPageClick = { navController.navigateToMyProfile() },
             onAlarmClick = {},
             onAddContactClick = {},
+        )
+
+        myProfileNavGraph(
+            onNavigateBack = {
+                navController.popBackStack()
+            },
         )
     }
 }

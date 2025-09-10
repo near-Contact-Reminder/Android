@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.myprofile.components.NearLogoutButton
 import com.alarmy.near.presentation.feature.myprofile.components.NearServiceInfoRow
@@ -29,6 +30,14 @@ import com.alarmy.near.presentation.feature.myprofile.components.NearSwitch
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.theme.NearTheme
+
+@Composable
+internal fun MyProfileRoute(
+    viewModel: MyProfileViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit,
+) {
+    MyProfileScreen()
+}
 
 @Composable
 fun MyProfileScreen() {
