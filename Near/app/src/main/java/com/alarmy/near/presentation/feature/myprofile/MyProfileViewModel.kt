@@ -3,10 +3,12 @@ package com.alarmy.near.presentation.feature.myprofile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.mapper.toMyProfileInfo
+import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
 import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class MyProfileViewModel
     @Inject
     constructor(
-        memberRepository: MemberRepository,
+        private val memberRepository: MemberRepository,
+        private val authRepository: AuthRepository,
     ) : ViewModel() {
         // 에러 이벤트 관리
         private val _errorEvent = Channel<Throwable?>()
@@ -58,13 +61,28 @@ class MyProfileViewModel
                         ),
                 )
 
-        /**
-         * 백 네비게이션 이벤트 발생
-         */
-        fun onNavigateBack() {
-            _uiEvent.trySend(MyProfileUiEvent.NavigateBack)
-        }
-    }
+         /**
+          * 백 네비게이션 이벤트 발생
+          */
+         fun onNavigateBack() {
+             _uiEvent.trySend(MyProfileUiEvent.NavigateBack)
+         }
+         
+         /**
+          * 로그아웃 이벤트 발생
+          */
+         fun onLogout() {
+             viewModelScope.launch {
+                 runCatching {
+                     authRepository.logout()
+                 }.onSuccess {
+                     _uiEvent.trySend(MyProfileUiEvent.Logout)
+                 }.onFailure { exception ->
+                     _errorEvent.send(exception)
+                 }
+             }
+         }
+     }
 
 /**
  * MyProfile UI 상태
@@ -84,4 +102,6 @@ sealed class MyProfileUiEvent {
     ) : MyProfileUiEvent()
 
     object NavigateBack : MyProfileUiEvent()
+    
+    object Logout : MyProfileUiEvent()
 }

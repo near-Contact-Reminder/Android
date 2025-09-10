@@ -17,8 +17,10 @@ import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
+import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
 import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToMyProfile
+import com.alarmy.near.presentation.feature.myprofile.navigation.RouteMyProfile
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -101,6 +103,13 @@ internal fun NearNavHost(
         myProfileNavGraph(
             onNavigateBack = {
                 navController.popBackStack()
+            },
+            onNavigateToLogin = {
+                navController.navigateToLogin(
+                    navOptions = androidx.navigation.navOptions {
+                        popUpTo(RouteMyProfile) { inclusive = true }
+                    }
+                )
             },
             onShowErrorSnackBar = onShowSnackbar,
         )

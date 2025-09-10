@@ -40,6 +40,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 internal fun MyProfileRoute(
     viewModel: MyProfileViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,6 +62,9 @@ internal fun MyProfileRoute(
                 is MyProfileUiEvent.ShowError -> {
                     onShowErrorSnackBar(event.throwable)
                 }
+                is MyProfileUiEvent.Logout -> {
+                    onNavigateToLogin()
+                }
             }
         }
     }
@@ -68,6 +72,7 @@ internal fun MyProfileRoute(
     MyProfileScreen(
         uiState = uiState,
         onNavigateBack = { viewModel.onNavigateBack() },
+        onLogout = { viewModel.onLogout() },
     )
 }
 
@@ -75,6 +80,7 @@ internal fun MyProfileRoute(
 fun MyProfileScreen(
     uiState: MyProfileUiState,
     onNavigateBack: () -> Unit = {},
+    onLogout: () -> Unit = {},
 ) {
     NearFrame {
         // 앱바
@@ -210,7 +216,7 @@ fun MyProfileScreen(
 
             NearLogoutButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { /* 로그아웃 클릭 처리 */ },
+                onClick = onLogout,
             )
 
             Spacer(modifier = Modifier.size(24.dp))
@@ -247,6 +253,7 @@ fun ProfileScreenPreview() {
                         ),
                 ),
             onNavigateBack = {},
+            onLogout = {},
         )
     }
 }
