@@ -59,9 +59,11 @@ internal fun MyProfileRoute(
                 is MyProfileUiEvent.NavigateBack -> {
                     onNavigateBack()
                 }
+
                 is MyProfileUiEvent.ShowError -> {
                     onShowErrorSnackBar(event.throwable)
                 }
+
                 is MyProfileUiEvent.Logout -> {
                     onNavigateToLogin()
                 }
@@ -69,11 +71,25 @@ internal fun MyProfileRoute(
         }
     }
 
-    MyProfileScreen(
-        uiState = uiState,
-        onNavigateBack = { viewModel.onNavigateBack() },
-        onLogout = { viewModel.onLogout() },
-    )
+    // 로딩 상태 처리
+    if (uiState.isLoading) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator(
+                color = NearTheme.colors.BLUE01_5AA2E9,
+            )
+        }
+    } else {
+        MyProfileScreen(
+            uiState = uiState,
+            onNavigateBack = { viewModel.onNavigateBack() },
+            onLogout = { viewModel.onLogout() },
+        )
+    }
 }
 
 @Composable
@@ -92,42 +108,28 @@ fun MyProfileScreen(
 
         Spacer(modifier = Modifier.size(16.dp))
 
-        // 로딩 상태 처리
-        if (uiState.isLoading) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(
-                    color = NearTheme.colors.BLUE01_5AA2E9,
-                )
-            }
-        } else {
-            // 프로필 이미지 - 가운데 정렬
-            ImageLoader(
-                uri = uiState.memberInfo.imageUrl,
-                contentScale = ContentScale.Crop,
-                contentDescription = "프로필 이미지",
-                modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterHorizontally),
-            )
+        ImageLoader(
+            uri = uiState.memberInfo.imageUrl,
+            contentScale = ContentScale.Crop,
+            contentDescription = "프로필 이미지",
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .align(Alignment.CenterHorizontally),
+        )
 
-            Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
-            // 프로필 네임 - 가운데 정렬
-            Text(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                text = uiState.memberInfo.nickname,
-                style = NearTheme.typography.B1_16_BOLD,
-                color = NearTheme.colors.BLACK_1A1A1A,
-                textAlign = TextAlign.Center,
-            )
-        }
+        // 프로필 네임 - 가운데 정렬
+        Text(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+            text = uiState.memberInfo.nickname,
+            style = NearTheme.typography.B1_16_BOLD,
+            color = NearTheme.colors.BLACK_1A1A1A,
+            textAlign = TextAlign.Center,
+        )
 
         Spacer(modifier = Modifier.size(40.dp))
 
