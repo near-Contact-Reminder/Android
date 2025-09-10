@@ -26,12 +26,15 @@ class ContactLocalDataSource
                 val idIndex = it.getColumnIndex(ContactsContract.Contacts._ID)
                 val nameIndex = it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
                 val hasPhoneIndex = it.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)
+                val photoIndex = it.getColumnIndex(ContactsContract.Contacts.PHOTO_URI)
 
                 while (it.moveToNext()) {
                     val id = it.getLong(idIndex)
                     val name = it.getString(nameIndex) ?: ""
                     val hasPhone = it.getInt(hasPhoneIndex) > 0
+                    val photoUri = it.getString(photoIndex)
 
+                    // 전화번호 가져오기
                     val phones = mutableListOf<String>()
                     if (hasPhone) {
                         val phoneCursor =
@@ -51,7 +54,44 @@ class ContactLocalDataSource
                         }
                     }
 
-                    contacts.add(ContactEntity(id, name, phones))
+                    // 메모(Note) 가져오기
+                    var memo: String? = null
+                    val noteCursor =
+                        contentResolver.query(
+                            ContactsContract.Data.CONTENT_URI,
+                            arrayOf(ContactsContract.CommonDataKinds.Note.NOTE),
+                            "${ContactsContract.Data.CONTACT_ID} = ? AND ${ContactsContract.Data.MIMETYPE} = ?",
+                            arrayOf(id.toString(), ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE),
+                            null,
+                        )
+                    noteCursor?.use { nc ->
+                        if (nc.moveToFirst()) {
+                            memo = nc.getString(0)
+                        }
+                    }
+
+                    // 생일(Birthday) 가져오기
+                    var birthDay: String? = null
+                    val birthdayCursor =
+                        contentResolver.query(
+                            ContactsContract.Data.CONTENT_URI,
+                            arrayOf(ContactsContract.CommonDataKinds.Event.START_DATE),
+                            "${ContactsContract.Data.CONTACT_ID} = ? AND ${ContactsContract.Data.MIMETYPE} = ? AND ${ContactsContract.CommonDataKinds.Event.TYPE} = ?",
+                            arrayOf(
+                                id.toString(),
+                                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+                                ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
+                                    .toString(),
+                            ),
+                            null,
+                        )
+                    birthdayCursor?.use { bc ->
+                        if (bc.moveToFirst()) {
+                            birthDay = bc.getString(0)
+                        }
+                    }
+
+                    contacts.add(ContactEntity(id, name, phones, photoUri, birthDay, memo))
                 }
             }
 

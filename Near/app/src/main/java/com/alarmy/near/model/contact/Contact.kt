@@ -1,6 +1,6 @@
-package com.alarmy.near.local.entity
+package com.alarmy.near.model.contact
 
-data class ContactEntity(
+data class Contact(
     val id: Long,
     val name: String,
     val phones: List<String>,
