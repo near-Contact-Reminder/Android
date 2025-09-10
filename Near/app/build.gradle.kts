@@ -84,6 +84,7 @@ dependencies {
     // Glide
     implementation(libs.glide)
     kapt(libs.glide.compiler)
+    implementation(libs.glide.compose)
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
