@@ -1,36 +1,47 @@
 package com.alarmy.near.presentation.ui.component.textfield
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.presentation.ui.component.textfield.internal.NearTextFieldColors
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun NearOutlinedTextField(
     modifier: Modifier = Modifier,
@@ -46,17 +57,39 @@ fun NearOutlinedTextField(
     focusedBorderThickness: Float = 1.5f, // 포커스 시 border
     unfocusedBorderThickness: Float = 1f, // 포커스 해제 시 border
     showCharacterCount: Boolean = false,
+    imeAction: ImeAction = ImeAction.Done, // 키보드 완료 버튼 타입
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    var isFocused by remember { mutableStateOf(false) }
+
+    // 포커스가 변경될 때 텍스트필드를 화면 제일 밑으로 스크롤
+    LaunchedEffect(isFocused) {
+        if (isFocused) {
+            coroutineScope.launch {
+                bringIntoViewRequester.bringIntoView()
+            }
+        }
+    }
+
+    // 텍스트 내용이 변경될 때도 스크롤 (포커스 상태일 때만)
+    LaunchedEffect(value) {
+        if (isFocused && value.isNotEmpty()) {
+            coroutineScope.launch {
+                bringIntoViewRequester.bringIntoView()
+            }
+        }
+    }
 
     // 글자 수가 표시될 때 텍스트 영역을 위한 패딩 조정
     val adjustedContentPadding =
-        if (showCharacterCount && value.isNotEmpty()) {
+        if (showCharacterCount) {
             PaddingValues(
-                start = 16.dp,
-                top = 16.dp,
-                end = 16.dp + 82.dp,
-                bottom = 16.dp,
+                start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+                top = contentPadding.calculateTopPadding(),
+                end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 120.dp, // 글자 수 공간 확보
+                bottom = contentPadding.calculateBottomPadding(),
             )
         } else {
             contentPadding
@@ -66,7 +99,7 @@ fun NearOutlinedTextField(
         modifier =
             modifier
                 .fillMaxWidth()
-                .wrapContentSize(),
+                .bringIntoViewRequester(bringIntoViewRequester),
     ) {
         BasicTextField(
             value = value,
@@ -80,9 +113,16 @@ fun NearOutlinedTextField(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 56.dp),
+                    .heightIn(min = 56.dp)
+                    .onFocusChanged { focusState ->
+                        val newFocused = focusState.isFocused
+                        if (isFocused != newFocused) {
+                            isFocused = newFocused
+                        }
+                    },
             textStyle = NearTheme.typography.B2_14_MEDIUM,
             maxLines = maxLines,
+            keyboardOptions = KeyboardOptions(imeAction = imeAction),
             interactionSource = interactionSource,
             decorationBox = { innerTextField ->
                 OutlinedTextFieldDefaults.DecorationBox(
@@ -116,16 +156,18 @@ fun NearOutlinedTextField(
             },
         )
 
-        if (showCharacterCount && value.isNotEmpty()) {
+        if (showCharacterCount) {
             CharacterCountText(
                 currentLength = value.length,
                 maxLength = maxLength,
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(contentPadding),
+                        .wrapContentSize()
+                        .padding(
+                            end = contentPadding.calculateEndPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                            bottom = contentPadding.calculateBottomPadding(),
+                        ),
             )
         }
     }
