@@ -32,12 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.model.contact.Contact
 import com.alarmy.near.presentation.feature.contact.state.ContactUiState
 import com.alarmy.near.presentation.feature.contact.state.SelectedContactUiState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.component.textfield.NearSearchTextField
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 // 선택 완료 및 백 클릭 이벤트 처리
@@ -45,6 +47,8 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 fun ContactRoute(
     viewModel: ContactViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onBackClick: () -> Unit,
+    onCompletedSelection: (List<Contact>) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -70,6 +74,10 @@ fun ContactRoute(
                 onContactCheckedChange = { contactId, isSelected ->
                     viewModel.onContactSelect(isSelected, contactId)
                 },
+                onBackClick = onBackClick,
+                onCompleteClick = {},
+                onSearchClick = {},
+                onSearchTextChange = {},
             )
         }
     }
@@ -83,7 +91,9 @@ fun ContactScreen(
     onSearchTextChange: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onContactCheckedChange: (Long, Boolean) -> Unit = { _, _ -> },
+    onCompleteClick: () -> Unit = {},
 ) {
+    val selectedContactCount = contacts.values.flatten().count { it.isSelected }
     NearFrame(modifier = modifier) {
         Row(
             modifier =
@@ -104,6 +114,7 @@ fun ContactScreen(
                 color = NearTheme.colors.BLACK_1A1A1A,
             )
             Image(
+                modifier = Modifier.onNoRippleClick { onBackClick() },
                 painter = painterResource(R.drawable.ic_close_32_black),
                 contentDescription = stringResource(R.string.contact_close_screen),
             )
@@ -128,6 +139,7 @@ fun ContactScreen(
                 onContactCheckedChange = onContactCheckedChange,
             )
             NearSolidTypeButton(
+                enabled = selectedContactCount != 0,
                 modifier =
                     Modifier
                         .align(Alignment.BottomCenter)
@@ -135,8 +147,8 @@ fun ContactScreen(
                         .padding(horizontal = 20.dp)
                         .padding(bottom = 24.dp),
                 contentPadding = PaddingValues(vertical = 17.dp),
-                onClick = {},
-                text = "${contacts.values.flatten().count { it.isSelected }}명 선택 완료",
+                onClick = onCompleteClick,
+                text = "${selectedContactCount}명 선택 완료",
             )
         }
     }
@@ -215,6 +227,67 @@ fun ContactList(
 @Composable
 fun ContactScreenPreview() {
     NearTheme {
-        ContactScreen()
+        ContactScreen(
+            contacts =
+                mapOf(
+                    "ㄱ" to
+                        listOf(
+                            SelectedContactUiState(
+                                contact =
+                                    Contact(
+                                        id = 1L,
+                                        name = "김철수",
+                                        phones = listOf("010-1234-5678"),
+                                        photoUri = null,
+                                        birthDay = "1995-03-15",
+                                        memo = "고등학교 친구",
+                                    ),
+                                isSelected = false,
+                            ),
+                            SelectedContactUiState(
+                                contact =
+                                    Contact(
+                                        id = 2L,
+                                        name = "강민수",
+                                        phones = listOf("010-2222-3333"),
+                                        photoUri = null,
+                                        birthDay = null,
+                                        memo = "회사 동료",
+                                    ),
+                                isSelected = true,
+                            ),
+                        ),
+                    "ㅂ" to
+                        listOf(
+                            SelectedContactUiState(
+                                contact =
+                                    Contact(
+                                        id = 3L,
+                                        name = "박영희",
+                                        phones = listOf("010-9876-5432"),
+                                        photoUri = null,
+                                        birthDay = null,
+                                        memo = null,
+                                    ),
+                                isSelected = false,
+                            ),
+                        ),
+                    "ㅊ" to
+                        listOf(
+                            SelectedContactUiState(
+                                contact =
+                                    Contact(
+                                        id = 4L,
+                                        name = "최수정",
+                                        phones = listOf("010-4444-5555"),
+                                        photoUri = null,
+                                        birthDay = "1998-07-22",
+                                        memo = "대학 동기",
+                                    ),
+                                isSelected = false,
+                            ),
+                        ),
+                ),
+        )
     }
 }

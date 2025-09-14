@@ -7,6 +7,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
+import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
+import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
@@ -14,11 +17,11 @@ import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.frie
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
 import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 internal fun NearNavHost(
@@ -77,11 +80,12 @@ internal fun NearNavHost(
             onShowErrorSnackBar = onShowSnackbar,
             onNavigateToHome = {
                 navController.navigateToHome(
-                    navOptions = androidx.navigation.navOptions {
-                        popUpTo(RouteLogin) { inclusive = true }
-                    }
+                    navOptions =
+                        navOptions {
+                            popUpTo(RouteLogin) { inclusive = true }
+                        },
                 )
-            }
+            },
         )
 
         // 홈 화면 NavGraph
@@ -93,6 +97,20 @@ internal fun NearNavHost(
             onMyPageClick = {},
             onAlarmClick = {},
             onAddContactClick = {},
+        )
+
+        contactNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onBackClick = {
+                navController.popBackStack()
+            },
+            onCompletedSelection = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    CONTACT_SELECTION_COMPLETE_KEY,
+                    it,
+                )
+                navController.popBackStack()
+            },
         )
     }
 }
