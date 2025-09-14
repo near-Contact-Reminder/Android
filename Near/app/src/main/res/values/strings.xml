@@ -92,5 +92,6 @@
     <string name="contact_title_text">연락처에서 불러오기</string>
     <string name="contact_close_screen">화면 닫기</string>
     <string name="context_search_placeholder">이름 검색</string>
+    <string name="contact_load_error">연락처를 불러오지 못했습니다.</string>
 
 </resources>
