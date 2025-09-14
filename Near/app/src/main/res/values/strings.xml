@@ -88,4 +88,8 @@
     <string name="day_of_week_saturday">토요일</string>
     <string name="day_of_week_sunday">일요일</string>
 
+    <!-- 연락처 선택 -->
+    <string name="contact_title_text">연락처에서 불러오기</string>
+    <string name="contact_close_screen">화면 닫기</string>
+
 </resources>
