@@ -21,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.contact.Contact
+import com.alarmy.near.presentation.feature.contact.state.ContactUiEvent
 import com.alarmy.near.presentation.feature.contact.state.ContactUiState
 import com.alarmy.near.presentation.feature.contact.state.SelectedContactUiState
 import com.alarmy.near.presentation.ui.component.NearFrame
@@ -48,9 +50,20 @@ fun ContactRoute(
     viewModel: ContactViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBackClick: () -> Unit,
-    onCompletedSelection: (List<Contact>) -> Unit
+    onCompletedSelection: (List<Contact>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is ContactUiEvent.Completed -> {
+                    onCompletedSelection(event.selectedContacts)
+                }
+            }
+        }
+    }
 
     when (uiState) {
         is ContactUiState.Loading -> {
@@ -71,13 +84,14 @@ fun ContactRoute(
             val contacts = (uiState as ContactUiState.Success).contacts
             ContactScreen(
                 contacts = contacts,
+                searchQuery = searchQuery,
                 onContactCheckedChange = { contactId, isSelected ->
                     viewModel.onContactSelect(isSelected, contactId)
                 },
                 onBackClick = onBackClick,
-                onCompleteClick = {},
+                onCompleteClick = viewModel::onCompleteClick,
                 onSearchClick = {},
-                onSearchTextChange = {},
+                onSearchTextChange = viewModel::onSearchTextChange,
             )
         }
     }
@@ -87,6 +101,7 @@ fun ContactRoute(
 fun ContactScreen(
     modifier: Modifier = Modifier,
     contacts: Map<String, List<SelectedContactUiState>> = emptyMap(),
+    searchQuery: String = "",
     onBackClick: () -> Unit = {},
     onSearchTextChange: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
@@ -123,7 +138,7 @@ fun ContactScreen(
         NearSearchTextField(
             placeHolderText = stringResource(R.string.context_search_placeholder),
             modifier = Modifier.padding(horizontal = 20.dp),
-            value = "",
+            value = searchQuery,
             onValueChange = onSearchTextChange,
             onSearchClick = onSearchClick,
         )

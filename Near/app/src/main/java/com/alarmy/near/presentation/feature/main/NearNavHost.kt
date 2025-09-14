@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
+import com.alarmy.near.presentation.feature.contact.navigation.RouteContact
 import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
@@ -36,7 +37,7 @@ internal fun NearNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = RouteHome,
+        startDestination = RouteContact,
     ) {
         friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
             navController.popBackStack()

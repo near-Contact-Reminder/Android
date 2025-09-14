@@ -12,6 +12,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -25,13 +26,6 @@ class HomeViewModel
     ) : ViewModel() {
         private val _errorEvent = Channel<Throwable?>()
         val errorEvent = _errorEvent.receiveAsFlow()
-
-        init {
-            val contacts = contactRepository.fetchAllContacts()
-            contacts.forEach {
-                Log.d("contacts", it.toString())
-            }
-        }
 
         val friendsFlow: StateFlow<List<FriendSummary>> =
             friendRepository
