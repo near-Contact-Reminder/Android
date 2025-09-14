@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.component.NearFrame
+import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.component.textfield.NearSearchTextField
 import com.alarmy.near.presentation.ui.theme.NearTheme
@@ -86,6 +88,17 @@ fun ContactScreen(
         ) {
             ContactList(
                 groupedContacts = groupedContacts,
+            )
+            NearSolidTypeButton(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = 24.dp),
+                contentPadding = PaddingValues(vertical = 17.dp),
+                onClick = {},
+                text = "4명 선택 완료",
             )
         }
     }
