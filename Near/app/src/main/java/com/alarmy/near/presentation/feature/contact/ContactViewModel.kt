@@ -57,15 +57,15 @@ class ContactViewModel
             }
         }
 
+        // 초성을 추출하는 함수
         fun getInitial(name: String): String {
             if (name.isEmpty()) return "#"
 
-            val firstChar = name.first()
+            val ch = name.first()
+            return if (ch in '가'..'힣') {
+                val base = ch.code - 0xAC00
+                val initialIndex = base / (21 * 28)
 
-            // 한글 범위 (가 ~ 힣)
-            if (firstChar in '가'..'힣') {
-                val base = firstChar.code - 0xAC00
-                val initialIndex = base / (21 * 28) // 초성 인덱스
                 val initials =
                     listOf(
                         "ㄱ",
@@ -87,16 +87,25 @@ class ContactViewModel
                         "ㅌ",
                         "ㅍ",
                         "ㅎ",
-                )
-            return initials[initialIndex]
-        }
+                    )
+                val initial = initials[initialIndex]
 
-        // 알파벳 → 대문자
-        if (firstChar.isLetter()) {
-            return firstChar.uppercaseChar().toString()
+                // 쌍자음을 단일 자음으로 매핑
+                when (initial) {
+                    "ㄲ" -> "ㄱ"
+                    "ㄸ" -> "ㄷ"
+                    "ㅃ" -> "ㅂ"
+                    "ㅆ" -> "ㅅ"
+                    "ㅉ" -> "ㅈ"
+                    else -> initial
+                }
+            } else {
+                // 한글 이외 → A~Z or #
+                if (ch.isLetter()) {
+                    ch.uppercaseChar().toString()
+                } else {
+                    "#"
+                }
+            }
         }
-
-        // 그 외 → #
-        return "#"
     }
-}
