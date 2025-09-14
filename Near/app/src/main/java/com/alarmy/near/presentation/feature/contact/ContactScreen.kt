@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.component.NearFrame
+import com.alarmy.near.presentation.ui.component.textfield.NearSearchTextField
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -28,16 +29,20 @@ fun ContactRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
 fun ContactScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
+    onSearchTextChange: (String) -> Unit = {},
+    onSearchClick: () -> Unit = {},
 ) {
     NearFrame(modifier = modifier) {
         Row(
             modifier =
-                Modifier.fillMaxWidth().padding(
-                    start = 24.dp,
-                    end = 20.dp,
-                    top = 8.dp,
-                    bottom = 8.dp,
-                ),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 24.dp,
+                        end = 20.dp,
+                        top = 8.dp,
+                        bottom = 8.dp,
+                    ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -52,7 +57,13 @@ fun ContactScreen(
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
-
+        NearSearchTextField(
+            placeHolderText = stringResource(R.string.context_search_placeholder),
+            modifier = Modifier.padding(horizontal = 20.dp),
+            value = "",
+            onValueChange = onSearchTextChange,
+            onSearchClick = onSearchClick,
+        )
     }
 }
 
