@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,26 +29,61 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.contact.state.ContactUiState
+import com.alarmy.near.presentation.feature.contact.state.SelectedContactUiState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.component.textfield.NearSearchTextField
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
+// 선택 완료 및 백 클릭 이벤트 처리
 @Composable
-fun ContactRoute(onShowErrorSnackBar: (throwable: Throwable?) -> Unit) {
-    ContactScreen()
+fun ContactRoute(
+    viewModel: ContactViewModel = hiltViewModel(),
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (uiState) {
+        is ContactUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            }
+        }
+
+        is ContactUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(modifier = Modifier.align(Alignment.Center), text = stringResource(R.string.contact_load_error))
+            }
+        }
+
+        is ContactUiState.Success -> {
+            val contacts = (uiState as ContactUiState.Success).contacts
+            ContactScreen(
+                contacts = contacts,
+                onContactCheckedChange = { contactId, isSelected ->
+                    viewModel.onContactSelect(isSelected, contactId)
+                },
+            )
+        }
+    }
 }
 
 @Composable
 fun ContactScreen(
     modifier: Modifier = Modifier,
+    contacts: Map<String, List<SelectedContactUiState>> = emptyMap(),
     onBackClick: () -> Unit = {},
     onSearchTextChange: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onContactCheckedChange: (Long, Boolean) -> Unit = { _, _ -> },
 ) {
-    val sectionedContacts = groupedContacts.toList()
     NearFrame(modifier = modifier) {
         Row(
             modifier =
@@ -87,7 +124,8 @@ fun ContactScreen(
                     .fillMaxSize(),
         ) {
             ContactList(
-                groupedContacts = groupedContacts,
+                groupedContacts = contacts,
+                onContactCheckedChange = onContactCheckedChange,
             )
             NearSolidTypeButton(
                 modifier =
@@ -98,7 +136,7 @@ fun ContactScreen(
                         .padding(bottom = 24.dp),
                 contentPadding = PaddingValues(vertical = 17.dp),
                 onClick = {},
-                text = "4명 선택 완료",
+                text = "${contacts.values.flatten().count { it.isSelected }}명 선택 완료",
             )
         }
     }
@@ -106,7 +144,10 @@ fun ContactScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ContactList(groupedContacts: Map<String, List<Contact>>) {
+fun ContactList(
+    groupedContacts: Map<String, List<SelectedContactUiState>>,
+    onContactCheckedChange: (Long, Boolean) -> Unit,
+) {
     val sectionedContacts = groupedContacts.toList()
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         sectionedContacts.forEach { (initial, contacts) ->
@@ -132,30 +173,31 @@ fun ContactList(groupedContacts: Map<String, List<Contact>>) {
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { /* 선택 토글 */ }
-                                .padding(horizontal = 24.dp, vertical = 12.dp),
+                                .clickable {
+                                    onContactCheckedChange(contact.contact.id, !contact.isSelected)
+                                }.padding(horizontal = 24.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         NearBackgroundCheckbox(
                             checked = contact.isSelected,
-                            onCheckedChange = { /* 선택 처리 */ },
+                            onCheckedChange = { checked ->
+                                onContactCheckedChange(contact.contact.id, checked)
+                            },
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = contact.name,
+                            text = contact.contact.name,
                             textAlign = TextAlign.Center,
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.BLACK_1A1A1A,
                         )
                     }
-                    // Divider는 마지막 아이템에는 안 그리도록 처리
                     if (index < contacts.lastIndex) {
                         HorizontalDivider(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 20.dp),
-                            // 체크박스 공간만큼 들여쓰기
                             color = NearTheme.colors.GRAY03_EBEBEB,
                             thickness = 1.dp,
                         )
@@ -173,18 +215,6 @@ fun ContactList(groupedContacts: Map<String, List<Contact>>) {
 @Composable
 fun ContactScreenPreview() {
     NearTheme {
-        ContactScreen { }
+        ContactScreen()
     }
 }
-
-data class Contact(
-    val name: String,
-    val isSelected: Boolean = false,
-)
-
-val groupedContacts: Map<String, List<Contact>> =
-    mapOf(
-        "ㄱ" to listOf(Contact("강민철"), Contact("곽명숙"), Contact("김경이")),
-        "ㄴ" to listOf(Contact("나윤희"), Contact("노진구")),
-        "ㅅ" to listOf(Contact("서지혜"), Contact("손록형")),
-    )
