@@ -13,13 +13,11 @@ import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToF
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
+import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
-import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
-import com.alarmy.near.presentation.feature.splash.navigation.RouteSplash
-import com.alarmy.near.presentation.feature.splash.navigation.splashNavGraph
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -27,16 +25,19 @@ import java.nio.charset.StandardCharsets
 internal fun NearNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    isLoggedIn: Boolean = false,
     onShowSnackbar: (Throwable?) -> Unit = { _ -> },
 ) {
     val context = LocalContext.current
+
     /*
      * 화면 이동 및 구성을 위한 컴포저블 함수입니다.
+     * 로그인 상태에 따라 즉시 적절한 화면으로 시작합니다.
      * */
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = RouteLogin,
+        startDestination = if (isLoggedIn) RouteHome else RouteLogin,
     ) {
         friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
             navController.popBackStack()
@@ -76,23 +77,6 @@ internal fun NearNavHost(
             navController.popBackStack()
         })
 
-        // 스플래쉬 화면 NavGraph
-        splashNavGraph(
-            onNavigateToLogin = {
-                navController.navigateToLogin(
-                    navOptions = navOptions {
-                        popUpTo(RouteSplash) { inclusive = true }
-                    }
-                )
-            },
-            onNavigateToHome = {
-                navController.navigateToHome(
-                    navOptions = navOptions {
-                        popUpTo(RouteSplash) { inclusive = true }
-                    }
-                )
-            }
-        )
 
         // 로그인 화면 NavGraph
         loginNavGraph(
