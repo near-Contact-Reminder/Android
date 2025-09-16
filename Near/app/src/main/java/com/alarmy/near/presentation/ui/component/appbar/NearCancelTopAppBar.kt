@@ -23,7 +23,7 @@ fun NearCancelTopAppBar(
     onCancelClick: () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
