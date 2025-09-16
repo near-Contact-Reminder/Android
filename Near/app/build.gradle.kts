@@ -34,12 +34,18 @@ android {
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_PROD_URL"))
             buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
             buildConfigField("String", "KAKAO_NATIVE_APP_KEY", getProperty("KAKAO_NATIVE_APP_KEY"))
+            buildConfigField("String", "SERVICE_AGREED_TERMS_URL", getProperty("SERVICE_AGREED_TERMS_URL"))
+            buildConfigField("String", "PERSONAL_INFO_TERMS_URL", getProperty("PERSONAL_INFO_TERMS_URL"))
+            buildConfigField("String", "PRIVACY_POLICY_TERMS_URL", getProperty("PRIVACY_POLICY_TERMS_URL"))
             manifestPlaceholders["kakaoAppKey"] = getProperty("KAKAO_NATIVE_APP_KEY").replace("\"", "")
         }
         debug {
             buildConfigField("String", "NEAR_URL", getProperty("NEAR_DEV_URL"))
             buildConfigField("String", "TEMP_TOKEN", getProperty("TEMP_TOKEN")) // TODO 추후 삭제 필요
             buildConfigField("String", "KAKAO_NATIVE_APP_KEY", getProperty("KAKAO_NATIVE_APP_KEY"))
+            buildConfigField("String", "SERVICE_AGREED_TERMS_URL", getProperty("SERVICE_AGREED_TERMS_URL"))
+            buildConfigField("String", "PERSONAL_INFO_TERMS_URL", getProperty("PERSONAL_INFO_TERMS_URL"))
+            buildConfigField("String", "PRIVACY_POLICY_TERMS_URL", getProperty("PRIVACY_POLICY_TERMS_URL"))
             manifestPlaceholders["kakaoAppKey"] = getProperty("KAKAO_NATIVE_APP_KEY").replace("\"", "")
         }
     }
