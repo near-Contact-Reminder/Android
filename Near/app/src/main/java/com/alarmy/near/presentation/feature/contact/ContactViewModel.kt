@@ -46,9 +46,7 @@ class ContactViewModel
                         contacts
                     } else {
                         contacts.filter { contact ->
-                            contact.name.contains(query, ignoreCase = true) ||
-                                contact.phones.any { it.contains(query) } ||
-                                (contact.memo?.contains(query) ?: false)
+                            contact.name.contains(query, ignoreCase = true)
                         }
                     }
 
