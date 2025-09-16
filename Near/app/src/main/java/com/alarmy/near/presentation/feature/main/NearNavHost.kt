@@ -21,6 +21,7 @@ import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
 import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToMyProfile
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToWithdraw
+import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToWebView
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -113,6 +114,9 @@ internal fun NearNavHost(
             },
             onNavigateToWithdraw = { nickname ->
                 navController.navigateToWithdraw(nickname)
+            },
+            onNavigateToTerms = { title, url ->
+                navController.navigateToWebView(title, url)
             },
             onShowErrorSnackBar = onShowSnackbar,
         )

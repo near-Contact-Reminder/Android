@@ -26,16 +26,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.feature.myprofile.components.NearLogoutButton
 import com.alarmy.near.presentation.feature.myprofile.components.NearServiceInfoRow
 import com.alarmy.near.presentation.feature.myprofile.components.NearSocialLoginBadge
 import com.alarmy.near.presentation.feature.myprofile.components.NearSwitch
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
 import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
+import com.alarmy.near.presentation.feature.myprofile.model.TermsType
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.extension.ImageLoader
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -44,6 +45,7 @@ internal fun MyProfileRoute(
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToWithdraw: (nickname: String) -> Unit,
+    onNavigateToTerms: (title: String, url: String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -74,6 +76,10 @@ internal fun MyProfileRoute(
                 is MyProfileUiEvent.NavigateToWithdraw -> {
                     onNavigateToWithdraw(event.nickname)
                 }
+
+                is MyProfileUiEvent.NavigateToTerms -> {
+                    onNavigateToTerms(event.termsType.title, event.termsType.url)
+                }
             }
         }
     }
@@ -96,6 +102,7 @@ internal fun MyProfileRoute(
             onNavigateBack = { viewModel.onNavigateBack() },
             onLogout = { viewModel.onLogout() },
             onWithdraw = { viewModel.onWithdraw() },
+            onTermsClick = { termsType -> viewModel.onTermsClick(termsType) },
         )
     }
 }
@@ -106,6 +113,7 @@ fun MyProfileScreen(
     onNavigateBack: () -> Unit = {},
     onLogout: () -> Unit = {},
     onWithdraw: () -> Unit = {},
+    onTermsClick: (TermsType) -> Unit = {},
 ) {
     NearFrame {
         // 앱바
@@ -125,7 +133,7 @@ fun MyProfileScreen(
                     .padding(horizontal = 24.dp),
         ) {
             MyProfileGeneralSection(uiState)
-            MyProfileServiceInfoSection(onLogout, onWithdraw)
+            MyProfileServiceInfoSection(onLogout, onWithdraw, onTermsClick)
         }
     }
 }
@@ -138,9 +146,10 @@ private fun ColumnScope.MyProfileInfoSection(uiState: MyProfileUiState) {
         uri = uiState.memberInfo.imageUrl,
         contentScale = ContentScale.Crop,
         contentDescription = "프로필 이미지",
-        modifier = Modifier
-            .padding(horizontal = 24.dp)
-            .align(Alignment.CenterHorizontally),
+        modifier =
+            Modifier
+                .padding(horizontal = 24.dp)
+                .align(Alignment.CenterHorizontally),
     )
 
     Spacer(modifier = Modifier.size(16.dp))
@@ -213,6 +222,7 @@ private fun MyProfileGeneralSection(uiState: MyProfileUiState) {
 private fun ColumnScope.MyProfileServiceInfoSection(
     onLogout: () -> Unit,
     onWithdraw: () -> Unit,
+    onTermsClick: (TermsType) -> Unit,
 ) {
     Text(
         text = "서비스 정보",
@@ -225,19 +235,19 @@ private fun ColumnScope.MyProfileServiceInfoSection(
     // 서비스 이용 약관
     NearServiceInfoRow(
         label = "서비스 이용 약관",
-        onClick = { /* 서비스 이용 약관 클릭 처리 */ },
+        onClick = { onTermsClick(TermsType.SERVICE_AGREED_TERMS) },
     )
 
     // 개인정보 수집 및 이용 동의서
     NearServiceInfoRow(
         label = "개인정보 수집 및 이용 동의서",
-        onClick = { /* 개인정보 수집 및 이용 동의서 클릭 처리 */ },
+        onClick = { onTermsClick(TermsType.PERSONAL_INFO_TERMS) },
     )
 
     // 개인정보 처리방침
     NearServiceInfoRow(
         label = "개인정보 처리방침",
-        onClick = { /* 개인정보 처리방침 클릭 처리 */ },
+        onClick = { onTermsClick(TermsType.PRIVACY_POLICY_TERMS) },
         showDivider = false, // 마지막 항목이므로 구분선 제거
     )
 

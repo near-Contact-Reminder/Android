@@ -7,6 +7,7 @@ import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
 import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
+import com.alarmy.near.presentation.feature.myprofile.model.TermsType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
@@ -90,6 +91,13 @@ class MyProfileViewModel
             val currentState = uiState.value
             _uiEvent.trySend(MyProfileUiEvent.NavigateToWithdraw(currentState.memberInfo.nickname))
         }
+
+        /**
+         * 약관 및 정책 클릭 이벤트 발생
+         */
+        fun onTermsClick(termsType: TermsType) {
+            _uiEvent.trySend(MyProfileUiEvent.NavigateToTerms(termsType))
+        }
     }
 
 /**
@@ -115,5 +123,9 @@ sealed class MyProfileUiEvent {
 
     data class NavigateToWithdraw(
         val nickname: String,
+    ) : MyProfileUiEvent()
+
+    data class NavigateToTerms(
+        val termsType: TermsType,
     ) : MyProfileUiEvent()
 }
