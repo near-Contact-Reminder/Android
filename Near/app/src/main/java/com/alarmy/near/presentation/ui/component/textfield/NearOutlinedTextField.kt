@@ -186,7 +186,7 @@ fun NearOutlinedTextField(
         // 에러 메시지 표시
         if (isError) {
             Text(
-                text = "편하게 의견을 남겨주세요.",
+                text = "1글자 이상 입력해주세요.",
                 style = NearTheme.typography.B2_14_MEDIUM,
                 color = NearTheme.colors.NEGATIVE_F04E4E,
                 modifier =
