@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,14 +60,39 @@ class ContactViewModel
                         )
                     }
 
+                // groupBy → 정렬된 Map 으로 변환
+                val grouped = uiContacts.groupBy { getInitial(it.contact.name) }
+                val sorted = grouped.toSortedMap(initialComparator)
+
                 ContactUiState.Success(
-                    contacts = uiContacts.groupBy { getInitial(it.contact.name) },
+                    contacts = sorted,
                 )
             }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000L),
                 ContactUiState.Loading,
             )
+
+        // 한글 - 영어 - 특수문자 순으로 정렬하는 Comparator
+        private val initialComparator =
+            Comparator<String> { a, b ->
+                val orderA = categoryOrder(a)
+                val orderB = categoryOrder(b)
+
+                if (orderA == orderB) {
+                    a.compareTo(b) // 같은 카테고리 안에서는 알파벳/자음 순 정렬
+                } else {
+                    orderA - orderB
+                }
+            }
+
+        // 한글=0, 영어=1, 그 외=2
+        private fun categoryOrder(initial: String): Int =
+            when {
+                initial.first() in 'ㄱ'..'ㅎ' -> 0
+                initial.first().isLetter() -> 1
+                else -> 2
+            }
 
         fun onContactSelect(
             isSelected: Boolean,
@@ -82,8 +108,17 @@ class ContactViewModel
         }
 
         fun onCompleteClick() {
-            val selected = selectedIds.value
-            println("선택된 연락처 ID들: $selected")
+            val selected =
+                (uiState.value as? ContactUiState.Success)
+                    ?.contacts
+                    ?.flatMap { it.value }
+                    ?.filter { it.isSelected }
+                    ?.map {
+                        it.contact
+                    } ?: return
+            viewModelScope.launch {
+                _uiEvent.send(ContactUiEvent.Completed(selected))
+            }
         }
 
         private fun getInitial(name: String): String {
@@ -128,5 +163,5 @@ class ContactViewModel
             } else {
                 if (ch.isLetter()) ch.uppercaseChar().toString() else "#"
             }
+        }
     }
-}
