@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun WithdrawRoute(
     viewModel: WithdrawViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -41,6 +42,9 @@ fun WithdrawRoute(
     LaunchedEffect(viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
+                is WithdrawUiEvent.NavigateBack -> {
+                    onNavigateBack()
+                }
                 is WithdrawUiEvent.NavigateToLogin -> {
                     onNavigateToLogin()
                 }
@@ -53,6 +57,7 @@ fun WithdrawRoute(
         onSelectReason = viewModel::selectReason,
         onUpdateOtherReasonText = viewModel::updateOtherReasonText,
         onSubmitWithdrawRequest = viewModel::submitWithdrawRequest,
+        onNavigateBack = viewModel::onNavigateBack,
     )
 }
 
@@ -62,6 +67,7 @@ fun WithdrawScreen(
     onSelectReason: (WithdrawReason) -> Unit,
     onUpdateOtherReasonText: (String) -> Unit,
     onSubmitWithdrawRequest: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     // 4개의 탈퇴 사유 리스트 생성
     val withdrawReasons = remember { WithdrawReason.entries }
@@ -85,7 +91,7 @@ fun WithdrawScreen(
     ) {
         WithdrawTopAppBar(
             title = "탈퇴하기",
-            onCancelClick = { /*TODO*/ },
+            onCancelClick = onNavigateBack,
         )
 
         Spacer(modifier = Modifier.size(48.dp))
@@ -142,7 +148,7 @@ fun WithdrawScreen(
         ) {
             NearBasicButton(
                 modifier = Modifier.weight(1f),
-                onClick = {},
+                onClick = onNavigateBack,
                 contentPadding = PaddingValues(16.dp),
             ) {
                 Text(
@@ -208,6 +214,7 @@ fun WithdrawScreenPreview() {
             onSelectReason = {},
             onUpdateOtherReasonText = {},
             onSubmitWithdrawRequest = {},
+            onNavigateBack = {},
         )
     }
 }

@@ -129,6 +129,13 @@ class WithdrawViewModel
                     errorMessage = errorMessage,
                 )
         }
+
+        /**
+         * 백 네비게이션 이벤트 발생
+         */
+        fun onNavigateBack() {
+            _uiEvent.trySend(WithdrawUiEvent.NavigateBack)
+        }
     }
 
 /**
@@ -161,5 +168,6 @@ data class WithdrawUiState(
  * 탈퇴 화면의 UI 이벤트
  */
 sealed class WithdrawUiEvent {
+    object NavigateBack : WithdrawUiEvent()
     object NavigateToLogin : WithdrawUiEvent()
 }

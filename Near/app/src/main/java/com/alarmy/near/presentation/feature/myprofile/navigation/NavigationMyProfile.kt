@@ -38,6 +38,7 @@ fun NavGraphBuilder.myProfileNavGraph(
 
     composable<RouteWithdraw> {
         WithdrawRoute(
+            onNavigateBack = onNavigateBack,
             onNavigateToLogin = onNavigateToLogin,
         )
     }
