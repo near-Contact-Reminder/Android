@@ -1,15 +1,31 @@
 package com.alarmy.near.network.response
 
+import com.alarmy.near.model.DayOfWeek
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class FriendEntity(
     val friendId: String,
-    val position: Int,
-    val source: String,
+    val imageUrl: String?,
+    val relation: String,
     val name: String,
-    val imageUrl: String? = null,
-    val fileName: String? = null,
-    val checkRate: Int,
-    val lastContactAt: String? = null,
+    val contactFrequency: ContactFrequencyEntity,
+    val birthday: String?,
+    val anniversaryList: List<AnniversaryEntity>,
+    val memo: String?,
+    val phone: String?,
+    val lastContactAt: String?,
+)
+
+@Serializable
+data class ContactFrequencyEntity(
+    val contactWeek: String,
+    val dayOfWeek: String,
+)
+
+@Serializable
+data class AnniversaryEntity(
+    val id: Int,
+    val title: String,
+    val date: String,
 )

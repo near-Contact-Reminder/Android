@@ -27,9 +27,10 @@ fun NearDatePicker(
     onDismiss: () -> Unit,
 ) {
     DatePickerDialog(
-        colors = DatePickerDefaults.colors().copy(
-            containerColor = NearTheme.colors.WHITE_FFFFFF,
-        ),
+        colors =
+            DatePickerDefaults.colors().copy(
+                containerColor = NearTheme.colors.WHITE_FFFFFF,
+            ),
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
@@ -45,19 +46,20 @@ fun NearDatePicker(
             }
         },
     ) {
-        DatePicker(state = datePickerState, title = null, headline = null, showModeToggle = false,
+        DatePicker(
+            state = datePickerState,
+            title = null,
+            headline = null,
+            showModeToggle = false,
             dateFormatter =
                 remember
                 { DatePickerDefaults.dateFormatter() },
-                colors = DatePickerDefaults.colors().copy(
-                containerColor = NearTheme.colors.WHITE_FFFFFF,
-            ))
+            colors =
+                DatePickerDefaults.colors().copy(
+                    containerColor = NearTheme.colors.WHITE_FFFFFF,
+                ),
+        )
     }
-}
-
-private fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    return formatter.format(Date(millis))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

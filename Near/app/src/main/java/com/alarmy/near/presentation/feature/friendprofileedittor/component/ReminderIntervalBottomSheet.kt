@@ -44,7 +44,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 @Composable
 fun ReminderIntervalBottomSheet(
     modifier: Modifier = Modifier,
-    selectedReminderInterval: ReminderInterval = ReminderInterval.WEEKLY,
+    selectedReminderInterval: ReminderInterval = ReminderInterval.EVERY_WEEK,
     onSelectReminderInterval: (ReminderInterval) -> Unit = {},
     sheetState: SheetState =
         rememberModalBottomSheetState(

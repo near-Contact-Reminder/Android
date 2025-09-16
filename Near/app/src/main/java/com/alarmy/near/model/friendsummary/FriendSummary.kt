@@ -1,4 +1,4 @@
-package com.alarmy.near.model
+package com.alarmy.near.model.friendsummary
 
 import androidx.compose.runtime.Immutable
 
@@ -9,5 +9,5 @@ data class FriendSummary(
     val profileImageUrl: String?,
     val lastContactedAt: String?,
     val isContacted: Boolean,
-    val contactFrequency: ContactFrequency,
+    val contactFrequencyLevel: ContactFrequencyLevel,
 )

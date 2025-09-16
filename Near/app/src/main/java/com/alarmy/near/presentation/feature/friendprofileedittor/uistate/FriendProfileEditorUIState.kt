@@ -1,0 +1,68 @@
+package com.alarmy.near.presentation.feature.friendprofileedittor.uistate
+
+import com.alarmy.near.model.Anniversary
+import com.alarmy.near.model.ContactFrequency
+import com.alarmy.near.model.Friend
+import com.alarmy.near.model.Relation
+
+data class FriendProfileEditorUIState(
+    val name: InputField<String> = InputField(""),
+    val relation: Relation = Relation.FRIEND,
+    val contactFrequency: ContactFrequency,
+    val birthday: InputField<String?> = InputField(null),
+    val anniversaries: List<AnniversaryUIState> = emptyList(),
+    val memo: InputField<String?> = InputField(null),
+)
+
+data class AnniversaryUIState(
+    val title: InputField<String> = InputField(""),
+    val date: InputField<String?> = InputField(null),
+)
+
+data class InputField<T>(
+    val value: T,
+    val error: Boolean = false, // null이면 유효한 상태
+    val isDirty: Boolean = false, // 유저가 입력을 시도했는지
+)
+
+fun Friend.toUiModel(): FriendProfileEditorUIState =
+    FriendProfileEditorUIState(
+        name = InputField(name),
+        relation = relation,
+        contactFrequency = contactFrequency,
+        birthday = InputField(birthday),
+        anniversaries = anniversaryList.map { it.toUiModel() },
+        memo = InputField(memo),
+    )
+
+fun Anniversary.toUiModel(): AnniversaryUIState =
+    AnniversaryUIState(
+        title = InputField(title),
+        date = InputField(date),
+    )
+
+fun FriendProfileEditorUIState.toModel(
+    friendId: String,
+    imageUrl: String,
+    phone: String,
+    lastContactAt: String,
+): Friend =
+    Friend(
+        name = name.value,
+        relation = relation,
+        contactFrequency =
+        contactFrequency,
+        birthday = birthday.value?.replace(".", "-"),
+        anniversaryList =
+            anniversaries.map {
+                Anniversary(
+                    title = it.title.value,
+                    date = it.date.value?.replace(".", "-"),
+                )
+            },
+        friendId = friendId,
+        imageUrl = imageUrl,
+        memo = memo.value,
+        phone = phone,
+        lastContactAt = lastContactAt,
+    )
