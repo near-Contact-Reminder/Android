@@ -97,7 +97,7 @@ fun WithdrawScreen(
         Spacer(modifier = Modifier.size(48.dp))
 
         Text(
-            text = "신짱구님,\n떠나는 이유를 알려주시면\n큰 도움이 될 거예요.",
+            text = "${uiState.nickname}님,\n떠나는 이유를 알려주시면\n큰 도움이 될 거예요.",
             style = NearTheme.typography.H1_24_MEDIUM,
         )
 

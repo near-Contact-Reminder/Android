@@ -111,8 +111,8 @@ internal fun NearNavHost(
                     }
                 )
             },
-            onNavigateToWithdraw = {
-                navController.navigateToWithdraw()
+            onNavigateToWithdraw = { nickname ->
+                navController.navigateToWithdraw(nickname)
             },
             onShowErrorSnackBar = onShowSnackbar,
         )

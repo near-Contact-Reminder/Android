@@ -20,76 +20,77 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyProfileViewModel
-@Inject
-constructor(
-    private val memberRepository: MemberRepository,
-    private val authRepository: AuthRepository,
-) : ViewModel() {
-    // 에러 이벤트 관리
-    private val _errorEvent = Channel<Throwable?>()
-    val errorEvent = _errorEvent.receiveAsFlow()
+    @Inject
+    constructor(
+        private val memberRepository: MemberRepository,
+        private val authRepository: AuthRepository,
+    ) : ViewModel() {
+        // 에러 이벤트 관리
+        private val _errorEvent = Channel<Throwable?>()
+        val errorEvent = _errorEvent.receiveAsFlow()
 
-    // UI 이벤트 관리
-    private val _uiEvent = Channel<MyProfileUiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
+        // UI 이벤트 관리
+        private val _uiEvent = Channel<MyProfileUiEvent>()
+        val uiEvent = _uiEvent.receiveAsFlow()
 
-    // UI 상태 관리
-    val uiState: StateFlow<MyProfileUiState> =
-        memberRepository
-            .getMyInfo()
-            .catch { throwable ->
-                _errorEvent.send(throwable)
-            }.map { memberInfo ->
-                MyProfileUiState(
-                    isLoading = false,
-                    memberInfo = memberInfo.toMyProfileInfo(),
-                    error = null,
-                )
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue =
+        // UI 상태 관리
+        val uiState: StateFlow<MyProfileUiState> =
+            memberRepository
+                .getMyInfo()
+                .catch { throwable ->
+                    _errorEvent.send(throwable)
+                }.map { memberInfo ->
                     MyProfileUiState(
-                        isLoading = true,
-                        memberInfo =
-                            MyProfileInfo(
-                                nickname = "",
-                                imageUrl = null,
-                                notificationAgreedAt = null,
-                                providerType = LoginType.KAKAO,
-                            ),
-                    ),
-            )
+                        isLoading = false,
+                        memberInfo = memberInfo.toMyProfileInfo(),
+                        error = null,
+                    )
+                }.stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue =
+                        MyProfileUiState(
+                            isLoading = true,
+                            memberInfo =
+                                MyProfileInfo(
+                                    nickname = "",
+                                    imageUrl = null,
+                                    notificationAgreedAt = null,
+                                    providerType = LoginType.KAKAO,
+                                ),
+                        ),
+                )
 
-    /**
-     * 백 네비게이션 이벤트 발생
-     */
-    fun onNavigateBack() {
-        _uiEvent.trySend(MyProfileUiEvent.NavigateBack)
-    }
+        /**
+         * 백 네비게이션 이벤트 발생
+         */
+        fun onNavigateBack() {
+            _uiEvent.trySend(MyProfileUiEvent.NavigateBack)
+        }
 
-    /**
-     * 로그아웃 이벤트 발생
-     */
-    fun onLogout() {
-        viewModelScope.launch {
-            runCatching {
-                authRepository.logout()
-            }.onSuccess {
-                _uiEvent.trySend(MyProfileUiEvent.Logout)
-            }.onFailure { exception ->
-                _errorEvent.send(exception)
+        /**
+         * 로그아웃 이벤트 발생
+         */
+        fun onLogout() {
+            viewModelScope.launch {
+                runCatching {
+                    authRepository.logout()
+                }.onSuccess {
+                    _uiEvent.trySend(MyProfileUiEvent.Logout)
+                }.onFailure { exception ->
+                    _errorEvent.send(exception)
+                }
             }
         }
-    }
 
-    /**
-     * 탈퇴하기 이벤트 발생
-     */
-    fun onWithdraw() {
-        _uiEvent.trySend(MyProfileUiEvent.NavigateToWithdraw)
+        /**
+         * 탈퇴하기 이벤트 발생
+         */
+        fun onWithdraw() {
+            val currentState = uiState.value
+            _uiEvent.trySend(MyProfileUiEvent.NavigateToWithdraw(currentState.memberInfo.nickname))
+        }
     }
-}
 
 /**
  * MyProfile UI 상태
@@ -112,5 +113,7 @@ sealed class MyProfileUiEvent {
 
     object Logout : MyProfileUiEvent()
 
-    object NavigateToWithdraw : MyProfileUiEvent()
+    data class NavigateToWithdraw(
+        val nickname: String,
+    ) : MyProfileUiEvent()
 }

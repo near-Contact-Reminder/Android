@@ -43,7 +43,7 @@ internal fun MyProfileRoute(
     viewModel: MyProfileViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onNavigateToWithdraw: () -> Unit,
+    onNavigateToWithdraw: (nickname: String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,7 +72,7 @@ internal fun MyProfileRoute(
                 }
 
                 is MyProfileUiEvent.NavigateToWithdraw -> {
-                    onNavigateToWithdraw()
+                    onNavigateToWithdraw(event.nickname)
                 }
             }
         }

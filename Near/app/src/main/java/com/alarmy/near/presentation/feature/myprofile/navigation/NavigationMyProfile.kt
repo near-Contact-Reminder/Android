@@ -11,20 +11,20 @@ import kotlinx.serialization.Serializable
 object RouteMyProfile
 
 @Serializable
-object RouteWithdraw
+data class RouteWithdraw(val nickname: String)
 
 fun NavController.navigateToMyProfile() {
     navigate(RouteMyProfile)
 }
 
-fun NavController.navigateToWithdraw() {
-    navigate(RouteWithdraw)
+fun NavController.navigateToWithdraw(nickname: String) {
+    navigate(RouteWithdraw(nickname))
 }
 
 fun NavGraphBuilder.myProfileNavGraph(
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onNavigateToWithdraw: () -> Unit,
+    onNavigateToWithdraw: (nickname: String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     composable<RouteMyProfile> {

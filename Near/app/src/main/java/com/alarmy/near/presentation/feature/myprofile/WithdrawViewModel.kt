@@ -1,11 +1,14 @@
 package com.alarmy.near.presentation.feature.myprofile
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.model.member.WithdrawRequest
 import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
+import com.alarmy.near.presentation.feature.myprofile.navigation.RouteWithdraw
 import com.alarmy.near.utils.logger.NearLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -22,9 +25,12 @@ class WithdrawViewModel
     constructor(
         private val memberRepository: MemberRepository,
         private val authRepository: AuthRepository,
+        savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
+        private val nickname: String = savedStateHandle.toRoute<RouteWithdraw>().nickname
+
         // UI 상태 관리
-        private val _uiState = MutableStateFlow(WithdrawUiState())
+        private val _uiState = MutableStateFlow(WithdrawUiState(nickname = nickname))
         val uiState: StateFlow<WithdrawUiState> = _uiState.asStateFlow()
 
         // UI 이벤트 관리
@@ -142,6 +148,7 @@ class WithdrawViewModel
  * 탈퇴 화면의 UI 상태
  */
 data class WithdrawUiState(
+    val nickname: String = "",
     val selectedReason: WithdrawReason? = null,
     val otherReasonText: String = "",
     val isLoading: Boolean = false,
@@ -169,5 +176,6 @@ data class WithdrawUiState(
  */
 sealed class WithdrawUiEvent {
     object NavigateBack : WithdrawUiEvent()
+
     object NavigateToLogin : WithdrawUiEvent()
 }
