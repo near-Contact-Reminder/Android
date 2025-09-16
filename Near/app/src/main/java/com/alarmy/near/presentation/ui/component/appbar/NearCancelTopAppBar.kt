@@ -1,4 +1,4 @@
-package com.alarmy.near.presentation.feature.myprofile.components
+package com.alarmy.near.presentation.ui.component.appbar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +17,9 @@ import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun WithdrawTopAppBar(
+fun NearCancelTopAppBar(
     modifier: Modifier = Modifier,
-    title: String = "탈퇴하기",
+    title: String = "",
     onCancelClick: () -> Unit = {}
 ) {
     Row(
@@ -46,9 +46,9 @@ fun WithdrawTopAppBar(
 
 @Preview(showBackground = true)
 @Composable
-fun WithdrawTopAppBarPreview() {
+fun NearCancelTopAppBarPreview() {
     NearTheme {
-        WithdrawTopAppBar(
+        NearCancelTopAppBar(
             title = "탈퇴하기",
             onCancelClick = { }
         )

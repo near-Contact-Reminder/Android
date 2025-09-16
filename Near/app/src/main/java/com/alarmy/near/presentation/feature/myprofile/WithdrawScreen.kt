@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alarmy.near.presentation.feature.myprofile.components.WithdrawTopAppBar
+import com.alarmy.near.presentation.ui.component.appbar.NearCancelTopAppBar
 import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
@@ -89,7 +89,7 @@ fun WithdrawScreen(
                 .background(NearTheme.colors.WHITE_FFFFFF)
                 .padding(horizontal = 24.dp),
     ) {
-        WithdrawTopAppBar(
+        NearCancelTopAppBar(
             title = "탈퇴하기",
             onCancelClick = onNavigateBack,
         )
