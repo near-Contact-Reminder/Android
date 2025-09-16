@@ -17,19 +17,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
@@ -43,6 +48,7 @@ import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.component.textfield.NearSearchTextField
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
 
 // 선택 완료 및 백 클릭 이벤트 처리
 @Composable
@@ -176,63 +182,144 @@ fun ContactList(
     onContactCheckedChange: (Long, Boolean) -> Unit,
 ) {
     val sectionedContacts = groupedContacts.toList()
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        sectionedContacts.forEach { (initial, contacts) ->
-            stickyHeader {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(NearTheme.colors.BG02_F4F9FD)
-                            .padding(vertical = 12.dp, horizontal = 24.dp),
-                ) {
-                    Text(
-                        text = initial,
-                        style = NearTheme.typography.B1_16_BOLD,
-                        color = NearTheme.colors.BLACK_1A1A1A,
-                    )
-                }
-                Spacer(modifier = Modifier.height(6.dp))
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // 섹션별 첫 번째 아이템 인덱스 계산
+    val sectionIndexMap =
+        remember(sectionedContacts) {
+            val map = mutableMapOf<String, Int>()
+            var index = 0
+            sectionedContacts.forEach { (initial, contacts) ->
+                map[initial] = index // stickyHeader 위치
+                index += 1 + contacts.size + 1 // header + items + spacer
             }
-            itemsIndexed(contacts) { index, contact ->
-                Column {
-                    Row(
+            map
+        }
+
+    Box {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState,
+        ) {
+            sectionedContacts.forEach { (initial, contacts) ->
+                stickyHeader {
+                    Box(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    onContactCheckedChange(contact.contact.id, !contact.isSelected)
-                                }.padding(horizontal = 24.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                                .background(NearTheme.colors.BG02_F4F9FD)
+                                .padding(vertical = 12.dp, horizontal = 24.dp),
                     ) {
-                        NearBackgroundCheckbox(
-                            checked = contact.isSelected,
-                            onCheckedChange = { checked ->
-                                onContactCheckedChange(contact.contact.id, checked)
-                            },
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = contact.contact.name,
-                            textAlign = TextAlign.Center,
-                            style = NearTheme.typography.B2_14_MEDIUM,
+                            text = initial,
+                            style = NearTheme.typography.B1_16_BOLD,
                             color = NearTheme.colors.BLACK_1A1A1A,
                         )
                     }
-                    if (index < contacts.lastIndex) {
-                        HorizontalDivider(
+                    Spacer(modifier = Modifier.height(6.dp))
+                }
+                itemsIndexed(contacts) { index, contact ->
+                    Column {
+                        Row(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 20.dp),
-                            color = NearTheme.colors.GRAY03_EBEBEB,
-                            thickness = 1.dp,
-                        )
+                                    .clickable {
+                                        onContactCheckedChange(
+                                            contact.contact.id,
+                                            !contact.isSelected,
+                                        )
+                                    }.padding(horizontal = 24.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            NearBackgroundCheckbox(
+                                checked = contact.isSelected,
+                                onCheckedChange = { checked ->
+                                    onContactCheckedChange(contact.contact.id, checked)
+                                },
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = contact.contact.name,
+                                textAlign = TextAlign.Center,
+                                style = NearTheme.typography.B2_14_MEDIUM,
+                                color = NearTheme.colors.BLACK_1A1A1A,
+                            )
+                        }
+                        if (index < contacts.lastIndex) {
+                            HorizontalDivider(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp),
+                                color = NearTheme.colors.GRAY03_EBEBEB,
+                                thickness = 1.dp,
+                            )
+                        }
                     }
                 }
+                item { Spacer(modifier = Modifier.height(18.dp)) }
             }
             item {
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(90.dp))
+            }
+        }
+
+        // 우측 인덱스 바
+        val allInitials =
+            listOf(
+                "ㄱ",
+                "ㄴ",
+                "ㄷ",
+                "ㄹ",
+                "ㅁ",
+                "ㅂ",
+                "ㅅ",
+                "ㅇ",
+                "ㅈ",
+                "ㅊ",
+                "ㅋ",
+                "ㅌ",
+                "ㅍ",
+                "ㅎ",
+            ) + ('A'..'Z').map { it.toString() } + "#"
+
+        Column(
+            modifier =
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(end = 12.dp, top = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            allInitials.forEach { initial ->
+                Text(
+                    text = initial,
+                    style =
+                        NearTheme.typography.FC_12_BOLD.copy(
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp,
+                            lineHeightStyle =
+                                LineHeightStyle(
+                                    alignment = LineHeightStyle.Alignment.Center,
+                                    trim = LineHeightStyle.Trim.None,
+                                ),
+                        ),
+                    color = NearTheme.colors.BLUE01_5AA2E9,
+                    modifier =
+                        Modifier
+                            .onNoRippleClick {
+                                // 실제 존재하는 섹션 중 가장 가까운 이전 섹션 찾기
+                                val available = sectionIndexMap.keys.sorted()
+                                val target = available.lastOrNull { it <= initial }
+                                val index = sectionIndexMap[target]
+                                if (index != null) {
+                                    coroutineScope.launch {
+                                        listState.animateScrollToItem(index)
+                                    }
+                                }
+                            },
+                )
             }
         }
     }
