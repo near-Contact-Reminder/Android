@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,8 +26,10 @@ import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.component.button.NearLineTypeButton
 import com.alarmy.near.presentation.ui.component.radiobutton.NearLargeRadioButton
+import com.alarmy.near.presentation.ui.component.textfield.NearOutlinedTextField
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun WithdrawRoute(
@@ -49,7 +52,7 @@ fun WithdrawRoute(
         uiState = uiState,
         onSelectReason = viewModel::selectReason,
         onUpdateOtherReasonText = viewModel::updateOtherReasonText,
-        onSubmitWithdrawRequest = viewModel::submitWithdrawRequest
+        onSubmitWithdrawRequest = viewModel::submitWithdrawRequest,
     )
 }
 
@@ -60,36 +63,46 @@ fun WithdrawScreen(
     onUpdateOtherReasonText: (String) -> Unit,
     onSubmitWithdrawRequest: () -> Unit,
 ) {
-
     // 4개의 탈퇴 사유 리스트 생성
     val withdrawReasons = remember { WithdrawReason.entries }
+    val textFieldFocusRequester = remember { FocusRequester() }
+
+    // 기타 사유 선택 시 먼저 키보드를 올리고, 키보드가 완전히 올라온 후에 에러 상태 생성
+    LaunchedEffect(uiState.isOtherReasonSelected) {
+        if (uiState.isOtherReasonSelected) {
+            textFieldFocusRequester.requestFocus()
+            delay(300)
+            onUpdateOtherReasonText("")
+        }
+    }
 
     NearFrame {
-
         WithdrawTopAppBar(
             title = "탈퇴하기",
-            onCancelClick = { /*TODO*/ }
+            onCancelClick = { /*TODO*/ },
         )
 
         Spacer(modifier = Modifier.size(48.dp))
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
         ) {
             Text(
                 text = "신짱구님,\n떠나는 이유를 알려주시면\n큰 도움이 될 거예요.",
-                style = NearTheme.typography.H1_24_MEDIUM
+                style = NearTheme.typography.H1_24_MEDIUM,
             )
 
             Spacer(modifier = Modifier.size(12.dp))
 
             Text(
                 text = "소중한 의견을 받아\n더 나은 서비스를 만들어갈게요.",
-                style = NearTheme.typography.B1_16_MEDIUM.copy(
-                    color = NearTheme.colors.GRAY01_888888,
-                ),
+                style =
+                    NearTheme.typography.B1_16_MEDIUM.copy(
+                        color = NearTheme.colors.GRAY01_888888,
+                    ),
             )
 
             Spacer(modifier = Modifier.size(48.dp))
@@ -101,7 +114,7 @@ fun WithdrawScreen(
                     isSelected = uiState.selectedReason == reason,
                     onClick = {
                         onSelectReason(reason)
-                    }
+                    },
                 )
 
                 // 마지막 항목이 아닌 경우에만 Spacer 추가
@@ -110,7 +123,18 @@ fun WithdrawScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.size(16.dp))
+
+            NearOutlinedTextField(
+                value = uiState.otherReasonText,
+                onValueChange = onUpdateOtherReasonText,
+                placeholder = "편하게 의견을 남겨주세요.",
+                enabled = uiState.isOtherReasonTextFieldEnabled,
+                isError = !uiState.isOtherReasonTextValid,
+                focusRequester = textFieldFocusRequester,
+            )
+
+            Spacer(modifier = Modifier.size(40.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -132,17 +156,15 @@ fun WithdrawScreen(
                 // 탈퇴하기 버튼
                 NearLineTypeButton(
                     modifier = Modifier.weight(1f),
-                    enabled = uiState.selectedReason != null &&
-                            (uiState.selectedReason != WithdrawReason.REASON_OTHER || uiState.otherReasonText.isNotEmpty()) &&
-                            !uiState.isLoading,
+                    enabled = uiState.isWithdrawButtonEnabled,
                     onClick = {
                         onSubmitWithdrawRequest()
                     },
                     text = "탈퇴하기",
-                    contentPadding = PaddingValues(vertical = 16.dp)
+                    contentPadding = PaddingValues(vertical = 16.dp),
                 )
             }
-                Spacer(modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.size(24.dp))
         }
     }
 }
@@ -152,12 +174,13 @@ private fun WithdrawReasonButtonAndLabel(
     modifier: Modifier = Modifier,
     label: String,
     isSelected: Boolean = false,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .onNoRippleClick(onClick = onClick)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .onNoRippleClick(onClick = onClick),
     ) {
         NearLargeRadioButton(
             selected = isSelected,
@@ -177,7 +200,6 @@ private fun WithdrawReasonButtonAndLabel(
     }
 }
 
-
 @Preview
 @Composable
 fun WithdrawScreenPreview() {
@@ -186,7 +208,7 @@ fun WithdrawScreenPreview() {
             uiState = WithdrawUiState(),
             onSelectReason = {},
             onUpdateOtherReasonText = {},
-            onSubmitWithdrawRequest = {}
+            onSubmitWithdrawRequest = {},
         )
     }
 }
