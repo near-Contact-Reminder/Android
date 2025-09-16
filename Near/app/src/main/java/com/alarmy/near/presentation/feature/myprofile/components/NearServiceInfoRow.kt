@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
@@ -27,7 +28,8 @@ fun NearServiceInfoRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickable { onClick() },
+                .onNoRippleClick(onClick)
+                .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -49,7 +51,6 @@ fun NearServiceInfoRow(
     // 구분선 (선택사항)
     if (showDivider) {
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 16.dp),
             color = NearTheme.colors.GRAY03_EBEBEB,
         )
     }
