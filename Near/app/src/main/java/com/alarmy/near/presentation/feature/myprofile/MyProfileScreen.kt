@@ -232,24 +232,14 @@ private fun ColumnScope.MyProfileServiceInfoSection(
 
     Spacer(modifier = Modifier.size(32.dp))
 
-    // 서비스 이용 약관
-    NearServiceInfoRow(
-        label = "서비스 이용 약관",
-        onClick = { onTermsClick(TermsType.SERVICE_AGREED_TERMS) },
-    )
-
-    // 개인정보 수집 및 이용 동의서
-    NearServiceInfoRow(
-        label = "개인정보 수집 및 이용 동의서",
-        onClick = { onTermsClick(TermsType.PERSONAL_INFO_TERMS) },
-    )
-
-    // 개인정보 처리방침
-    NearServiceInfoRow(
-        label = "개인정보 처리방침",
-        onClick = { onTermsClick(TermsType.PRIVACY_POLICY_TERMS) },
-        showDivider = false, // 마지막 항목이므로 구분선 제거
-    )
+    // 약관 및 정책 목록
+    TermsType.entries.forEachIndexed { index, termsType ->
+        NearServiceInfoRow(
+            label = termsType.title,
+            onClick = { onTermsClick(termsType) },
+            showDivider = index < TermsType.entries.size - 1,
+        )
+    }
 
     Spacer(modifier = Modifier.weight(1f))
 
