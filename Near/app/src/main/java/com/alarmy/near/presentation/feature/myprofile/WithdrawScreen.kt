@@ -140,7 +140,7 @@ fun WithdrawScreen(
             focusRequester = textFieldFocusRequester,
         )
 
-        Spacer(modifier = Modifier.size(40.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
