@@ -3,6 +3,7 @@ package com.alarmy.near.presentation.ui.component.textfield
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -29,7 +30,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
@@ -39,7 +41,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.presentation.ui.component.textfield.internal.NearTextFieldColors
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+// 상수 정의
+private val DEFAULT_MIN_HEIGHT = 56.dp
+private val CHARACTER_COUNT_END_PADDING = 92.dp
+private val ERROR_MESSAGE_START_PADDING = 16.dp
+private val ERROR_MESSAGE_VERTICAL_PADDING = 6.dp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -49,125 +58,141 @@ fun NearOutlinedTextField(
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,
     placeholder: String = "",
+    isError: Boolean = false,
+    focusRequester: FocusRequester,
     maxLines: Int = Int.MAX_VALUE,
-    maxLength: Int = 50, // 최대 글자 수
+    maxLength: Int = 200,
     shape: Shape = RoundedCornerShape(12.dp),
     colors: TextFieldColors = NearTextFieldColors(),
     contentPadding: PaddingValues = PaddingValues(16.dp),
     focusedBorderThickness: Float = 1.5f, // 포커스 시 border
     unfocusedBorderThickness: Float = 1f, // 포커스 해제 시 border
-    showCharacterCount: Boolean = false,
-    imeAction: ImeAction = ImeAction.Done, // 키보드 완료 버튼 타입
+    showCharacterCount: Boolean = true, // 굴자수 보이기
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val coroutineScope = rememberCoroutineScope()
-    var isFocused by remember { mutableStateOf(false) }
+    var hasEverBeenTyped by remember { mutableStateOf(false) }
 
-    // 포커스가 변경될 때 텍스트필드를 화면 제일 밑으로 스크롤
-    LaunchedEffect(isFocused) {
-        if (isFocused) {
-            coroutineScope.launch {
-                bringIntoViewRequester.bringIntoView()
-            }
+    LaunchedEffect(value) {
+        // 한 번이라도 텍스트가 입력되면 hasEverBeenTyped을 true로 설정
+        if (value.isNotEmpty() && !hasEverBeenTyped) {
+            hasEverBeenTyped = true
         }
     }
 
-    // 텍스트 내용이 변경될 때도 스크롤 (포커스 상태일 때만)
-    LaunchedEffect(value) {
-        if (isFocused && value.isNotEmpty()) {
-            coroutineScope.launch {
-                bringIntoViewRequester.bringIntoView()
-            }
+    // 에러 상태일 때 스크롤
+    LaunchedEffect(isError) {
+        coroutineScope.launch {
+            delay(300)
+            bringIntoViewRequester.bringIntoView()
         }
     }
 
     // 글자 수가 표시될 때 텍스트 영역을 위한 패딩 조정
     val adjustedContentPadding =
-        if (showCharacterCount) {
+        remember(showCharacterCount, contentPadding) {
+            if (!showCharacterCount) return@remember contentPadding
+
             PaddingValues(
                 start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
                 top = contentPadding.calculateTopPadding(),
-                end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 120.dp, // 글자 수 공간 확보
+                end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + CHARACTER_COUNT_END_PADDING,
                 bottom = contentPadding.calculateBottomPadding(),
             )
-        } else {
-            contentPadding
         }
 
-    Box(
+    Column(
         modifier =
             modifier
                 .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester),
     ) {
-        BasicTextField(
-            value = value,
-            onValueChange = { newValue ->
-                if (newValue.length > maxLength) {
-                    return@BasicTextField
-                }
-                onValueChange(newValue)
-            },
-            enabled = enabled,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 56.dp)
-                    .onFocusChanged { focusState ->
-                        val newFocused = focusState.isFocused
-                        if (isFocused != newFocused) {
-                            isFocused = newFocused
-                        }
-                    },
-            textStyle = NearTheme.typography.B2_14_MEDIUM,
-            maxLines = maxLines,
-            keyboardOptions = KeyboardOptions(imeAction = imeAction),
-            interactionSource = interactionSource,
-            decorationBox = { innerTextField ->
-                OutlinedTextFieldDefaults.DecorationBox(
-                    value = value,
-                    innerTextField = innerTextField,
-                    enabled = enabled,
-                    singleLine = maxLines == 1,
-                    visualTransformation = VisualTransformation.None,
-                    interactionSource = interactionSource,
-                    contentPadding = adjustedContentPadding,
-                    placeholder = {
-                        Text(
-                            text = placeholder,
-                            style = NearTheme.typography.B2_14_MEDIUM,
-                            color = NearTheme.colors.GRAY02_B7B7B7,
-                        )
-                    },
-                    colors = colors,
-                    container = {
-                        OutlinedTextFieldDefaults.Container(
-                            enabled = enabled,
-                            isError = false,
-                            interactionSource = interactionSource,
-                            colors = colors,
-                            shape = shape,
-                            focusedBorderThickness = focusedBorderThickness.dp,
-                            unfocusedBorderThickness = unfocusedBorderThickness.dp,
-                        )
-                    },
-                )
-            },
-        )
-
-        if (showCharacterCount) {
-            CharacterCountText(
-                currentLength = value.length,
-                maxLength = maxLength,
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = { newValue ->
+                    if (newValue.length > maxLength) {
+                        return@BasicTextField
+                    }
+                    onValueChange(newValue)
+                },
+                enabled = enabled,
                 modifier =
                     Modifier
-                        .align(Alignment.BottomEnd)
-                        .wrapContentSize()
-                        .padding(
-                            end = contentPadding.calculateEndPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                        .fillMaxWidth()
+                        .heightIn(min = DEFAULT_MIN_HEIGHT)
+                        .focusRequester(focusRequester),
+                textStyle = NearTheme.typography.B2_14_MEDIUM,
+                maxLines = maxLines,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                interactionSource = interactionSource,
+                decorationBox = { innerTextField ->
+                    OutlinedTextFieldDefaults.DecorationBox(
+                        value = value,
+                        innerTextField = innerTextField,
+                        enabled = enabled,
+                        singleLine = maxLines == 1,
+                        visualTransformation = VisualTransformation.None,
+                        interactionSource = interactionSource,
+                        contentPadding = adjustedContentPadding,
+                        placeholder = {
+                            Text(
+                                text = placeholder,
+                                style = NearTheme.typography.B2_14_MEDIUM,
+                                color = NearTheme.colors.GRAY02_B7B7B7,
+                            )
+                        },
+                        colors = colors,
+                        container = {
+                            OutlinedTextFieldDefaults.Container(
+                                enabled = enabled,
+                                isError = false,
+                                interactionSource = interactionSource,
+                                colors = colors,
+                                shape = shape,
+                                focusedBorderThickness = focusedBorderThickness.dp,
+                                unfocusedBorderThickness = unfocusedBorderThickness.dp,
+                            )
+                        },
+                    )
+                },
+            )
+
+            // 글자수는 한 번이라도 입력된 후에는 계속 표시
+            if (showCharacterCount && hasEverBeenTyped) {
+                val characterCountPadding =
+                    remember(contentPadding) {
+                        Modifier.padding(
+                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
                             bottom = contentPadding.calculateBottomPadding(),
-                        ),
+                        )
+                    }
+
+                CharacterCountText(
+                    currentLength = value.length,
+                    maxLength = maxLength,
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomEnd)
+                            .wrapContentSize()
+                            .then(characterCountPadding),
+                )
+            }
+        }
+
+        // 에러 메시지 표시
+        if (isError) {
+            Text(
+                text = "편하게 의견을 남겨주세요.",
+                style = NearTheme.typography.B2_14_MEDIUM,
+                color = NearTheme.colors.NEGATIVE_F04E4E,
+                modifier =
+                    Modifier
+                        .padding(start = ERROR_MESSAGE_START_PADDING)
+                        .padding(vertical = ERROR_MESSAGE_VERTICAL_PADDING),
             )
         }
     }
@@ -200,6 +225,7 @@ fun NearOutlinedTextFieldPreview_Default() {
                 value = "",
                 onValueChange = {},
                 placeholder = "기본 텍스트필드",
+                focusRequester = remember { FocusRequester() },
             )
         }
     }
@@ -214,6 +240,7 @@ fun NearOutlinedTextFieldPreview_WithText() {
                 value = "입력된 텍스트입니다",
                 onValueChange = {},
                 placeholder = "텍스트 입력",
+                focusRequester = remember { FocusRequester() },
             )
         }
     }
@@ -229,6 +256,7 @@ fun NearOutlinedTextFieldPreview_Disabled() {
                 onValueChange = {},
                 placeholder = "비활성화",
                 enabled = false,
+                focusRequester = remember { FocusRequester() },
             )
         }
     }
@@ -244,6 +272,7 @@ fun NearOutlinedTextFieldPreview_Multiline() {
                 onValueChange = {},
                 placeholder = "여러 줄 텍스트 입력",
                 maxLines = 4,
+                focusRequester = remember { FocusRequester() },
             )
         }
     }
@@ -261,6 +290,7 @@ fun NearOutlinedTextFieldPreview_Interactive() {
                 onValueChange = { text = it },
                 placeholder = "클릭해서 포커스 테스트",
                 modifier = Modifier.fillMaxWidth(),
+                focusRequester = remember { FocusRequester() },
             )
         }
     }
@@ -280,6 +310,24 @@ fun NearOutlinedTextFieldPreview_CharacterCount() {
                 showCharacterCount = true,
                 maxLength = 50,
                 modifier = Modifier.fillMaxWidth(),
+                focusRequester = remember { FocusRequester() },
+            )
+        }
+    }
+}
+
+@Preview(name = "에러 상태", showBackground = true)
+@Composable
+fun NearOutlinedTextFieldPreview_Error() {
+    NearTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            NearOutlinedTextField(
+                value = "에러가 있는 텍스트",
+                onValueChange = {},
+                placeholder = "에러 상태 테스트",
+                isError = true,
+                modifier = Modifier.fillMaxWidth(),
+                focusRequester = remember { FocusRequester() },
             )
         }
     }
