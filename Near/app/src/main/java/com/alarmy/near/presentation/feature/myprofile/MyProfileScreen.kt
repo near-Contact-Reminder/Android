@@ -78,7 +78,7 @@ internal fun MyProfileRoute(
                 }
 
                 is MyProfileUiEvent.NavigateToTerms -> {
-                    onNavigateToTerms(event.termsType.title, event.termsType.url)
+                    onNavigateToTerms("${event.termsType.title} 상세", event.termsType.url)
                 }
             }
         }
