@@ -1,7 +1,7 @@
 package com.alarmy.near.presentation.feature.myprofile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -76,7 +76,13 @@ fun WithdrawScreen(
         }
     }
 
-    NearFrame {
+    NearFrame(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(NearTheme.colors.WHITE_FFFFFF)
+                .padding(horizontal = 24.dp),
+    ) {
         WithdrawTopAppBar(
             title = "탈퇴하기",
             onCancelClick = { /*TODO*/ },
@@ -84,88 +90,81 @@ fun WithdrawScreen(
 
         Spacer(modifier = Modifier.size(48.dp))
 
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-        ) {
-            Text(
-                text = "신짱구님,\n떠나는 이유를 알려주시면\n큰 도움이 될 거예요.",
-                style = NearTheme.typography.H1_24_MEDIUM,
+        Text(
+            text = "신짱구님,\n떠나는 이유를 알려주시면\n큰 도움이 될 거예요.",
+            style = NearTheme.typography.H1_24_MEDIUM,
+        )
+
+        Spacer(modifier = Modifier.size(12.dp))
+
+        Text(
+            text = "소중한 의견을 받아\n더 나은 서비스를 만들어갈게요.",
+            style =
+                NearTheme.typography.B1_16_MEDIUM.copy(
+                    color = NearTheme.colors.GRAY01_888888,
+                ),
+        )
+
+        Spacer(modifier = Modifier.size(48.dp))
+
+        // 탈퇴 사유 버튼들을 표시
+        withdrawReasons.forEach { reason ->
+            WithdrawReasonButtonAndLabel(
+                label = reason.displayText,
+                isSelected = uiState.selectedReason == reason,
+                onClick = {
+                    onSelectReason(reason)
+                },
             )
 
-            Spacer(modifier = Modifier.size(12.dp))
-
-            Text(
-                text = "소중한 의견을 받아\n더 나은 서비스를 만들어갈게요.",
-                style =
-                    NearTheme.typography.B1_16_MEDIUM.copy(
-                        color = NearTheme.colors.GRAY01_888888,
-                    ),
-            )
-
-            Spacer(modifier = Modifier.size(48.dp))
-
-            // 탈퇴 사유 버튼들을 표시
-            withdrawReasons.forEach { reason ->
-                WithdrawReasonButtonAndLabel(
-                    label = reason.displayText,
-                    isSelected = uiState.selectedReason == reason,
-                    onClick = {
-                        onSelectReason(reason)
-                    },
-                )
-
-                // 마지막 항목이 아닌 경우에만 Spacer 추가
-                if (reason != withdrawReasons.last()) {
-                    Spacer(modifier = Modifier.size(32.dp))
-                }
+            // 마지막 항목이 아닌 경우에만 Spacer 추가
+            if (reason != withdrawReasons.last()) {
+                Spacer(modifier = Modifier.size(32.dp))
             }
-
-            Spacer(modifier = Modifier.size(16.dp))
-
-            NearOutlinedTextField(
-                value = uiState.otherReasonText,
-                onValueChange = onUpdateOtherReasonText,
-                placeholder = "편하게 의견을 남겨주세요.",
-                enabled = uiState.isOtherReasonTextFieldEnabled,
-                isError = !uiState.isOtherReasonTextValid,
-                focusRequester = textFieldFocusRequester,
-            )
-
-            Spacer(modifier = Modifier.size(40.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                NearBasicButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = {},
-                    contentPadding = PaddingValues(16.dp),
-                ) {
-                    Text(
-                        text = "그만두기",
-                        style = NearTheme.typography.B1_16_BOLD,
-                    )
-                }
-
-                Spacer(modifier = Modifier.size(7.dp))
-
-                // 탈퇴하기 버튼
-                NearLineTypeButton(
-                    modifier = Modifier.weight(1f),
-                    enabled = uiState.isWithdrawButtonEnabled,
-                    onClick = {
-                        onSubmitWithdrawRequest()
-                    },
-                    text = "탈퇴하기",
-                    contentPadding = PaddingValues(vertical = 16.dp),
-                )
-            }
-            Spacer(modifier = Modifier.size(24.dp))
         }
+
+        Spacer(modifier = Modifier.size(16.dp))
+
+        NearOutlinedTextField(
+            value = uiState.otherReasonText,
+            onValueChange = onUpdateOtherReasonText,
+            placeholder = "편하게 의견을 남겨주세요.",
+            enabled = uiState.isOtherReasonTextFieldEnabled,
+            isError = !uiState.isOtherReasonTextValid,
+            focusRequester = textFieldFocusRequester,
+        )
+
+        Spacer(modifier = Modifier.size(40.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            NearBasicButton(
+                modifier = Modifier.weight(1f),
+                onClick = {},
+                contentPadding = PaddingValues(16.dp),
+            ) {
+                Text(
+                    text = "그만두기",
+                    style = NearTheme.typography.B1_16_BOLD,
+                )
+            }
+
+            Spacer(modifier = Modifier.size(7.dp))
+
+            // 탈퇴하기 버튼
+            NearLineTypeButton(
+                modifier = Modifier.weight(1f),
+                enabled = uiState.isWithdrawButtonEnabled,
+                onClick = {
+                    onSubmitWithdrawRequest()
+                },
+                text = "탈퇴하기",
+                contentPadding = PaddingValues(vertical = 16.dp),
+            )
+        }
+        Spacer(modifier = Modifier.size(24.dp))
     }
 }
 
