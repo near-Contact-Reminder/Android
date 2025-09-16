@@ -39,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.component.textfield.internal.NearTextFieldColors
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.delay
@@ -186,7 +188,7 @@ fun NearOutlinedTextField(
         // 에러 메시지 표시
         if (isError) {
             Text(
-                text = "1글자 이상 입력해주세요.",
+                text = stringResource(R.string.textfield_error_message),
                 style = NearTheme.typography.B2_14_MEDIUM,
                 color = NearTheme.colors.NEGATIVE_F04E4E,
                 modifier =

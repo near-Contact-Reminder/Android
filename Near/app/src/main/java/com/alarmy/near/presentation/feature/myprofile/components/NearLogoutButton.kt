@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.component.button.NearLineTypeButton
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -19,7 +21,7 @@ fun NearLogoutButton(
         modifier = modifier,
         enabled = enabled,
         onClick = onClick,
-        text = "로그아웃",
+        text = stringResource(R.string.my_profile_logout),
         contentPadding = contentPadding,
     )
 }

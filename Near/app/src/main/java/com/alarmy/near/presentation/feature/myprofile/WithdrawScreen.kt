@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.component.appbar.NearCancelTopAppBar
 import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 import com.alarmy.near.presentation.ui.component.NearFrame
@@ -90,21 +92,21 @@ fun WithdrawScreen(
                 .padding(horizontal = 24.dp),
     ) {
         NearCancelTopAppBar(
-            title = "탈퇴하기",
+            title = stringResource(R.string.withdraw_title),
             onCancelClick = onNavigateBack,
         )
 
         Spacer(modifier = Modifier.size(48.dp))
 
         Text(
-            text = "${uiState.nickname}님,\n떠나는 이유를 알려주시면\n큰 도움이 될 거예요.",
+            text = stringResource(R.string.withdraw_greeting, uiState.nickname),
             style = NearTheme.typography.H1_24_MEDIUM,
         )
 
         Spacer(modifier = Modifier.size(12.dp))
 
         Text(
-            text = "소중한 의견을 받아\n더 나은 서비스를 만들어갈게요.",
+            text = stringResource(R.string.withdraw_description),
             style =
                 NearTheme.typography.B1_16_MEDIUM.copy(
                     color = NearTheme.colors.GRAY01_888888,
@@ -116,7 +118,7 @@ fun WithdrawScreen(
         // 탈퇴 사유 버튼들을 표시
         withdrawReasons.forEach { reason ->
             WithdrawReasonButtonAndLabel(
-                label = reason.displayText,
+                label = stringResource(reason.displayTextRes),
                 isSelected = uiState.selectedReason == reason,
                 onClick = {
                     onSelectReason(reason)
@@ -134,7 +136,7 @@ fun WithdrawScreen(
         NearOutlinedTextField(
             value = uiState.otherReasonText,
             onValueChange = onUpdateOtherReasonText,
-            placeholder = "편하게 의견을 남겨주세요.",
+            placeholder = stringResource(R.string.withdraw_other_reason_placeholder),
             enabled = uiState.isOtherReasonTextFieldEnabled,
             isError = !uiState.isOtherReasonTextValid,
             focusRequester = textFieldFocusRequester,
@@ -152,7 +154,7 @@ fun WithdrawScreen(
                 contentPadding = PaddingValues(16.dp),
             ) {
                 Text(
-                    text = "그만두기",
+                    text = stringResource(R.string.withdraw_cancel_button),
                     style = NearTheme.typography.B1_16_BOLD,
                 )
             }
@@ -166,7 +168,7 @@ fun WithdrawScreen(
                 onClick = {
                     onSubmitWithdrawRequest()
                 },
-                text = "탈퇴하기",
+                text = stringResource(R.string.withdraw_confirm_button),
                 contentPadding = PaddingValues(vertical = 16.dp),
             )
         }

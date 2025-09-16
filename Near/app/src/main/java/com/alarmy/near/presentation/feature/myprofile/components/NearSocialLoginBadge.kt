@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -21,7 +22,7 @@ fun NearSocialLoginBadge(loginType: LoginType) {
     ) {
         // 소셜 로그인 텍스트
         Text(
-            text = loginType.typeTitle,
+            text = stringResource(loginType.typeTitleRes),
             style = NearTheme.typography.FC_12_MEDIUM,
             color = NearTheme.colors.BLACK_1A1A1A,
         )
@@ -30,7 +31,7 @@ fun NearSocialLoginBadge(loginType: LoginType) {
         loginType.logoTitle?.let { logo ->
             Image(
                 painter = painterResource(id = logo),
-                contentDescription = "소셜 로그인 아이콘",
+                contentDescription = stringResource(R.string.login_social_icon_description),
             )
         }
     }

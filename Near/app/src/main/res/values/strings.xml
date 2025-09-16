@@ -88,4 +88,41 @@
     <string name="day_of_week_saturday">토요일</string>
     <string name="day_of_week_sunday">일요일</string>
 
+    <!-- MY 페이지 (My Profile) -->
+    <string name="my_profile_title">MY</string>
+    <string name="my_profile_image_description">프로필 이미지</string>
+    <string name="my_profile_general_section">일반</string>
+    <string name="my_profile_connected_account">연결계정</string>
+    <string name="my_profile_notification_settings">알림 설정</string>
+    <string name="my_profile_service_info_section">서비스 정보</string>
+    <string name="my_profile_logout">로그아웃</string>
+    <string name="my_profile_withdraw">탈퇴하기</string>
+    <string name="my_profile_terms_detail">%1$s 상세</string>
+
+    <!-- 탈퇴하기 (Withdraw) -->
+    <string name="withdraw_title">탈퇴하기</string>
+    <string name="withdraw_greeting">%1$s님,\n떠나는 이유를 알려주시면\n큰 도움이 될 거예요.</string>
+    <string name="withdraw_description">소중한 의견을 받아\n더 나은 서비스를 만들어갈게요.</string>
+    <string name="withdraw_reason_not_often">자주 이용하지 않아요</string>
+    <string name="withdraw_reason_new_account">신규 계정으로 가입할게요</string>
+    <string name="withdraw_reason_worried_info">개인정보가 우려돼요</string>
+    <string name="withdraw_reason_inconvenient">서비스가 불편해요</string>
+    <string name="withdraw_reason_other">기타</string>
+    <string name="withdraw_other_reason_placeholder">편하게 의견을 남겨주세요.</string>
+    <string name="withdraw_cancel_button">그만두기</string>
+    <string name="withdraw_confirm_button">탈퇴하기</string>
+
+    <!-- 텍스트필드 (TextField) -->
+    <string name="textfield_error_message">1글자 이상 입력해주세요.</string>
+
+    <!-- 약관 및 정책 (Terms) -->
+    <string name="terms_service_agreed">서비스 이용약관</string>
+    <string name="terms_personal_info">개인정보 수집 및 이용동의</string>
+    <string name="terms_privacy_policy">개인정보 처리방침</string>
+
+    <!-- 로그인 타입 (Login Type) -->
+    <string name="login_type_kakao">카카오</string>
+    <string name="login_type_etc">-</string>
+    <string name="login_social_icon_description">소셜 로그인 아이콘</string>
+
 </resources>
