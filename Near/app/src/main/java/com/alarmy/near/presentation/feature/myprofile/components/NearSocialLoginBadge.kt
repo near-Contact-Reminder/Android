@@ -28,7 +28,7 @@ fun NearSocialLoginBadge(loginType: LoginType) {
         )
 
         // 소셜 로그인 아이콘
-        loginType.logoTitle?.let { logo ->
+        loginType.loginTypeImage?.let { logo ->
             Image(
                 painter = painterResource(id = logo),
                 contentDescription = stringResource(R.string.login_social_icon_description),
