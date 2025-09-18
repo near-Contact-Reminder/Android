@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,13 +38,22 @@ internal fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showPrivacyBottomSheet by remember { mutableStateOf(false) }
 
+    // 통합된 이벤트 처리
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
-            when(event) {
-                is LoginEvent.NavigateToHome -> onNavigateToHome
+            when (event) {
+                is LoginEvent.ShowPrivacyBottomSheet -> {
+                    showPrivacyBottomSheet = true
+                }
+
+                is LoginEvent.NavigateToHome -> {
+                    showPrivacyBottomSheet = false
+                    onNavigateToHome()
+                }
+
                 is LoginEvent.ShowError -> TODO()
-                is LoginEvent.ShowPrivacyBottomSheet -> TODO()
             }
         }
     }
@@ -51,6 +62,17 @@ internal fun LoginRoute(
         uiState = uiState,
         onLoginClick = { providerType ->
             viewModel.performLogin(providerType)
+        },
+    )
+
+    // 개인정보 동의 바텀시트
+    PrivacyConsentBottomSheet(
+        isVisible = showPrivacyBottomSheet,
+        onDismiss = {
+            showPrivacyBottomSheet = false
+        },
+        onConsentComplete = {
+            viewModel.onPrivacyConsentComplete()
         },
     )
 }
