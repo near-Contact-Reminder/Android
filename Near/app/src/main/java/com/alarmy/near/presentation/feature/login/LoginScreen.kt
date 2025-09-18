@@ -38,8 +38,12 @@ internal fun LoginRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loginSuccessEvent.collect {
-            onNavigateToHome()
+        viewModel.event.collect { event ->
+            when(event) {
+                is LoginEvent.NavigateToHome -> onNavigateToHome
+                is LoginEvent.ShowError -> TODO()
+                is LoginEvent.ShowPrivacyBottomSheet -> TODO()
+            }
         }
     }
 

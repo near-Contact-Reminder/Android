@@ -23,13 +23,9 @@ class LoginViewModel
         private val _uiState = MutableStateFlow(LoginUiState())
         val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-        // 에러 이벤트 관리
-        private val _errorEvent = Channel<Throwable?>()
-        val errorEvent = _errorEvent.receiveAsFlow()
-
-        // 로그인 성공 이벤트 관리
-        private val _loginSuccessEvent = Channel<Unit>()
-        val loginSuccessEvent = _loginSuccessEvent.receiveAsFlow()
+        // 이벤트 관리
+        private val _event = Channel<LoginEvent>()
+        val event = _event.receiveAsFlow()
 
         /**
          * 소셜 로그인 수행
@@ -38,14 +34,14 @@ class LoginViewModel
             viewModelScope.launch {
                 updateLoadingState(isLoading = true)
 
-                authRepository.performSocialLogin(providerType)
+                authRepository
+                    .performSocialLogin(providerType)
                     .onSuccess {
                         updateLoadingState(isLoading = false)
-                        _loginSuccessEvent.send(Unit)
-                    }
-                    .onFailure { exception ->
+                        _event.send(LoginEvent.NavigateToHome)
+                    }.onFailure { exception ->
                         updateLoadingState(isLoading = false)
-                        _errorEvent.send(exception)
+                        _event.send(LoginEvent.ShowError(exception))
                     }
             }
         }
@@ -65,3 +61,17 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val hasError: Boolean = false,
 )
+
+/*
+* 로그인 화면 이벤트 관리
+*
+* */
+sealed class LoginEvent {
+    object ShowPrivacyBottomSheet : LoginEvent()
+
+    object NavigateToHome : LoginEvent()
+
+    data class ShowError(
+        val throwable: Throwable?,
+    ) : LoginEvent()
+}
