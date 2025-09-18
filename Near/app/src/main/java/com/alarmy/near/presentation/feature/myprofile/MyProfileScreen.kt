@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.feature.myprofile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,14 +52,15 @@ internal fun MyProfileRoute(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    
+
     val termsDetailFormat = stringResource(R.string.my_profile_terms_detail)
-    
-    val termsTitles = mapOf(
-        TermsType.SERVICE_AGREED_TERMS to stringResource(TermsType.SERVICE_AGREED_TERMS.titleRes),
-        TermsType.PERSONAL_INFO_TERMS to stringResource(TermsType.PERSONAL_INFO_TERMS.titleRes),
-        TermsType.PRIVACY_POLICY_TERMS to stringResource(TermsType.PRIVACY_POLICY_TERMS.titleRes),
-    )
+
+    val termsTitles =
+        mapOf(
+            TermsType.SERVICE_AGREED_TERMS to stringResource(TermsType.SERVICE_AGREED_TERMS.titleRes),
+            TermsType.PERSONAL_INFO_TERMS to stringResource(TermsType.PERSONAL_INFO_TERMS.titleRes),
+            TermsType.PRIVACY_POLICY_TERMS to stringResource(TermsType.PRIVACY_POLICY_TERMS.titleRes),
+        )
 
     // 에러 이벤트 처리
     LaunchedEffect(viewModel.errorEvent) {
@@ -100,7 +102,8 @@ internal fun MyProfileRoute(
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(NearTheme.colors.WHITE_FFFFFF),
             contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator(
