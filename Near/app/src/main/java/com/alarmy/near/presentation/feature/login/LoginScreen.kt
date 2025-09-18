@@ -38,6 +38,7 @@ internal fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
     var showPrivacyBottomSheet by remember { mutableStateOf(false) }
 
     // 통합된 이벤트 처리
@@ -51,6 +52,10 @@ internal fun LoginRoute(
                 is LoginEvent.NavigateToHome -> {
                     showPrivacyBottomSheet = false
                     onNavigateToHome()
+                }
+
+                is LoginEvent.ShowTermsDetail -> {
+                    // TODO: 웹뷰로 약관 상세 보기 이동
                 }
 
                 is LoginEvent.ShowError -> TODO()
@@ -73,6 +78,16 @@ internal fun LoginRoute(
         },
         onConsentComplete = {
             viewModel.onPrivacyConsentComplete()
+        },
+        termsAgreementState = termsAgreementState,
+        onToggleAllTerms = {
+            viewModel.toggleAllTermsAgreement()
+        },
+        onToggleIndividualTerms = { termType ->
+            viewModel.toggleIndividualTermsAgreement(termType)
+        },
+        onShowTermsDetail = { termType ->
+            viewModel.showTermsDetail(termType)
         },
     )
 }

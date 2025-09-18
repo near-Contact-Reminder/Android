@@ -27,6 +27,10 @@ class LoginViewModel
         private val _event = Channel<LoginEvent>()
         val event = _event.receiveAsFlow()
 
+        // 약관 동의 상태 관리
+        private val _termsAgreementState = MutableStateFlow(TermsAgreementState())
+        val termsAgreementState: StateFlow<TermsAgreementState> = _termsAgreementState.asStateFlow()
+
         /**
          * 소셜 로그인 수행
          */
@@ -52,6 +56,49 @@ class LoginViewModel
         private fun updateLoadingState(isLoading: Boolean) {
             _uiState.value = _uiState.value.copy(isLoading = isLoading)
         }
+
+        /**
+         * 약관 전체 동의 토글
+         */
+        fun toggleAllTermsAgreement() {
+            val currentState = _termsAgreementState.value
+            val newAgreedState = !currentState.isAllAgreed
+            
+            _termsAgreementState.value = currentState.copy(
+                isAllAgreed = newAgreedState,
+                isServiceTermsAgreed = newAgreedState,
+                isPrivacyCollectionAgreed = newAgreedState,
+                isPrivacyPolicyAgreed = newAgreedState
+            )
+        }
+
+        /**
+         * 개별 약관 동의 토글
+         */
+        fun toggleIndividualTermsAgreement(termType: TermType) {
+            val currentState = _termsAgreementState.value
+            val newState = when (termType) {
+                TermType.SERVICE_TERMS -> currentState.copy(isServiceTermsAgreed = !currentState.isServiceTermsAgreed)
+                TermType.PRIVACY_COLLECTION -> currentState.copy(isPrivacyCollectionAgreed = !currentState.isPrivacyCollectionAgreed)
+                TermType.PRIVACY_POLICY -> currentState.copy(isPrivacyPolicyAgreed = !currentState.isPrivacyPolicyAgreed)
+            }
+            
+            // 모든 개별 약관이 동의되었는지 확인하여 전체 동의 상태 업데이트
+            val isAllIndividualAgreed = newState.isServiceTermsAgreed && 
+                                      newState.isPrivacyCollectionAgreed && 
+                                      newState.isPrivacyPolicyAgreed
+            
+            _termsAgreementState.value = newState.copy(isAllAgreed = isAllIndividualAgreed)
+        }
+
+        /**
+         * 약관 상세 보기 (웹뷰로 이동)
+         */
+        fun showTermsDetail(termType: TermType) {
+            viewModelScope.launch {
+                _event.send(LoginEvent.ShowTermsDetail(termType))
+            }
+        }
     }
 
 /**
@@ -62,6 +109,31 @@ data class LoginUiState(
     val hasError: Boolean = false,
 )
 
+/**
+ * 약관 동의 상태
+ */
+data class TermsAgreementState(
+    val isAllAgreed: Boolean = false,
+    val isServiceTermsAgreed: Boolean = false,
+    val isPrivacyCollectionAgreed: Boolean = false,
+    val isPrivacyPolicyAgreed: Boolean = false,
+) {
+    /**
+     * 모든 필수 약관에 동의했는지 확인
+     */
+    val isAllRequiredTermsAgreed: Boolean
+        get() = isServiceTermsAgreed && isPrivacyCollectionAgreed && isPrivacyPolicyAgreed
+}
+
+/**
+ * 약관 타입
+ */
+enum class TermType {
+    SERVICE_TERMS,
+    PRIVACY_COLLECTION,
+    PRIVACY_POLICY
+}
+
 /*
 * 로그인 화면 이벤트 관리
 *
@@ -70,6 +142,10 @@ sealed class LoginEvent {
     object ShowPrivacyBottomSheet : LoginEvent()
 
     object NavigateToHome : LoginEvent()
+
+    data class ShowTermsDetail(
+        val termType: TermType,
+    ) : LoginEvent()
 
     data class ShowError(
         val throwable: Throwable?,
