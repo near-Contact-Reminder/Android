@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -20,9 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.presentation.feature.login.components.NearBottomSheetDragHandle
 import com.alarmy.near.presentation.feature.login.components.TermsAgreementItem
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +32,10 @@ fun PrivacyConsentBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onConsentComplete: () -> Unit,
+    termsAgreementState: TermsAgreementState,
+    onToggleAllTerms: () -> Unit,
+    onToggleIndividualTerms: (TermType) -> Unit,
+    onShowTermsDetail: (TermType) -> Unit,
 ) {
     if (isVisible) {
         val bottomSheetState =
@@ -41,13 +46,7 @@ fun PrivacyConsentBottomSheet(
         ModalBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = bottomSheetState,
-            dragHandle = {
-                BottomSheetDefaults.DragHandle(
-                    color = NearTheme.colors.GRAY03_EBEBEB,
-                    width = 32.dp,
-                    height = 6.dp,
-                )
-            },
+            dragHandle = { NearBottomSheetDragHandle() },
             containerColor = NearTheme.colors.WHITE_FFFFFF,
             contentColor = NearTheme.colors.BLACK_1A1A1A,
         ) {
@@ -73,24 +72,25 @@ fun PrivacyConsentBottomSheet(
                                 width = 1.dp,
                                 color = NearTheme.colors.GRAY03_EBEBEB,
                                 shape = RoundedCornerShape(12.dp),
-                            ).padding(16.dp),
+                            ).onNoRippleClick(onToggleAllTerms)
+                            .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    NearBackgroundCheckbox(
-                        checked = false,
-                    ) { }
-
-                    Spacer(modifier = Modifier.size(8.dp))
-
-                    Text(
-                        text = "약관 전체 동의",
-                        style = NearTheme.typography.B2_14_BOLD,
+                    // 전체 체크
+                    TermsAllCheckAgreementSection(
+                        termsAgreementState = termsAgreementState,
+                        onToggleAllTerms = onToggleAllTerms,
                     )
                 }
 
                 Spacer(modifier = Modifier.size(16.dp))
 
-                TermsAgreementSection()
+                // 개별 약관 동의
+                TermsAgreementSection(
+                    termsAgreementState = termsAgreementState,
+                    onToggleIndividualTerms = onToggleIndividualTerms,
+                    onShowTermsDetail = onShowTermsDetail,
+                )
 
                 Spacer(modifier = Modifier.size(32.dp))
 
@@ -98,6 +98,7 @@ fun PrivacyConsentBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(vertical = 16.dp),
                     onClick = onConsentComplete,
+                    enabled = termsAgreementState.isAllRequiredTermsAgreed,
                 ) {
                     Text(
                         text = "가입",
@@ -112,12 +113,46 @@ fun PrivacyConsentBottomSheet(
 }
 
 @Composable
-private fun TermsAgreementSection() {
+private fun TermsAllCheckAgreementSection(
+    termsAgreementState: TermsAgreementState,
+    onToggleAllTerms: () -> Unit,
+) {
+    NearBackgroundCheckbox(
+        checked = termsAgreementState.isAllAgreed,
+        onCheckedChange = { onToggleAllTerms() },
+    )
+
+    Spacer(modifier = Modifier.size(8.dp))
+
+    Text(
+        text = "약관 전체 동의",
+        style = NearTheme.typography.B2_14_BOLD,
+    )
+}
+
+@Composable
+private fun TermsAgreementSection(
+    termsAgreementState: TermsAgreementState,
+    onToggleIndividualTerms: (TermType) -> Unit,
+    onShowTermsDetail: (TermType) -> Unit,
+) {
     val termsList =
         listOf(
-            "[필수] 서비스 이용 약관",
-            "[필수] 개인정보 수집 및 이용 동의서",
-            "[필수] 개인정보 처리방침",
+            Triple(
+                "[필수] 서비스 이용 약관",
+                TermType.SERVICE_TERMS,
+                termsAgreementState.isServiceTermsAgreed,
+            ),
+            Triple(
+                "[필수] 개인정보 수집 및 이용 동의서",
+                TermType.PRIVACY_COLLECTION,
+                termsAgreementState.isPrivacyCollectionAgreed,
+            ),
+            Triple(
+                "[필수] 개인정보 처리방침",
+                TermType.PRIVACY_POLICY,
+                termsAgreementState.isPrivacyPolicyAgreed,
+            ),
         )
 
     Column(
@@ -130,11 +165,12 @@ private fun TermsAgreementSection() {
                     shape = RoundedCornerShape(12.dp),
                 ).padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
-        termsList.forEachIndexed { index, term ->
+        termsList.forEachIndexed { index, (text, termType, isChecked) ->
             TermsAgreementItem(
-                text = term,
-                isChecked = false,
-                onCheckedChange = { },
+                text = text,
+                isChecked = isChecked,
+                onCheckedChange = { onToggleIndividualTerms(termType) },
+                onclick = { onShowTermsDetail(termType) },
                 showDivider = index < termsList.size - 1,
             )
         }
@@ -149,6 +185,10 @@ fun PrivacyConsentBottomSheetPreview() {
             isVisible = true,
             onDismiss = { },
             onConsentComplete = { },
+            termsAgreementState = TermsAgreementState(),
+            onToggleAllTerms = { },
+            onToggleIndividualTerms = { },
+            onShowTermsDetail = { },
         )
     }
 }
