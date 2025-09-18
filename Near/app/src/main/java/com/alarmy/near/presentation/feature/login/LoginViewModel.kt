@@ -37,16 +37,24 @@ class LoginViewModel
         fun performLogin(providerType: ProviderType) {
             viewModelScope.launch {
                 updateLoadingState(isLoading = true)
-
                 authRepository
                     .performSocialLogin(providerType)
                     .onSuccess {
                         updateLoadingState(isLoading = false)
-                        _event.send(LoginEvent.NavigateToHome)
+                        _event.send(LoginEvent.ShowPrivacyBottomSheet)
                     }.onFailure { exception ->
                         updateLoadingState(isLoading = false)
                         _event.send(LoginEvent.ShowError(exception))
                     }
+            }
+        }
+
+        /**
+         * 개인정보 동의 완료 처리
+         */
+        fun onPrivacyConsentComplete() {
+            viewModelScope.launch {
+                _event.send(LoginEvent.NavigateToHome)
             }
         }
 
@@ -63,13 +71,14 @@ class LoginViewModel
         fun toggleAllTermsAgreement() {
             val currentState = _termsAgreementState.value
             val newAgreedState = !currentState.isAllAgreed
-            
-            _termsAgreementState.value = currentState.copy(
-                isAllAgreed = newAgreedState,
-                isServiceTermsAgreed = newAgreedState,
-                isPrivacyCollectionAgreed = newAgreedState,
-                isPrivacyPolicyAgreed = newAgreedState
-            )
+
+            _termsAgreementState.value =
+                currentState.copy(
+                    isAllAgreed = newAgreedState,
+                    isServiceTermsAgreed = newAgreedState,
+                    isPrivacyCollectionAgreed = newAgreedState,
+                    isPrivacyPolicyAgreed = newAgreedState,
+                )
         }
 
         /**
@@ -77,17 +86,19 @@ class LoginViewModel
          */
         fun toggleIndividualTermsAgreement(termType: TermType) {
             val currentState = _termsAgreementState.value
-            val newState = when (termType) {
-                TermType.SERVICE_TERMS -> currentState.copy(isServiceTermsAgreed = !currentState.isServiceTermsAgreed)
-                TermType.PRIVACY_COLLECTION -> currentState.copy(isPrivacyCollectionAgreed = !currentState.isPrivacyCollectionAgreed)
-                TermType.PRIVACY_POLICY -> currentState.copy(isPrivacyPolicyAgreed = !currentState.isPrivacyPolicyAgreed)
-            }
-            
+            val newState =
+                when (termType) {
+                    TermType.SERVICE_TERMS -> currentState.copy(isServiceTermsAgreed = !currentState.isServiceTermsAgreed)
+                    TermType.PRIVACY_COLLECTION -> currentState.copy(isPrivacyCollectionAgreed = !currentState.isPrivacyCollectionAgreed)
+                    TermType.PRIVACY_POLICY -> currentState.copy(isPrivacyPolicyAgreed = !currentState.isPrivacyPolicyAgreed)
+                }
+
             // 모든 개별 약관이 동의되었는지 확인하여 전체 동의 상태 업데이트
-            val isAllIndividualAgreed = newState.isServiceTermsAgreed && 
-                                      newState.isPrivacyCollectionAgreed && 
-                                      newState.isPrivacyPolicyAgreed
-            
+            val isAllIndividualAgreed =
+                newState.isServiceTermsAgreed &&
+                    newState.isPrivacyCollectionAgreed &&
+                    newState.isPrivacyPolicyAgreed
+
             _termsAgreementState.value = newState.copy(isAllAgreed = isAllIndividualAgreed)
         }
 
@@ -131,7 +142,7 @@ data class TermsAgreementState(
 enum class TermType {
     SERVICE_TERMS,
     PRIVACY_COLLECTION,
-    PRIVACY_POLICY
+    PRIVACY_POLICY,
 }
 
 /*
