@@ -99,6 +99,9 @@ dependencies {
 
     // Kakao Module
     implementation(libs.v2.all)
+
+    // Splash Screen API
+    implementation(libs.androidx.core.splashscreen)
 }
 
 fun getProperty(propertyKey: String): String = gradleLocalProperties(rootDir, providers).getProperty(propertyKey)

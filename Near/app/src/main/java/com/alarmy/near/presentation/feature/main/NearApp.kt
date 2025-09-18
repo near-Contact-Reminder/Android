@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
@@ -26,6 +25,7 @@ import kotlinx.coroutines.launch
 internal fun NearApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    isLoggedIn: Boolean = false,
 ) {
     val snackBarState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -48,6 +48,7 @@ internal fun NearApp(
         NearNavHost(
             modifier = Modifier.consumeWindowInsets(innerPadding), // 하위 뷰에 Padding을 소비한 것으로 알립니다.
             navController = navController,
+            isLoggedIn = isLoggedIn,
             onShowSnackbar = {
                 scope.launch {
                     snackBarState.showSnackbar(

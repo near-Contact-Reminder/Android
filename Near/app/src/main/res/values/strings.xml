@@ -8,6 +8,9 @@
     <string name="common_menu_button_description">메뉴</string>
     <string name="network_error_message">네트워크 에러가 발생했습니다.</string>
 
+    <!--  스플래쉬 (Splash)  -->
+    <string name="near_splash_background">스플래쉬 배경</string>
+
     <!--  로그인 (Login)  -->
     <string name="near_logo">Near 로고</string>
     <string name="near_logo_title">Near 타이틀</string>
