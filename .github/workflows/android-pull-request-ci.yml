@@ -3,7 +3,7 @@ name: Android Pull Request CI
 on:
   pull_request:
     branches: [ "main", "develop", "dev" ]
-    
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,6 +48,16 @@ jobs:
           KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
         run: |
           echo "KAKAO_NATIVE_APP_KEY=\"$KAKAO_NATIVE_APP_KEY\"" >> local.properties
+
+      - name: Access Near PRIVACY URLS
+        env:
+          SERVICE_AGREED_TERMS_URL: ${{ secrets.SERVICE_AGREED_TERMS_URL }}
+          PERSONAL_INFO_TERMS_URL: ${{ secrets.PERSONAL_INFO_TERMS_URL }}
+          PRIVACY_POLICY_TERMS_URL: ${{ secrets.PRIVACY_POLICY_TERMS_URL }}
+        run: |
+          echo "SERVICE_AGREED_TERMS_URL=\"$SERVICE_AGREED_TERMS_URL\"" >> local.properties
+          echo "PERSONAL_INFO_TERMS_URL=\"$PERSONAL_INFO_TERMS_URL\"" >> local.properties
+          echo "PRIVACY_POLICY_TERMS_URL=\"$PRIVACY_POLICY_TERMS_URL\"" >> local.properties
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
