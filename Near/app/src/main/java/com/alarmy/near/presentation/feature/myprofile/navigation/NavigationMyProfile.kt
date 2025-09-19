@@ -3,6 +3,7 @@ package com.alarmy.near.presentation.feature.myprofile.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.alarmy.near.presentation.feature.myprofile.MyProfileRoute
 import com.alarmy.near.presentation.feature.myprofile.WithdrawRoute
 import com.alarmy.near.presentation.ui.component.WebViewFrame
@@ -62,13 +63,12 @@ fun NavGraphBuilder.myProfileNavGraph(
     }
 
     composable<RouteWebView> { backStackEntry ->
-        val title = backStackEntry.arguments?.getString("title") ?: ""
-        val url = backStackEntry.arguments?.getString("url") ?: ""
+        val route = backStackEntry.toRoute<RouteWebView>()
 
         WebViewFrame(
             onNavigateBack = onNavigateBack,
-            title = title,
-            url = url,
+            title = route.title,
+            url = route.url,
         )
     }
 }
