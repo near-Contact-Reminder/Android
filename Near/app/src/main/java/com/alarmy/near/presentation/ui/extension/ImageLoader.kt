@@ -8,7 +8,6 @@ import androidx.compose.ui.res.painterResource
 import com.alarmy.near.R
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.request.RequestOptions
 
 /**
  * 이미지 로딩 확장 함수
@@ -34,17 +33,6 @@ fun ImageLoader(
             it
                 .placeholder(placeholder)
                 .error(error)
-                .apply(
-                    when (contentScale) {
-                        ContentScale.Crop -> RequestOptions.centerCropTransform()
-                        ContentScale.Fit -> RequestOptions.fitCenterTransform()
-                        ContentScale.FillBounds -> RequestOptions.centerInsideTransform()
-                        ContentScale.FillHeight -> RequestOptions.centerInsideTransform()
-                        ContentScale.FillWidth -> RequestOptions.centerInsideTransform()
-                        ContentScale.Inside -> RequestOptions.centerInsideTransform()
-                        else -> RequestOptions.centerCropTransform()
-                    },
-                )
         }
     } else {
         // URI가 null이거나 비어있을 경우 기본 이미지 표시
