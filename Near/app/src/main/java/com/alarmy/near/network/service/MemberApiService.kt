@@ -14,14 +14,11 @@ import retrofit2.http.Header
 interface MemberApiService {
     // 현재 로그인한 회원의 정보를 조회
     @GET("member/me")
-    suspend fun getMyInfo(
-        @Header("Authorization") authorization: String,
-    ): Response<MemberInfo>
+    suspend fun getMyInfo(): Response<MemberInfo>
 
     // 회원 탈퇴
     @HTTP(method = "DELETE", path = "member/withdraw", hasBody = true)
     suspend fun withdraw(
-        @Header("Authorization") authorization: String,
-        @Body request: WithdrawRequest
+        @Body request: WithdrawRequest,
     ): Response<Unit>
 }

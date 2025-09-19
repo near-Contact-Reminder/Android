@@ -22,7 +22,7 @@ class MemberRepositoryImpl
             flow {
                 emit(
                     runCatching {
-                        val response = memberApiService.getMyInfo("")
+                        val response = memberApiService.getMyInfo()
 
                         if (response.isSuccessful) {
                             response.body() ?: throw Exception("회원 정보가 null입니다.")
@@ -42,7 +42,7 @@ class MemberRepositoryImpl
         // 회원 탈퇴
         override suspend fun withdraw(request: WithdrawRequest): Result<Unit> =
             runCatching {
-                val response = memberApiService.withdraw("", request)
+                val response = memberApiService.withdraw(request)
 
                 if (response.isSuccessful) {
                     Unit
