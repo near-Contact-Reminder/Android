@@ -89,7 +89,7 @@ private fun LoginIntroductionSection(modifier: Modifier = Modifier) {
     Image(
         modifier = modifier.wrapContentSize(Alignment.Center),
         alignment = Alignment.Center,
-        painter = painterResource(R.drawable.ic_near_logo_title),
+        painter = painterResource(R.drawable.ic_near_logo_title_primary),
         contentDescription = stringResource(R.string.near_logo_title),
     )
 

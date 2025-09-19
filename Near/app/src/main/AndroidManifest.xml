@@ -9,7 +9,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -20,25 +20,28 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${kakaoAppKey}" />
-            
+
         <!-- 카카오톡 로그인 콜백을 위한 Activity -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="oauth"
-                      android:scheme="kakao${kakaoAppKey}" />
+
+                <data
+                    android:host="oauth"
+                    android:scheme="kakao${kakaoAppKey}" />
             </intent-filter>
         </activity>
-        
+
         <activity
             android:name=".presentation.feature.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Near">
+            android:theme="@style/Theme.Near.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

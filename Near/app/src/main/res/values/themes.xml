@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- 메인 앱 테마 -->
     <style name="Theme.Near" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- 스플래시 스크린 테마 -->
+    <style name="Theme.Near.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/img_splash_logo</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Near</item>
+    </style>
 </resources>
