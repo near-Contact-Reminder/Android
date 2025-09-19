@@ -44,7 +44,6 @@ class MyProfileViewModel
                     MyProfileUiState(
                         isLoading = false,
                         memberInfo = memberInfo.toMyProfileInfo(),
-                        error = null,
                     )
                 }.stateIn(
                     scope = viewModelScope,
@@ -106,7 +105,6 @@ class MyProfileViewModel
 data class MyProfileUiState(
     val isLoading: Boolean = false,
     val memberInfo: MyProfileInfo,
-    val error: String? = null,
 )
 
 /**
