@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 internal fun NearApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    isLoggedIn: Boolean = false,
+    startDestination: Any,
 ) {
     val snackBarState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -48,7 +48,7 @@ internal fun NearApp(
         NearNavHost(
             modifier = Modifier.consumeWindowInsets(innerPadding), // 하위 뷰에 Padding을 소비한 것으로 알립니다.
             navController = navController,
-            isLoggedIn = isLoggedIn,
+            startDestination = startDestination,
             onShowSnackbar = {
                 scope.launch {
                     snackBarState.showSnackbar(
