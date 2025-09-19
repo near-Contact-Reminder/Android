@@ -13,7 +13,6 @@ import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToF
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
-import com.alarmy.near.presentation.feature.home.navigation.RouteHome
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
@@ -28,19 +27,19 @@ import java.nio.charset.StandardCharsets
 internal fun NearNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    isLoggedIn: Boolean = false,
+    startDestination: Any, // 나중에 모든 루트를 sealed로 구성하면 sealed 타입으로 변경
     onShowSnackbar: (Throwable?) -> Unit = { _ -> },
 ) {
     val context = LocalContext.current
 
     /*
      * 화면 이동 및 구성을 위한 컴포저블 함수입니다.
-     * 로그인 상태에 따라 즉시 적절한 화면으로 시작합니다.
+     * startDestination 파라미터로 받은 시작 화면으로 이동합니다.
      * */
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = if (isLoggedIn) RouteHome else RouteLogin,
+        startDestination = startDestination,
     ) {
         // 온보딩 화면 NavGraph
         onboardingNavGraph(
@@ -102,9 +101,6 @@ internal fun NearNavHost(
                         navOptions {
                             popUpTo(RouteLogin) { inclusive = true }
                         },
-                    navOptions = navOptions {
-                        popUpTo(RouteLogin) { inclusive = true }
-                    }
                 )
             },
         )

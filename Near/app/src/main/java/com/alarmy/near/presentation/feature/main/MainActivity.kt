@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
                 if (!uiState.isLoading) {
                     NearApp(
-                        isLoggedIn = uiState.isLoggedIn
+                        startDestination = uiState.startDestination,
                     )
                 }
             }
