@@ -59,6 +59,7 @@ fun NavGraphBuilder.myProfileNavGraph(
         WithdrawRoute(
             onNavigateBack = onNavigateBack,
             onNavigateToLogin = onNavigateToLogin,
+            onShowErrorSnackBar = onShowErrorSnackBar,
         )
     }
 

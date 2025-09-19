@@ -67,10 +67,7 @@ class WithdrawViewModel
             val reason = currentState.selectedReason
 
             if (reason == null) {
-                _uiState.value =
-                    currentState.copy(
-                        errorMessage = "탈퇴 사유를 선택해주세요.",
-                    )
+                _uiEvent.trySend(WithdrawUiEvent.ShowError(Exception("탈퇴 사유를 선택해주세요.")))
                 return
             }
 
@@ -100,7 +97,7 @@ class WithdrawViewModel
                     }.onFailure { exception ->
                         // 실패 시 에러 처리
                         NearLog.d(exception.message.toString())
-                        onWithdrawFailure(exception.message ?: "탈퇴 처리 중 오류가 발생했습니다.")
+                        onWithdrawFailure(exception)
                     }
             }
         }
@@ -116,11 +113,8 @@ class WithdrawViewModel
                     _uiEvent.trySend(WithdrawUiEvent.NavigateToLogin)
                 }.onFailure { exception ->
                     NearLog.d(exception.message.toString())
-                    _uiState.value =
-                        _uiState.value.copy(
-                            isLoading = false,
-                            errorMessage = exception.message ?: "로그아웃 처리 중 오류가 발생했습니다.",
-                        )
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                    _uiEvent.trySend(WithdrawUiEvent.ShowError(exception))
                 }
             }
         }
@@ -128,12 +122,9 @@ class WithdrawViewModel
         /**
          * 탈퇴 실패 시 호출되는 함수
          */
-        private fun onWithdrawFailure(errorMessage: String) {
-            _uiState.value =
-                _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = errorMessage,
-                )
+        private fun onWithdrawFailure(exception: Throwable) {
+            _uiState.value = _uiState.value.copy(isLoading = false)
+            _uiEvent.trySend(WithdrawUiEvent.ShowError(exception))
         }
 
         /**
@@ -152,7 +143,6 @@ data class WithdrawUiState(
     val selectedReason: WithdrawReason? = null,
     val otherReasonText: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String = "",
 ) {
     // 기타 사유가 선택되었는지 확인
     val isOtherReasonSelected: Boolean
@@ -178,4 +168,8 @@ sealed class WithdrawUiEvent {
     object NavigateBack : WithdrawUiEvent()
 
     object NavigateToLogin : WithdrawUiEvent()
+
+    data class ShowError(
+        val throwable: Throwable?,
+    ) : WithdrawUiEvent()
 }

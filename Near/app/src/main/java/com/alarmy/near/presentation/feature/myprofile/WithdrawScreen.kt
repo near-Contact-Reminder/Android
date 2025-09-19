@@ -16,15 +16,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.ui.res.stringResource
 import com.alarmy.near.R
-import com.alarmy.near.presentation.ui.component.appbar.NearCancelTopAppBar
 import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 import com.alarmy.near.presentation.ui.component.NearFrame
+import com.alarmy.near.presentation.ui.component.appbar.NearCancelTopAppBar
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.component.button.NearLineTypeButton
 import com.alarmy.near.presentation.ui.component.radiobutton.NearLargeRadioButton
@@ -38,9 +38,11 @@ fun WithdrawRoute(
     viewModel: WithdrawViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
+    onShowErrorSnackBar: (Throwable?) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // 통합된 이벤트 처리
     LaunchedEffect(viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -49,6 +51,9 @@ fun WithdrawRoute(
                 }
                 is WithdrawUiEvent.NavigateToLogin -> {
                     onNavigateToLogin()
+                }
+                is WithdrawUiEvent.ShowError -> {
+                    onShowErrorSnackBar(event.throwable)
                 }
             }
         }
