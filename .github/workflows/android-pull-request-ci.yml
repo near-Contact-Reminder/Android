@@ -25,6 +25,14 @@ jobs:
       - name: set up Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: Create file
+        run: cat $GITHUB_WORKSPACE/Near/app/google-services.json | base64
+
+      - name: Putting google data
+        env:
+          DATA: ${{ secrets.FIREBASE_GOOGLE_SERVICE }}
+        run: echo $DATA > $GITHUB_WORKSPACE/Near/app/google-services.json
+
       - name: Access Near DEV_URL
         env:
           NEAR_DEV_URL: ${{ secrets.NEAR_DEV_URL }}
