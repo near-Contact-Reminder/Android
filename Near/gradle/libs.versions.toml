@@ -32,8 +32,6 @@ datastoreCore = "1.1.7"
 v2All = "2.21.7"
 # Google Service (FCM)
 google-service = "4.4.3"
-# Splash Screen
-splashScreen = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +64,7 @@ logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-intercep
 retrofit-kotlin-serialization-converter = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofitVersion" }
 androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase"}
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 
 [plugins]

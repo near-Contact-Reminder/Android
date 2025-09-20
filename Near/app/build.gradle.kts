@@ -111,6 +111,9 @@ dependencies {
 
     // libphonenumber-android for phone number formatting
     implementation("io.michaelrocks:libphonenumber-android:9.0.15")
+
+    // firebase
+    implementation(platform(libs.firebase.bom))
 }
 
 fun getProperty(propertyKey: String): String = gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
