@@ -57,7 +57,7 @@ class FriendProfileViewModel
                     _friendFlow.value = FriendState.Success(friend)
                 }.catch { error ->
                     _friendFlow.value = FriendState.Error("데이터를 가져오는데 실패했습니다.")
-                    _uiEvent.send(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
+                    _uiEvent.trySend(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
                 }.launchIn(viewModelScope)
         }
 
