@@ -9,5 +9,5 @@ interface MemberRepository {
     fun getMyInfo(): Flow<MemberInfo>
     
     // 회원 탈퇴
-    suspend fun withdraw(request: WithdrawRequest): Result<Unit>
+    fun withdraw(request: WithdrawRequest): Flow<Unit>
 }
