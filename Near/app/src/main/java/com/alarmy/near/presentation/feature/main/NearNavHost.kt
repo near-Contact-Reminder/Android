@@ -8,6 +8,8 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
+import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
@@ -165,6 +167,20 @@ internal fun NearNavHost(
             onMyPageClick = {},
             onAlarmClick = {},
             onAddContactClick = {},
+        )
+
+        contactNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onBackClick = {
+                navController.popBackStack()
+            },
+            onCompletedSelection = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    CONTACT_SELECTION_COMPLETE_KEY,
+                    it,
+                )
+                navController.popBackStack()
+            },
         )
     }
 }
