@@ -1,6 +1,6 @@
 package com.alarmy.near.presentation.feature.myprofile.model
 
-data class MyProfileInfo(
+data class MyProfileInfoUIModel(
     val nickname: String,
     val imageUrl: String?,
     val notificationAgreedAt: String?,

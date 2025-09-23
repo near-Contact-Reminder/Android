@@ -1,15 +1,49 @@
 package com.alarmy.near.data.mapper
 
+import com.alarmy.near.data.entity.MemberInfoEntity
+import com.alarmy.near.data.entity.WithdrawRequestEntity
 import com.alarmy.near.model.member.MemberInfo
+import com.alarmy.near.model.member.WithdrawRequest
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
-import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
+import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfoUIModel
 
 /**
- * Member 관련 데이터 변환 매퍼
- * Data 계층 모델을 Presentation 계층 모델로 변환
+ * Data Layer Entity를 Model Layer로 변환
  */
-fun MemberInfo.toMyProfileInfo(): MyProfileInfo =
-    MyProfileInfo(
+fun MemberInfoEntity.toModel(): MemberInfo =
+    MemberInfo(
+        memberId = memberId,
+        username = username,
+        nickname = nickname,
+        imageUrl = imageUrl,
+        notificationAgreedAt = notificationAgreedAt,
+        providerType = providerType,
+    )
+
+/**
+ * Model Layer를 Data Layer Entity로 변환
+ */
+fun MemberInfo.toEntity(): MemberInfoEntity =
+    MemberInfoEntity(
+        memberId = memberId,
+        username = username,
+        nickname = nickname,
+        imageUrl = imageUrl,
+        notificationAgreedAt = notificationAgreedAt,
+        providerType = providerType,
+    )
+
+fun WithdrawRequest.toEntity(): WithdrawRequestEntity =
+    WithdrawRequestEntity(
+        reasonType = reasonType,
+        customReason = customReason,
+    )
+
+/**
+ * Model 계층 모델을 UI 계층 모델로 변환
+ */
+fun MemberInfo.toMyProfileInfoUIModel(): MyProfileInfoUIModel =
+    MyProfileInfoUIModel(
         nickname = nickname,
         imageUrl = imageUrl,
         notificationAgreedAt = notificationAgreedAt,

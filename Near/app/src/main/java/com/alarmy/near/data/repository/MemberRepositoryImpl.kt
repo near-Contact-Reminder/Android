@@ -1,8 +1,11 @@
 package com.alarmy.near.data.repository
 
+import com.alarmy.near.data.mapper.toEntity
+import com.alarmy.near.data.mapper.toModel
+import com.alarmy.near.data.mapper.toRequest
 import com.alarmy.near.model.member.MemberInfo
-import com.alarmy.near.model.member.WithdrawRequest
 import com.alarmy.near.network.service.MemberApiService
+import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 import com.alarmy.near.utils.extensions.apiCallFlow
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -18,14 +21,17 @@ class MemberRepositoryImpl
         private val memberApiService: MemberApiService,
     ) : MemberRepository {
         // 현재 로그인한 회원의 정보를 조회
-        override fun getMyInfo(): Flow<MemberInfo> =
-            apiCallFlow {
-                memberApiService.getMyInfo()
-            }
+        override fun getMyInfo(): Flow<MemberInfo> = apiCallFlow {
+            memberApiService.getMyInfo().toModel()
+        }
 
         // 회원 탈퇴
-        override fun withdraw(request: WithdrawRequest): Flow<Unit> =
-            apiCallFlow {
-                memberApiService.withdraw(request)
-            }
+        override fun withdraw(
+            reason: WithdrawReason,
+            customReason: String?,
+        ): Flow<Unit> = apiCallFlow {
+            val request = reason.toRequest(customReason)
+            memberApiService.withdraw(request.toEntity())
+            Unit
+        }
     }

@@ -2,11 +2,11 @@ package com.alarmy.near.presentation.feature.myprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alarmy.near.data.mapper.toMyProfileInfo
+import com.alarmy.near.data.mapper.toMyProfileInfoUIModel
 import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
-import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
+import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfoUIModel
 import com.alarmy.near.presentation.feature.myprofile.model.TermsType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -43,7 +43,7 @@ class MyProfileViewModel
                 }.map { memberInfo ->
                     MyProfileUiState(
                         isLoading = false,
-                        memberInfo = memberInfo.toMyProfileInfo(),
+                        memberInfo = memberInfo.toMyProfileInfoUIModel(),
                     )
                 }.stateIn(
                     scope = viewModelScope,
@@ -52,7 +52,7 @@ class MyProfileViewModel
                         MyProfileUiState(
                             isLoading = true,
                             memberInfo =
-                                MyProfileInfo(
+                                MyProfileInfoUIModel(
                                     nickname = "",
                                     imageUrl = null,
                                     notificationAgreedAt = null,
@@ -104,7 +104,7 @@ class MyProfileViewModel
  */
 data class MyProfileUiState(
     val isLoading: Boolean = false,
-    val memberInfo: MyProfileInfo,
+    val memberInfo: MyProfileInfoUIModel,
 )
 
 /**

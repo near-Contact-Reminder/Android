@@ -1,7 +1,7 @@
 package com.alarmy.near.network.service
 
-import com.alarmy.near.model.member.MemberInfo
-import com.alarmy.near.model.member.WithdrawRequest
+import com.alarmy.near.data.entity.MemberInfoEntity
+import com.alarmy.near.data.entity.WithdrawRequestEntity
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HTTP
@@ -12,11 +12,11 @@ import retrofit2.http.HTTP
 interface MemberApiService {
     // 현재 로그인한 회원의 정보를 조회
     @GET("member/me")
-    suspend fun getMyInfo(): MemberInfo
+    suspend fun getMyInfo(): MemberInfoEntity
 
     // 회원 탈퇴
     @HTTP(method = "DELETE", path = "member/withdraw", hasBody = true)
     suspend fun withdraw(
-        @Body request: WithdrawRequest,
+        @Body request: WithdrawRequestEntity,
     )
 }
