@@ -35,6 +35,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 @Composable
 fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
     var isBulkSettingEnabled by remember { mutableStateOf(false) }
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -50,7 +51,13 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
 
         NearBackgroundCheckbox(
             checked = isBulkSettingEnabled,
-            onCheckedChange = { isBulkSettingEnabled = it },
+            onCheckedChange = { checked ->
+                isBulkSettingEnabled = checked
+                // 체크버튼이 활성화되면 바텀시트 표시
+                if (checked) {
+                    isBottomSheetVisible = true
+                }
+            },
         )
     }
 
@@ -126,6 +133,14 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
         // 리스트가 비어있을 때도 공간 확보
         Spacer(modifier = Modifier.weight(1f))
     }
+
+    // 바텀시트 표시
+    CycleSettingBottomSheet(
+        isVisible = isBottomSheetVisible,
+        onDismiss = {
+            isBottomSheetVisible = false
+        },
+    )
 }
 
 @Preview(showBackground = true)
