@@ -67,12 +67,15 @@ fun FriendContactCycleScreen(
 
         Spacer(modifier = Modifier.size(24.dp))
 
-        ContactCycleHeader()
-
-        Spacer(modifier = Modifier.size(40.dp))
-
         when (currentStep) {
             ContactCycleStep.LOAD_CONTACTS -> {
+                ContactCycleHeader(
+                    headerTitle = "가까워지고 싶은 사람\n10명까지 선택해주세요",
+                    headerSubTitle = "먼저, 더 가까워지고 싶은\n소중한 사람만 선택해보세요.",
+                )
+
+                Spacer(modifier = Modifier.size(40.dp))
+
                 ContactLoadContent(
                     contacts = contacts,
                 )
@@ -88,6 +91,13 @@ fun FriendContactCycleScreen(
             }
 
             ContactCycleStep.SET_CYCLE -> {
+                ContactCycleHeader(
+                    headerTitle = "얼마나 자주\n챙기고 싶으세요?",
+                    headerSubTitle = "사람별로 챙기고 싶은 주기를 설정해주세요.",
+                )
+
+                Spacer(modifier = Modifier.size(40.dp))
+
                 ContactCycleContent(
                     contacts = contacts,
                 )
@@ -136,7 +146,10 @@ fun ContactCycleTopAppBar(
 }
 
 @Composable
-private fun ContactCycleHeader() {
+private fun ContactCycleHeader(
+    headerTitle: String,
+    headerSubTitle: String,
+) {
     Image(
         painter = painterResource(R.drawable.img_100_character_default),
         contentDescription = null,
@@ -145,14 +158,14 @@ private fun ContactCycleHeader() {
     Spacer(modifier = Modifier.size(8.dp))
 
     Text(
-        text = "가까워지고 싶은 사람\n10명까지 선택해주세요",
+        text = headerTitle,
         style = NearTheme.typography.H1_24_MEDIUM,
     )
 
     Spacer(modifier = Modifier.size(12.dp))
 
     Text(
-        text = "먼저, 더 가까워지고 싶은\n소중한 사람만 선택해보세요.",
+        text = headerSubTitle,
         style =
             NearTheme.typography.B1_16_MEDIUM.copy(
                 color = NearTheme.colors.GRAY01_888888,
