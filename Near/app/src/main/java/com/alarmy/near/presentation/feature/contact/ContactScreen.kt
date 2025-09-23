@@ -75,6 +75,7 @@ fun ContactRoute(
         is ContactUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(
+                    color = NearTheme.colors.BLUE01_5AA2E9,
                     modifier = Modifier.align(Alignment.Center),
                 )
             }
