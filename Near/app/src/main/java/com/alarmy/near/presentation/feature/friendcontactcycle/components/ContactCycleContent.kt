@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -77,8 +78,9 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
 
             Image(
                 modifier = Modifier.size(24.dp),
-                painter = painterResource(R.drawable.ic_back_32_black),
+                painter = painterResource(R.drawable.ic_24_down),
                 contentDescription = null,
+                colorFilter = ColorFilter.tint(NearTheme.colors.GRAY01_888888),
             )
         }
     }
@@ -112,8 +114,9 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
 
                         Image(
                             modifier = Modifier.size(24.dp),
-                            painter = painterResource(R.drawable.ic_back_32_black),
+                            painter = painterResource(R.drawable.ic_24_down),
                             contentDescription = null,
+                            colorFilter = ColorFilter.tint(NearTheme.colors.GRAY01_888888),
                         )
                     }
                 }

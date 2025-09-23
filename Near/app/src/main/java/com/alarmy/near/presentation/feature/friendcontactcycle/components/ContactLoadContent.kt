@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,8 +32,9 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
         when (contacts.isEmpty()) {
             true -> {
                 Image(
-                    painter = painterResource(R.drawable.img_100_character_empty),
-                    contentDescription = "친구가 없습니다",
+                    painter = painterResource(R.drawable.ic_24_down),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(NearTheme.colors.GRAY01_888888),
                 )
             }
 
@@ -66,6 +68,7 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
                     Image(
                         painter = painterResource(R.drawable.ic_back_32_black),
                         contentDescription = "친구 제거",
+                        colorFilter = ColorFilter.tint(NearTheme.colors.GRAY01_888888),
                         modifier =
                             Modifier
                                 .size(24.dp)
