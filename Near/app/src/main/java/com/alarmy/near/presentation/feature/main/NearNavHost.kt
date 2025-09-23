@@ -21,8 +21,8 @@ import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
 import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
 import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToMyProfile
-import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToWithdraw
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToWebView
+import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToWithdraw
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -44,6 +44,52 @@ internal fun NearNavHost(
         navController = navController,
         startDestination = if (isLoggedIn) RouteHome else RouteLogin,
     ) {
+        // 로그인 화면 NavGraph
+        loginNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onNavigateToHome = {
+                navController.navigateToHome(
+                    navOptions =
+                        navOptions {
+                            popUpTo(RouteLogin) { inclusive = true }
+                        },
+                )
+            },
+        )
+
+        // 홈 화면 NavGraph
+        homeNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onContactClick = { contactId ->
+                navController.navigateToFriendProfile(friendId = contactId)
+            },
+            onMyPageClick = { navController.navigateToMyProfile() },
+            onAlarmClick = {},
+            onAddContactClick = {},
+        )
+
+        myProfileNavGraph(
+            onNavigateBack = {
+                navController.popBackStack()
+            },
+            onNavigateToLogin = {
+                navController.navigateToLogin(
+                    navOptions =
+                        androidx.navigation.navOptions {
+                            popUpTo(0) { inclusive = true }
+                        },
+                )
+            },
+            onNavigateToWithdraw = { nickname ->
+                navController.navigateToWithdraw(nickname)
+            },
+            onNavigateToTerms = { title, url ->
+                navController.navigateToWebView(title, url)
+            },
+            onShowErrorSnackBar = onShowSnackbar,
+        )
+
+        // 친구 프로필 화면 NavGraph
         friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
             navController.popBackStack()
         }, onClickCallButton = { phoneNumber ->
@@ -72,6 +118,8 @@ internal fun NearNavHost(
                     ),
             )
         })
+
+        // 친구 프로필 편집 화면 NavGraph
         friendProfileEditorNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
             navController.popBackStack()
         }, onSuccessEdit = {
@@ -81,65 +129,5 @@ internal fun NearNavHost(
             )
             navController.popBackStack()
         })
-
-
-        // 로그인 화면 NavGraph
-        loginNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onNavigateToHome = {
-                navController.navigateToHome(
-                    navOptions = navOptions {
-                        popUpTo(RouteLogin) { inclusive = true }
-                    }
-                )
-            },
-        )
-
-        // 홈 화면 NavGraph
-        homeNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onContactClick = { contactId ->
-                navController.navigateToFriendProfile(friendId = contactId)
-            },
-            onMyPageClick = { navController.navigateToMyProfile() },
-            onAlarmClick = {},
-            onAddContactClick = {},
-        )
-
-        myProfileNavGraph(
-            onNavigateBack = {
-                navController.popBackStack()
-            },
-            onNavigateToLogin = {
-                navController.navigateToLogin(
-                    navOptions = androidx.navigation.navOptions {
-                        popUpTo(0) { inclusive = true }
-                    }
-                )
-            },
-            onNavigateToWithdraw = { nickname ->
-                navController.navigateToWithdraw(nickname)
-            },
-            onNavigateToTerms = { title, url ->
-                navController.navigateToWebView(title, url)
-            },
-            onShowErrorSnackBar = onShowSnackbar,
-        )
-
-        // 친구 프로필 화면 NavGraph
-        friendProfileNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onClickBackButton = {
-                navController.popBackStack()
-            }
-        )
-
-        // 친구 프로필 편집 화면 NavGraph
-        friendProfileEditorNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onClickBackButton = {
-                navController.popBackStack()
-            }
-        )
     }
 }
