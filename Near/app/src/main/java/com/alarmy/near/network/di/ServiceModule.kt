@@ -2,6 +2,7 @@ package com.alarmy.near.network.di
 
 import com.alarmy.near.network.service.AuthService
 import com.alarmy.near.network.service.FriendService
+import com.alarmy.near.network.service.MemberApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,4 +20,8 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideFriendService(retrofit: Retrofit): FriendService = retrofit.create(FriendService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMemberApiService(retrofit: Retrofit): MemberApiService = retrofit.create(MemberApiService::class.java)
 }

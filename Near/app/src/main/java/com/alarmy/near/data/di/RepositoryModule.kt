@@ -8,6 +8,8 @@ import com.alarmy.near.data.repository.ExampleRepositoryImpl
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.data.repository.OnBoardingRepository
 import com.alarmy.near.data.repository.OnBoardingRepositoryImpl
+import com.alarmy.near.data.repository.MemberRepository
+import com.alarmy.near.data.repository.MemberRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -32,4 +34,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindOnBoardingRepository(onBoardingRepositoryImpl: OnBoardingRepositoryImpl): OnBoardingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMemberRepository(memberRepositoryImpl: MemberRepositoryImpl): MemberRepository
 }
