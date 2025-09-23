@@ -80,8 +80,6 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
         // 리스트가 비어있을 때도 공간 확보
         Spacer(modifier = Modifier.weight(1f))
     }
-
-    Spacer(modifier = Modifier.weight(1f))
 }
 
 @Composable
