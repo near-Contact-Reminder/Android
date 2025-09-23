@@ -1,10 +1,11 @@
 package com.alarmy.near.data.entity
 
+import com.alarmy.near.network.request.WithdrawRequest
 import kotlinx.serialization.Serializable
 
 /**
  * 회원 탈퇴 요청 Data Layer 엔티티
- * API 요청 데이터를 나타내는 모델
+ * Network Layer의 WithdrawRequest와 동일한 구조
  */
 @Serializable
 data class WithdrawRequestEntity(

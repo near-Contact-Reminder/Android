@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.data.repository.MemberRepository
-import com.alarmy.near.model.member.WithdrawRequest
 import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 import com.alarmy.near.presentation.feature.myprofile.navigation.RouteWithdraw
 import com.alarmy.near.utils.logger.NearLog
@@ -79,19 +78,14 @@ class WithdrawViewModel
                 )
 
             viewModelScope.launch {
-                val request =
-                    WithdrawRequest(
-                        reasonType = reason.name,
-                        customReason =
-                            if (currentState.isOtherReasonSelected) {
-                                currentState.otherReasonText.takeIf { it.isNotEmpty() }
-                            } else {
-                                null
-                            },
-                    )
+                val customReason = if (currentState.isOtherReasonSelected) {
+                    currentState.otherReasonText.takeIf { it.isNotEmpty() }
+                } else {
+                    null
+                }
 
                 memberRepository
-                    .withdraw(request)
+                    .withdraw(reason, customReason)
                     .catch { error ->
                         // 실패 시 에러 처리
                         NearLog.d(error.message.toString())

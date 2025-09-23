@@ -1,7 +1,7 @@
 package com.alarmy.near.data.repository
 
 import com.alarmy.near.model.member.MemberInfo
-import com.alarmy.near.model.member.WithdrawRequest
+import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 import kotlinx.coroutines.flow.Flow
 
 interface MemberRepository {
@@ -9,5 +9,5 @@ interface MemberRepository {
     fun getMyInfo(): Flow<MemberInfo>
     
     // 회원 탈퇴
-    fun withdraw(request: WithdrawRequest): Flow<Unit>
+    fun withdraw(reason: WithdrawReason, customReason: String? = null): Flow<Unit>
 }

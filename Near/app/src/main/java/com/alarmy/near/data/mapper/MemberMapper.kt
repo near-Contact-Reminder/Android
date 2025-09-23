@@ -3,9 +3,10 @@ package com.alarmy.near.data.mapper
 import com.alarmy.near.data.entity.MemberInfoEntity
 import com.alarmy.near.data.entity.WithdrawRequestEntity
 import com.alarmy.near.model.member.MemberInfo
-import com.alarmy.near.model.member.WithdrawRequest
+import com.alarmy.near.network.request.WithdrawRequest
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
 import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfoUIModel
+import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 
 /**
  * Data Layer Entity를 Model Layer로 변환
@@ -31,6 +32,15 @@ fun MemberInfo.toEntity(): MemberInfoEntity =
         imageUrl = imageUrl,
         notificationAgreedAt = notificationAgreedAt,
         providerType = providerType,
+    )
+
+/**
+ * WithdrawReason을 Network Layer로 변환
+ */
+fun WithdrawReason.toRequest(customReason: String? = null): WithdrawRequest =
+    WithdrawRequest(
+        reasonType = this.name,
+        customReason = customReason,
     )
 
 fun WithdrawRequest.toEntity(): WithdrawRequestEntity =
