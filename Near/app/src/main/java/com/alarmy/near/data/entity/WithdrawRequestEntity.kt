@@ -1,6 +1,5 @@
 package com.alarmy.near.data.entity
 
-import com.alarmy.near.network.request.WithdrawRequest
 import kotlinx.serialization.Serializable
 
 /**
@@ -10,5 +9,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WithdrawRequestEntity(
     val reasonType: String,
-    val customReason: String? = null
+    val customReason: String? = null,
 )

@@ -21,17 +21,18 @@ class MemberRepositoryImpl
         private val memberApiService: MemberApiService,
     ) : MemberRepository {
         // 현재 로그인한 회원의 정보를 조회
-        override fun getMyInfo(): Flow<MemberInfo> = apiCallFlow {
-            memberApiService.getMyInfo().toModel()
-        }
+        override fun getMyInfo(): Flow<MemberInfo> =
+            apiCallFlow {
+                memberApiService.getMyInfo().toModel()
+            }
 
         // 회원 탈퇴
         override fun withdraw(
             reason: WithdrawReason,
             customReason: String?,
-        ): Flow<Unit> = apiCallFlow {
-            val request = reason.toRequest(customReason)
-            memberApiService.withdraw(request.toEntity())
-            Unit
-        }
+        ): Flow<Unit> =
+            apiCallFlow {
+                val request = reason.toRequest(customReason)
+                memberApiService.withdraw(request.toEntity())
+            }
     }

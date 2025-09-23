@@ -75,7 +75,7 @@ internal fun NearNavHost(
             onNavigateToLogin = {
                 navController.navigateToLogin(
                     navOptions =
-                        androidx.navigation.navOptions {
+                        navOptions {
                             popUpTo(0) { inclusive = true }
                         },
                 )
