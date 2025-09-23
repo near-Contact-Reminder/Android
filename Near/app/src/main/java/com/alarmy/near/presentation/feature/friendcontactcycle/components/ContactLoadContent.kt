@@ -67,7 +67,7 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
                     contact = contact,
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_back_32_black),
+                        painter = painterResource(R.drawable.ic_32_cancel),
                         contentDescription = "친구 제거",
                         colorFilter = ColorFilter.tint(NearTheme.colors.GRAY01_888888),
                         modifier =
