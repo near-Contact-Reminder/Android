@@ -15,6 +15,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -91,13 +92,13 @@ class WithdrawViewModel
 
                 memberRepository
                     .withdraw(request)
-                    .onSuccess {
+                    .catch { error ->
+                        // 실패 시 에러 처리
+                        NearLog.d(error.message.toString())
+                        onWithdrawFailure(error)
+                    }.collect {
                         // 성공 시 로그아웃 로직 실행
                         onWithdrawSuccess()
-                    }.onFailure { exception ->
-                        // 실패 시 에러 처리
-                        NearLog.d(exception.message.toString())
-                        onWithdrawFailure(exception)
                     }
             }
         }
