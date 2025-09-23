@@ -16,7 +16,12 @@ import com.alarmy.near.presentation.ui.component.button.NearLineTypeButton
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun ContactCycleButtons() {
+fun ContactCycleButtons(
+    onLeftButtonClick: () -> Unit = {},
+    onRightButtonClick: () -> Unit = {},
+    leftButtonText: String = "나중에 하기",
+    rightButtonText: String = "다음",
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -26,20 +31,20 @@ fun ContactCycleButtons() {
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(16.dp),
             enabled = true,
-            text = "나중에 하기",
-            onClick = {},
+            text = leftButtonText,
+            onClick = onLeftButtonClick,
         )
 
         Spacer(modifier = Modifier.size(7.dp))
 
         NearBasicButton(
             modifier = Modifier.weight(1f),
-            onClick = {},
+            onClick = onRightButtonClick,
             enabled = true,
             contentPadding = PaddingValues(16.dp),
         ) {
             Text(
-                text = "다음",
+                text = rightButtonText,
                 style = NearTheme.typography.B1_16_BOLD,
             )
         }
