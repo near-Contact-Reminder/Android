@@ -3,7 +3,6 @@ package com.alarmy.near.presentation.feature.friendcontactcycle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,15 +16,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.alarmy.near.R
-import com.alarmy.near.presentation.feature.friendcontactcycle.components.NearListModuleBackground
+import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactLoadContent
+import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.ui.component.NearFrame
-import com.alarmy.near.presentation.ui.component.button.NearBasicButton
-import com.alarmy.near.presentation.ui.component.button.NearLineTypeButton
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun FriendContactCycleScreen() {
+internal fun FriendContactCycleRoute(
+    onNavigateToHome: () -> Unit,
+    onNavigateToCycle: () -> Unit,
+    viewModel: FriendContactViewModel = hiltViewModel(),
+) {
+    FriendContactCycleScreen(viewModel.contacts)
+}
+
+@Composable
+fun FriendContactCycleScreen(contacts: List<FriendContactUIModel>) {
     NearFrame(
         modifier =
             Modifier
@@ -41,12 +49,7 @@ fun FriendContactCycleScreen() {
 
         Spacer(modifier = Modifier.size(40.dp))
 
-        NearListModuleBackground {
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        ContactCycleButtons()
+        ContactLoadContent(contacts)
 
         Spacer(modifier = Modifier.size(24.dp))
     }
@@ -102,41 +105,22 @@ private fun ContactCycleHeader() {
     )
 }
 
-@Composable
-private fun ContactCycleButtons() {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        NearLineTypeButton(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(16.dp),
-            enabled = true,
-            text = "나중에 하기",
-            onClick = {},
-        )
-
-        Spacer(modifier = Modifier.size(7.dp))
-
-        NearBasicButton(
-            modifier = Modifier.weight(1f),
-            onClick = {},
-            enabled = false,
-            contentPadding = PaddingValues(16.dp),
-        ) {
-            Text(
-                text = "다음",
-                style = NearTheme.typography.B1_16_BOLD,
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun FriendContactCycleScreenPreview() {
+    // 짱구 관련 더미데이터 생성
+    val contacts =
+        listOf(
+            FriendContactUIModel(
+                id = 1,
+                name = "신짱구",
+                photoUri = null,
+            ),
+        )
+
     NearTheme {
-        FriendContactCycleScreen()
+        FriendContactCycleScreen(
+            contacts = contacts,
+        )
     }
 }
