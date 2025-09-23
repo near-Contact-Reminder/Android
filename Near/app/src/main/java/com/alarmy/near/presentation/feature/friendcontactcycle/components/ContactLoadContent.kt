@@ -62,10 +62,18 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
             ) { contact ->
                 FriendListItem(
                     contact = contact,
-                    onRemoveClick = { contactId ->
-                        // TODO: 친구 제거 로직 구현
-                    },
-                )
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_back_32_black),
+                        contentDescription = "친구 제거",
+                        modifier =
+                            Modifier
+                                .size(24.dp)
+                                .onNoRippleClick {
+                                    // TODO 리스트 제거
+                                },
+                    )
+                }
             }
         }
     } else {
@@ -73,16 +81,14 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
         Spacer(modifier = Modifier.weight(1f))
     }
 
-    Spacer(modifier = Modifier.size(16.dp))
-
-    ContactCycleButtons()
+    Spacer(modifier = Modifier.weight(1f))
 }
 
 @Composable
 fun FriendListItem(
     modifier: Modifier = Modifier,
     contact: FriendContactUIModel,
-    onRemoveClick: (Long) -> Unit = {},
+    content: @Composable () -> Unit = {},
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -111,13 +117,6 @@ fun FriendListItem(
             )
         }
 
-        Image(
-            painter = painterResource(R.drawable.ic_back_32_black),
-            contentDescription = "친구 제거",
-            modifier =
-                Modifier
-                    .size(24.dp)
-                    .onNoRippleClick { onRemoveClick(contact.id) },
-        )
+        content()
     }
 }
