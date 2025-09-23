@@ -290,7 +290,7 @@ fun ContactList(
             modifier =
                 Modifier
                     .align(Alignment.TopEnd)
-                    .padding(end = 12.dp, top = 24.dp),
+                    .padding(end = 12.dp, top = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             allInitials.forEach { initial ->
