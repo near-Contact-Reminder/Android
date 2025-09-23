@@ -11,6 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -18,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleButtons
+import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleContent
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactLoadContent
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.ui.component.NearFrame
@@ -26,14 +33,25 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 @Composable
 internal fun FriendContactCycleRoute(
     onNavigateToHome: () -> Unit,
-    onNavigateToCycle: () -> Unit,
     viewModel: FriendContactViewModel = hiltViewModel(),
 ) {
-    FriendContactCycleScreen(viewModel.contacts)
+    val currentStep by viewModel.currentStep.collectAsState()
+
+    FriendContactCycleScreen(
+        contacts = viewModel.contacts,
+        currentStep = currentStep,
+        onNextClick = viewModel::moveToNextStep,
+        onLaterClick = viewModel::moveToPreviousStep,
+    )
 }
 
 @Composable
-fun FriendContactCycleScreen(contacts: List<FriendContactUIModel>) {
+fun FriendContactCycleScreen(
+    contacts: List<FriendContactUIModel>,
+    currentStep: ContactCycleStep,
+    onNextClick: () -> Unit,
+    onLaterClick: () -> Unit,
+) {
     NearFrame(
         modifier =
             Modifier
@@ -49,7 +67,37 @@ fun FriendContactCycleScreen(contacts: List<FriendContactUIModel>) {
 
         Spacer(modifier = Modifier.size(40.dp))
 
-        ContactLoadContent(contacts)
+        when (currentStep) {
+            ContactCycleStep.LOAD_CONTACTS -> {
+                ContactLoadContent(
+                    contacts = contacts,
+                )
+
+                Spacer(modifier = Modifier.size(16.dp))
+
+                ContactCycleButtons(
+                    onLeftButtonClick = onLaterClick,
+                    onRightButtonClick = onNextClick,
+                    leftButtonText = "나중에 하기",
+                    rightButtonText = "다음",
+                )
+            }
+
+            ContactCycleStep.SET_CYCLE -> {
+                ContactCycleContent(
+                    contacts = contacts,
+                )
+
+                Spacer(modifier = Modifier.size(16.dp))
+
+                ContactCycleButtons(
+                    onLeftButtonClick = onLaterClick,
+                    onRightButtonClick = { /* TODO: 완료 로직 */ },
+                    leftButtonText = "이전",
+                    rightButtonText = "완료",
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.size(24.dp))
     }
@@ -108,7 +156,6 @@ private fun ContactCycleHeader() {
 @Preview(showBackground = true)
 @Composable
 fun FriendContactCycleScreenPreview() {
-    // 짱구 관련 더미데이터 생성
     val contacts =
         listOf(
             FriendContactUIModel(
@@ -116,11 +163,26 @@ fun FriendContactCycleScreenPreview() {
                 name = "신짱구",
                 photoUri = null,
             ),
+            FriendContactUIModel(
+                id = 2,
+                name = "철수",
+                photoUri = null,
+            ),
+            FriendContactUIModel(
+                id = 3,
+                name = "유리",
+                photoUri = null,
+            ),
         )
+
+    var currentStep by remember { mutableStateOf(ContactCycleStep.LOAD_CONTACTS) }
 
     NearTheme {
         FriendContactCycleScreen(
             contacts = contacts,
+            currentStep = currentStep,
+            onNextClick = { currentStep = ContactCycleStep.SET_CYCLE },
+            onLaterClick = { currentStep = ContactCycleStep.LOAD_CONTACTS },
         )
     }
 }
