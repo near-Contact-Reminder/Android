@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
@@ -103,6 +104,7 @@ fun FriendListItem(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f),
         ) {
             Image(
                 painter = painterResource(R.drawable.img_100_character_default),
@@ -115,6 +117,9 @@ fun FriendListItem(
             Text(
                 text = contact.name,
                 style = NearTheme.typography.B2_14_MEDIUM,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                modifier = Modifier.weight(1f),
             )
         }
 
