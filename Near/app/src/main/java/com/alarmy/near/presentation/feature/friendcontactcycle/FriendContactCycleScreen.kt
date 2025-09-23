@@ -26,6 +26,7 @@ import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleButtons
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleContent
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactLoadContent
+import com.alarmy.near.presentation.feature.friendcontactcycle.model.ContactCycleStep
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.theme.NearTheme
@@ -59,7 +60,10 @@ fun FriendContactCycleScreen(
                 .background(NearTheme.colors.WHITE_FFFFFF)
                 .padding(horizontal = 24.dp),
     ) {
-        ContactCycleTopAppBar()
+        ContactCycleTopAppBar(
+            pageIndex = currentStep.ordinal + 1,
+            title = currentStep.appbarTitle,
+        )
 
         Spacer(modifier = Modifier.size(24.dp))
 
@@ -104,7 +108,10 @@ fun FriendContactCycleScreen(
 }
 
 @Composable
-fun ContactCycleTopAppBar() {
+fun ContactCycleTopAppBar(
+    pageIndex: Int,
+    title: String,
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -114,12 +121,12 @@ fun ContactCycleTopAppBar() {
                 .padding(vertical = 13.dp),
     ) {
         Text(
-            text = "챙길사람 불러오기",
+            text = title,
             style = NearTheme.typography.B1_16_BOLD,
         )
 
         Text(
-            text = "1/2",
+            text = "$pageIndex/2",
             style =
                 NearTheme.typography.B2_14_MEDIUM.copy(
                     color = NearTheme.colors.GRAY01_888888,
