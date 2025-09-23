@@ -41,7 +41,8 @@ fun FriendContactCycleScreen() {
 
         Spacer(modifier = Modifier.size(40.dp))
 
-        NearListModuleBackground()
+        NearListModuleBackground {
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -111,6 +112,7 @@ private fun ContactCycleButtons() {
         NearLineTypeButton(
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(16.dp),
+            enabled = true,
             text = "나중에 하기",
             onClick = {},
         )
@@ -120,7 +122,7 @@ private fun ContactCycleButtons() {
         NearBasicButton(
             modifier = Modifier.weight(1f),
             onClick = {},
-            enabled = true,
+            enabled = false,
             contentPadding = PaddingValues(16.dp),
         ) {
             Text(
