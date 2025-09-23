@@ -87,10 +87,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlin.serialization.converter)
     implementation(libs.logging.interceptor)
-    // Glide
-    implementation(libs.glide)
-    kapt(libs.glide.compiler)
-    implementation(libs.glide.compose)
+    // Coil
+    implementation(libs.coil.compose)
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

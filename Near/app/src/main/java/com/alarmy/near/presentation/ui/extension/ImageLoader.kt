@@ -4,16 +4,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.alarmy.near.R
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 
 /**
  * 이미지 로딩 확장 함수
- * TODO Glide 라이브러리에서 Coilㄹ로 마이그레이션 필요
+ * Coil 라이브러리를 사용하여 이미지를 비동기적으로 로드합니다.
  */
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ImageLoader(
     uri: String?,
@@ -24,16 +24,19 @@ fun ImageLoader(
     modifier: Modifier = Modifier,
 ) {
     if (!uri.isNullOrEmpty()) {
-        GlideImage(
-            model = uri,
+        AsyncImage(
+            model =
+                ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(uri)
+                    .crossfade(true)
+                    .build(),
             contentDescription = contentDescription,
             modifier = modifier,
             contentScale = contentScale,
-        ) {
-            it
-                .placeholder(placeholder)
-                .error(error)
-        }
+            placeholder = painterResource(id = placeholder),
+            error = painterResource(id = error),
+        )
     } else {
         // URI가 null이거나 비어있을 경우 기본 이미지 표시
         Image(
