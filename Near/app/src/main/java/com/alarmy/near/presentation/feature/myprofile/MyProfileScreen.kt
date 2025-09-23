@@ -34,7 +34,7 @@ import com.alarmy.near.presentation.feature.myprofile.components.NearServiceInfo
 import com.alarmy.near.presentation.feature.myprofile.components.NearSocialLoginBadge
 import com.alarmy.near.presentation.feature.myprofile.components.NearSwitch
 import com.alarmy.near.presentation.feature.myprofile.model.LoginType
-import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfo
+import com.alarmy.near.presentation.feature.myprofile.model.MyProfileInfoUIModel
 import com.alarmy.near.presentation.feature.myprofile.model.TermsType
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
@@ -287,7 +287,7 @@ fun ProfileScreenPreview() {
                 MyProfileUiState(
                     isLoading = false,
                     memberInfo =
-                        MyProfileInfo(
+                        MyProfileInfoUIModel(
                             nickname = "테스트유저",
                             imageUrl = null,
                             notificationAgreedAt = null,
