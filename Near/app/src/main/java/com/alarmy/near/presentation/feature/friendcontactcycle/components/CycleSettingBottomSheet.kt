@@ -40,6 +40,7 @@ import com.alarmy.near.utils.extensions.DateExtension
 fun CycleSettingBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
+    onComplete: (ReminderInterval) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     // 선택된 주기 상태 관리 (기본값: 매주)
@@ -182,7 +183,12 @@ fun CycleSettingBottomSheet(
 
                 ContactCycleButtons(
                     onLeftButtonClick = onDismiss,
-                    onRightButtonClick = { /* TODO: 완료 로직 */ },
+                    onRightButtonClick = { 
+                        selectedInterval?.let { interval ->
+                            onComplete(interval)
+                            onDismiss()
+                        }
+                    },
                     leftButtonText = "취소",
                     rightButtonText = "완료",
                 )

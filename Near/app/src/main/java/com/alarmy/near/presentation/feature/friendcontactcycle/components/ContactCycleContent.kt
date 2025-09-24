@@ -31,11 +31,14 @@ import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import com.alarmy.near.model.ReminderInterval
+import com.alarmy.near.utils.extensions.DateExtension
 
 @Composable
 fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
     var isBulkSettingEnabled by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var selectedCycle by remember { mutableStateOf<ReminderInterval?>(null) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -112,7 +115,7 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "주기 설정",
+                            text = selectedCycle?.let { DateExtension.getCycleText(it) } ?: "주기 설정",
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )
@@ -139,6 +142,9 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
         isVisible = isBottomSheetVisible,
         onDismiss = {
             isBottomSheetVisible = false
+        },
+        onComplete = { selectedInterval ->
+            selectedCycle = selectedInterval
         },
     )
 }

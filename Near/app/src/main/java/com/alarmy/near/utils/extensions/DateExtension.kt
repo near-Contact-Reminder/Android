@@ -100,4 +100,25 @@ object DateExtension {
 
         return "$month/$day $dayOfWeekKorean"
     }
+
+    // 선택된 주기를 사용자 친화적인 텍스트로 변환
+    fun getCycleText(reminderInterval: ReminderInterval): String {
+        val todayDayOfWeek = getTodayDayOfWeekInKorean()
+        
+        return when (reminderInterval) {
+            ReminderInterval.EVERY_DAY -> "매일"
+            ReminderInterval.EVERY_WEEK -> "매주 $todayDayOfWeek"
+            ReminderInterval.EVERY_TWO_WEEK -> "2주마다 $todayDayOfWeek"
+            ReminderInterval.EVERY_MONTH -> {
+                val calendar = Calendar.getInstance()
+                val day = calendar.get(Calendar.DAY_OF_MONTH)
+                "매월 ${day}일"
+            }
+            ReminderInterval.EVERY_SIX_MONTH -> {
+                val calendar = Calendar.getInstance()
+                val day = calendar.get(Calendar.DAY_OF_MONTH)
+                "6개월마다 ${day}일"
+            }
+        }
+    }
 }
