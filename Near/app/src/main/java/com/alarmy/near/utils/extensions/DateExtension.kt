@@ -1,5 +1,6 @@
 package com.alarmy.near.utils.extensions
 
+import com.alarmy.near.model.ReminderInterval
 import java.util.Calendar
 import java.util.Locale
 
@@ -54,6 +55,42 @@ object DateExtension {
 
         // 다음 주 같은 요일로 이동
         calendar.add(Calendar.WEEK_OF_YEAR, 1)
+
+        val month = calendar.get(Calendar.MONTH) + 1 // Calendar의 월은 0부터 시작
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+
+        val dayOfWeekKorean = convertDayOfWeekToKorean(dayOfWeek, isFull = false)
+
+        return "$month/$day $dayOfWeekKorean"
+    }
+
+    // 선택된 주기에 따른 다음 날짜를 반환
+    fun getNextCycleDate(reminderInterval: ReminderInterval): String {
+        val calendar = Calendar.getInstance()
+
+        when (reminderInterval) {
+            ReminderInterval.EVERY_DAY -> {
+                // 매일: 다음 날
+                calendar.add(Calendar.DAY_OF_MONTH, 1)
+            }
+            ReminderInterval.EVERY_WEEK -> {
+                // 매주: 다음 주 같은 요일
+                calendar.add(Calendar.WEEK_OF_YEAR, 1)
+            }
+            ReminderInterval.EVERY_TWO_WEEK -> {
+                // 격주: 2주 후 같은 요일
+                calendar.add(Calendar.WEEK_OF_YEAR, 2)
+            }
+            ReminderInterval.EVERY_MONTH -> {
+                // 매월: 다음 달 같은 날
+                calendar.add(Calendar.MONTH, 1)
+            }
+            ReminderInterval.EVERY_SIX_MONTH -> {
+                // 반년: 6개월 후 같은 날
+                calendar.add(Calendar.MONTH, 6)
+            }
+        }
 
         val month = calendar.get(Calendar.MONTH) + 1 // Calendar의 월은 0부터 시작
         val day = calendar.get(Calendar.DAY_OF_MONTH)
