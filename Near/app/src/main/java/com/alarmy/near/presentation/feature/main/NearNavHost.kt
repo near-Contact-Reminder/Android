@@ -8,6 +8,9 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.RouteFriendContactCycle
+import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.friendContactCycleNavGraph
+import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.navigateToFriendContactCycle
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
@@ -142,6 +145,19 @@ internal fun NearNavHost(
             )
             navController.popBackStack()
         })
+
+        // 친구 연락처 주기 설정 화면 NavGraph
+        friendContactCycleNavGraph(
+            onNavigateToHome = {
+                navController.navigateToHome(
+                    navOptions =
+                        navOptions {
+                            popUpTo(0) { inclusive = true }
+                        },
+                )
+            },
+            onShowErrorSnackBar = onShowSnackbar,
+        )
 
         // 로그인 화면 NavGraph
         loginNavGraph(
