@@ -33,6 +33,7 @@ import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.ui.component.checkbox.NearCheckbox
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import com.alarmy.near.utils.extensions.DateExtension
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,8 +42,8 @@ fun CycleSettingBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // 선택된 주기 상태 관리
-    var selectedInterval by remember { mutableStateOf<ReminderInterval?>(null) }
+    // 선택된 주기 상태 관리 (기본값: 매주)
+    var selectedInterval by remember { mutableStateOf<ReminderInterval?>(ReminderInterval.EVERY_WEEK) }
 
     if (isVisible) {
         val bottomSheetState =
@@ -105,7 +106,7 @@ fun CycleSettingBottomSheet(
                                             fontWeight = NearTheme.typography.B2_14_BOLD.fontWeight,
                                         ),
                                 ) {
-                                    append("화요일")
+                                    append(DateExtension.getTodayDayOfWeekInKorean())
                                 }
                             },
                         style = NearTheme.typography.B2_14_MEDIUM,
@@ -129,7 +130,10 @@ fun CycleSettingBottomSheet(
                         Spacer(modifier = Modifier.size(20.dp))
 
                         Text(
-                            text = "다음 주기 : 4/8 화",
+                            text = "다음 주기 : ${
+                                selectedInterval?.let { DateExtension.getNextCycleDate(it) } 
+                                    ?: DateExtension.getNextWeekSameDay()
+                            }",
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )
