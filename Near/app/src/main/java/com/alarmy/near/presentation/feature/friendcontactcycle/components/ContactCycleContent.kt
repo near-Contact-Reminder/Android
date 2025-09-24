@@ -41,6 +41,7 @@ fun ColumnScope.ContactCycleContent(
     onOpenBottomSheet: () -> Unit,
     onCloseBottomSheet: () -> Unit,
     onCompleteCycleSetting: (ReminderInterval) -> Unit,
+    onSetContactCycle: (String, ReminderInterval) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -192,6 +193,7 @@ fun ContactCycleContentPreview() {
                 onOpenBottomSheet = {},
                 onCloseBottomSheet = {},
                 onCompleteCycleSetting = {},
+                onSetContactCycle = { _, _ -> },
             )
         }
     }

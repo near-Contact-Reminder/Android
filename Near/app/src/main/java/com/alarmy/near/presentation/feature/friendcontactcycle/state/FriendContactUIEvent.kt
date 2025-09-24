@@ -25,4 +25,9 @@ sealed class FriendContactUIEvent {
     data class CompleteCycleSetting(
         val reminderInterval: ReminderInterval,
     ) : FriendContactUIEvent()
+
+    data class SetContactCycle(
+        val contactId: String,
+        val reminderInterval: ReminderInterval,
+    ) : FriendContactUIEvent()
 }

@@ -15,4 +15,10 @@ data class FriendContactUIState(
     val selectedCycle: ReminderInterval? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
-)
+) {
+    /**
+     * 모든 연락처의 주기 설정이 완료되었는지 확인
+     */
+    val isAllContactsCycleSet: Boolean
+        get() = contacts.isNotEmpty() && contacts.all { it.reminderInterval != null }
+}

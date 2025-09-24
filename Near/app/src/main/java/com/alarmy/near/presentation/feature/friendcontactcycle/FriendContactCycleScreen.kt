@@ -50,6 +50,7 @@ internal fun FriendContactCycleRoute(
                 is FriendContactUIEvent.OpenBottomSheet -> viewModel.openBottomSheet()
                 is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
                 is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
+                is FriendContactUIEvent.SetContactCycle -> viewModel.setContactCycle(event.contactId, event.reminderInterval)
             }
         }
     }
@@ -64,6 +65,9 @@ internal fun FriendContactCycleRoute(
         onCompleteCycleSetting = { reminderInterval ->
             viewModel.onEvent(FriendContactUIEvent.CompleteCycleSetting(reminderInterval))
         },
+        onSetContactCycle = { contactId, reminderInterval ->
+            viewModel.onEvent(FriendContactUIEvent.SetContactCycle(contactId, reminderInterval))
+        },
         onNavigateToHome = onNavigateToHome,
     )
 }
@@ -77,6 +81,7 @@ fun FriendContactCycleScreen(
     onOpenBottomSheet: () -> Unit,
     onCloseBottomSheet: () -> Unit,
     onCompleteCycleSetting: (ReminderInterval) -> Unit,
+    onSetContactCycle: (String, ReminderInterval) -> Unit,
     onNavigateToHome: () -> Unit,
 ) {
     NearFrame(
@@ -134,15 +139,17 @@ fun FriendContactCycleScreen(
                     onOpenBottomSheet = onOpenBottomSheet,
                     onCloseBottomSheet = onCloseBottomSheet,
                     onCompleteCycleSetting = onCompleteCycleSetting,
+                    onSetContactCycle = onSetContactCycle,
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
 
                 ContactCycleButtons(
                     onLeftButtonClick = onMoveToPreviousStep,
-                    onRightButtonClick = { /* TODO: 완료 로직 */ },
+                    onRightButtonClick = onNavigateToHome,
                     leftButtonText = "이전",
                     rightButtonText = "완료",
+                    isRightButtonEnabled = uiState.isAllContactsCycleSet,
                 )
             }
         }
@@ -241,6 +248,7 @@ fun FriendContactCycleScreenPreview() {
             onOpenBottomSheet = {},
             onCloseBottomSheet = {},
             onCompleteCycleSetting = {},
+            onSetContactCycle = { _, _ -> },
             onNavigateToHome = {},
         )
     }

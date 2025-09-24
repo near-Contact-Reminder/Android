@@ -22,7 +22,43 @@ class FriendContactViewModel
     constructor() : ViewModel() {
         // 임시 데이터
         private val dummyContacts =
-            listOf<FriendContactUIModel>()
+            listOf(
+                FriendContactUIModel(
+                    id = 1,
+                    name = "신짱구",
+                    photoUri = null,
+                ),
+                FriendContactUIModel(
+                    id = 2,
+                    name = "철수",
+                    photoUri = null,
+                ),
+                FriendContactUIModel(
+                    id = 3,
+                    name = "유리",
+                    photoUri = null,
+                ),
+                FriendContactUIModel(
+                    id = 4,
+                    name = "맹구",
+                    photoUri = null,
+                ),
+                FriendContactUIModel(
+                    id = 5,
+                    name = "액션가면",
+                    photoUri = null,
+                ),
+                FriendContactUIModel(
+                    id = 6,
+                    name = "흰둥이",
+                    photoUri = null,
+                ),
+                FriendContactUIModel(
+                    id = 7,
+                    name = "수지",
+                    photoUri = null,
+                ),
+            )
 
         private val _uiState = MutableStateFlow(FriendContactUIState())
         val uiState: StateFlow<FriendContactUIState> = _uiState.asStateFlow()
@@ -93,10 +129,16 @@ class FriendContactViewModel
 
             if (currentState.isBulkSettingEnabled) {
                 // 체크 해제 시: 미선택으로 돌아가고 설정한 값 리셋
+                val resetContacts =
+                    currentState.contacts.map { contact ->
+                        contact.copy(reminderInterval = null)
+                    }
+
                 _uiState.value =
                     currentState.copy(
                         isBulkSettingEnabled = false,
                         selectedCycle = null,
+                        contacts = resetContacts,
                     )
             } else {
                 // 체크 시: 바텀시트 표시
@@ -132,10 +174,36 @@ class FriendContactViewModel
         }
 
         fun completeCycleSetting(reminderInterval: ReminderInterval) {
+            val currentState = _uiState.value
+
+            // 한번에 설정으로 선택된 주기를 모든 연락처에 적용
+            val updatedContacts =
+                currentState.contacts.map { contact ->
+                    contact.copy(reminderInterval = reminderInterval)
+                }
+
             _uiState.value =
-                _uiState.value.copy(
+                currentState.copy(
                     selectedCycle = reminderInterval,
                     isBottomSheetVisible = false,
+                    contacts = updatedContacts,
                 )
+        }
+
+        fun setContactCycle(
+            contactId: String,
+            reminderInterval: ReminderInterval,
+        ) {
+            val currentState = _uiState.value
+            val updatedContacts =
+                currentState.contacts.map { contact ->
+                    if (contact.id.toString() == contactId) {
+                        contact.copy(reminderInterval = reminderInterval)
+                    } else {
+                        contact
+                    }
+                }
+
+            _uiState.value = currentState.copy(contacts = updatedContacts)
         }
     }
