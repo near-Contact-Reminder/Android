@@ -21,6 +21,7 @@ fun ContactCycleButtons(
     onRightButtonClick: () -> Unit = {},
     leftButtonText: String = "나중에 하기",
     rightButtonText: String = "다음",
+    isRightButtonEnabled: Boolean = true,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -40,7 +41,7 @@ fun ContactCycleButtons(
         NearBasicButton(
             modifier = Modifier.weight(1f),
             onClick = onRightButtonClick,
-            enabled = true,
+            enabled = isRightButtonEnabled,
             contentPadding = PaddingValues(16.dp),
         ) {
             Text(

@@ -111,6 +111,7 @@ fun FriendContactCycleScreen(
                     onRightButtonClick = onMoveToNextStep,
                     leftButtonText = "나중에 하기",
                     rightButtonText = "다음",
+                    isRightButtonEnabled = uiState.contacts.isNotEmpty(),
                 )
             }
 
