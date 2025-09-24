@@ -46,6 +46,7 @@ internal fun FriendContactCycleRoute(
                 is FriendContactUIEvent.MoveToNextStep -> viewModel.moveToNextStep()
                 is FriendContactUIEvent.MoveToPreviousStep -> viewModel.moveToPreviousStep()
                 is FriendContactUIEvent.LoadContacts -> viewModel.fetchContacts()
+                is FriendContactUIEvent.DeselectContact -> viewModel.deselectContact(event.contactId)
                 is FriendContactUIEvent.ToggleBulkSetting -> viewModel.toggleBulkSetting()
                 is FriendContactUIEvent.OpenBottomSheet -> viewModel.openBottomSheet()
                 is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
@@ -59,6 +60,9 @@ internal fun FriendContactCycleRoute(
         uiState = uiState,
         onMoveToNextStep = { viewModel.onEvent(FriendContactUIEvent.MoveToNextStep) },
         onMoveToPreviousStep = { viewModel.onEvent(FriendContactUIEvent.MoveToPreviousStep) },
+        onDeselectContact = { contactId ->
+            viewModel.onEvent(FriendContactUIEvent.DeselectContact(contactId))
+        },
         onToggleBulkSetting = { viewModel.onEvent(FriendContactUIEvent.ToggleBulkSetting) },
         onOpenBottomSheet = { viewModel.onEvent(FriendContactUIEvent.OpenBottomSheet) },
         onCloseBottomSheet = { viewModel.onEvent(FriendContactUIEvent.CloseBottomSheet) },
@@ -77,6 +81,7 @@ fun FriendContactCycleScreen(
     uiState: FriendContactUIState,
     onMoveToNextStep: () -> Unit,
     onMoveToPreviousStep: () -> Unit,
+    onDeselectContact: (String) -> Unit,
     onToggleBulkSetting: () -> Unit,
     onOpenBottomSheet: () -> Unit,
     onCloseBottomSheet: () -> Unit,
@@ -109,6 +114,7 @@ fun FriendContactCycleScreen(
 
                 ContactLoadContent(
                     contacts = uiState.contacts,
+                    onDeselectContact = onDeselectContact,
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
@@ -244,6 +250,7 @@ fun FriendContactCycleScreenPreview() {
                 ),
             onMoveToNextStep = {},
             onMoveToPreviousStep = {},
+            onDeselectContact = {},
             onToggleBulkSetting = {},
             onOpenBottomSheet = {},
             onCloseBottomSheet = {},

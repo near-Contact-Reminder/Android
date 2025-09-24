@@ -13,6 +13,8 @@ sealed class FriendContactUIEvent {
 
     // 연락처 관련 이벤트 (ContactLoadContent에서 처리)
     object LoadContacts : FriendContactUIEvent()
+    
+    data class DeselectContact(val contactId: String) : FriendContactUIEvent()
 
     // 주기 설정 관련 이벤트 (ContactCycleContent에서 처리)
     object ToggleBulkSetting : FriendContactUIEvent()

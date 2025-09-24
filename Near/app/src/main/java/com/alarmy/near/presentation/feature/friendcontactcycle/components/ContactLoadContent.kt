@@ -31,7 +31,10 @@ import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
+fun ColumnScope.ContactLoadContent(
+    contacts: List<FriendContactUIModel>,
+    onDeselectContact: (String) -> Unit,
+) {
     NearListModuleBackground {
         when (contacts.isEmpty()) {
             true -> {
@@ -77,6 +80,7 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
                             Modifier
                                 .size(24.dp)
                                 .onNoRippleClick {
+                                    onDeselectContact(contact.id.toString())
                                 },
                     )
                 }
@@ -162,6 +166,7 @@ fun ContactLoadContentPreview() {
         ) {
             ContactLoadContent(
                 contacts = contacts,
+                onDeselectContact = {},
             )
         }
     }

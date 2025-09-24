@@ -123,6 +123,15 @@ class FriendContactViewModel
             }
         }
 
+        fun deselectContact(contactId: String) {
+            val currentState = _uiState.value
+            val updatedContacts = currentState.contacts.filter { contact ->
+                contact.id.toString() != contactId
+            }
+            
+            _uiState.value = currentState.copy(contacts = updatedContacts)
+        }
+
         // 한번에 설정 관련 함수
         fun toggleBulkSetting() {
             val currentState = _uiState.value
