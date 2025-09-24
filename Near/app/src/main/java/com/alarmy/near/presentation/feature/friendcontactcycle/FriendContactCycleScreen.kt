@@ -64,6 +64,7 @@ internal fun FriendContactCycleRoute(
         onCompleteCycleSetting = { reminderInterval ->
             viewModel.onEvent(FriendContactUIEvent.CompleteCycleSetting(reminderInterval))
         },
+        onNavigateToHome = onNavigateToHome,
     )
 }
 
@@ -76,6 +77,7 @@ fun FriendContactCycleScreen(
     onOpenBottomSheet: () -> Unit,
     onCloseBottomSheet: () -> Unit,
     onCompleteCycleSetting: (ReminderInterval) -> Unit,
+    onNavigateToHome: () -> Unit,
 ) {
     NearFrame(
         modifier =
@@ -107,7 +109,7 @@ fun FriendContactCycleScreen(
                 Spacer(modifier = Modifier.size(16.dp))
 
                 ContactCycleButtons(
-                    onLeftButtonClick = onMoveToPreviousStep,
+                    onLeftButtonClick = onNavigateToHome,
                     onRightButtonClick = onMoveToNextStep,
                     leftButtonText = "나중에 하기",
                     rightButtonText = "다음",
@@ -239,6 +241,7 @@ fun FriendContactCycleScreenPreview() {
             onOpenBottomSheet = {},
             onCloseBottomSheet = {},
             onCompleteCycleSetting = {},
+            onNavigateToHome = {},
         )
     }
 }
