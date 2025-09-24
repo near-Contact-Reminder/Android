@@ -148,9 +148,10 @@ fun CycleSettingBottomSheet(
                             modifier
                                 .fillMaxWidth()
                                 .onNoRippleClick {
-                                    selectedInterval = if (isSelected) null else interval
-                                }
-                                .padding(vertical = 15.dp),
+                                    if (!isSelected) {
+                                        selectedInterval = interval
+                                    }
+                                }.padding(vertical = 15.dp),
                     ) {
                         Text(
                             text = stringResource(interval.labelRes),
@@ -166,7 +167,8 @@ fun CycleSettingBottomSheet(
                             NearCheckbox(
                                 checked = true,
                                 onCheckedChange = { checked ->
-                                    selectedInterval = if (checked) interval else null
+                                    // 체크박스 클릭 시 해제되지 않도록 수정
+                                    // 체크된 상태를 유지
                                 },
                             )
                         }
