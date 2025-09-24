@@ -1,7 +1,9 @@
 package com.alarmy.near.presentation.feature.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.data.repository.ContactRepository
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
@@ -10,6 +12,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -19,6 +22,7 @@ class HomeViewModel
     @Inject
     constructor(
         friendRepository: FriendRepository,
+        contactRepository: ContactRepository,
     ) : ViewModel() {
         private val _errorEvent = Channel<Throwable?>()
         val errorEvent = _errorEvent.receiveAsFlow()
@@ -28,8 +32,7 @@ class HomeViewModel
                 .fetchFriends()
                 .catch {
                     _errorEvent.send(it)
-                }
-                .stateIn(
+                }.stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
                     initialValue = emptyList(),
@@ -41,8 +44,7 @@ class HomeViewModel
                 .fetchMonthlyFriends()
                 .catch {
                     _errorEvent.send(it)
-                }
-                .stateIn(
+                }.stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
                     initialValue = emptyList(),
