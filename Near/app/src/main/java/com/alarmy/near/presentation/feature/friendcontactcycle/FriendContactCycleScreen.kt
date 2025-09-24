@@ -11,23 +11,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleButtons
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleContent
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactLoadContent
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.ContactCycleStep
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
+import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIEvent
+import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -36,22 +37,45 @@ internal fun FriendContactCycleRoute(
     onNavigateToHome: () -> Unit,
     viewModel: FriendContactViewModel = hiltViewModel(),
 ) {
-    val currentStep by viewModel.currentStep.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // UI 이벤트 처리
+    LaunchedEffect(viewModel.uiEvent) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is FriendContactUIEvent.MoveToNextStep -> viewModel.moveToNextStep()
+                is FriendContactUIEvent.MoveToPreviousStep -> viewModel.moveToPreviousStep()
+                is FriendContactUIEvent.LoadContacts -> viewModel.fetchContacts()
+                is FriendContactUIEvent.ToggleBulkSetting -> viewModel.toggleBulkSetting()
+                is FriendContactUIEvent.OpenBottomSheet -> viewModel.openBottomSheet()
+                is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
+                is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
+            }
+        }
+    }
 
     FriendContactCycleScreen(
-        contacts = viewModel.contacts,
-        currentStep = currentStep,
-        onNextClick = viewModel::moveToNextStep,
-        onLaterClick = viewModel::moveToPreviousStep,
+        uiState = uiState,
+        onMoveToNextStep = { viewModel.onEvent(FriendContactUIEvent.MoveToNextStep) },
+        onMoveToPreviousStep = { viewModel.onEvent(FriendContactUIEvent.MoveToPreviousStep) },
+        onToggleBulkSetting = { viewModel.onEvent(FriendContactUIEvent.ToggleBulkSetting) },
+        onOpenBottomSheet = { viewModel.onEvent(FriendContactUIEvent.OpenBottomSheet) },
+        onCloseBottomSheet = { viewModel.onEvent(FriendContactUIEvent.CloseBottomSheet) },
+        onCompleteCycleSetting = { reminderInterval ->
+            viewModel.onEvent(FriendContactUIEvent.CompleteCycleSetting(reminderInterval))
+        },
     )
 }
 
 @Composable
 fun FriendContactCycleScreen(
-    contacts: List<FriendContactUIModel>,
-    currentStep: ContactCycleStep,
-    onNextClick: () -> Unit,
-    onLaterClick: () -> Unit,
+    uiState: FriendContactUIState,
+    onMoveToNextStep: () -> Unit,
+    onMoveToPreviousStep: () -> Unit,
+    onToggleBulkSetting: () -> Unit,
+    onOpenBottomSheet: () -> Unit,
+    onCloseBottomSheet: () -> Unit,
+    onCompleteCycleSetting: (ReminderInterval) -> Unit,
 ) {
     NearFrame(
         modifier =
@@ -61,13 +85,13 @@ fun FriendContactCycleScreen(
                 .padding(horizontal = 24.dp),
     ) {
         ContactCycleTopAppBar(
-            pageIndex = currentStep.ordinal + 1,
-            title = currentStep.appbarTitle,
+            pageIndex = uiState.currentStep.ordinal + 1,
+            title = uiState.currentStep.appbarTitle,
         )
 
         Spacer(modifier = Modifier.size(24.dp))
 
-        when (currentStep) {
+        when (uiState.currentStep) {
             ContactCycleStep.LOAD_CONTACTS -> {
                 ContactCycleHeader(
                     headerTitle = "가까워지고 싶은 사람\n10명까지 선택해주세요",
@@ -77,14 +101,14 @@ fun FriendContactCycleScreen(
                 Spacer(modifier = Modifier.size(40.dp))
 
                 ContactLoadContent(
-                    contacts = contacts,
+                    contacts = uiState.contacts,
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
 
                 ContactCycleButtons(
-                    onLeftButtonClick = onLaterClick,
-                    onRightButtonClick = onNextClick,
+                    onLeftButtonClick = onMoveToPreviousStep,
+                    onRightButtonClick = onMoveToNextStep,
                     leftButtonText = "나중에 하기",
                     rightButtonText = "다음",
                 )
@@ -99,13 +123,20 @@ fun FriendContactCycleScreen(
                 Spacer(modifier = Modifier.size(40.dp))
 
                 ContactCycleContent(
-                    contacts = contacts,
+                    contacts = uiState.contacts,
+                    isBulkSettingEnabled = uiState.isBulkSettingEnabled,
+                    isBottomSheetVisible = uiState.isBottomSheetVisible,
+                    selectedCycle = uiState.selectedCycle,
+                    onToggleBulkSetting = onToggleBulkSetting,
+                    onOpenBottomSheet = onOpenBottomSheet,
+                    onCloseBottomSheet = onCloseBottomSheet,
+                    onCompleteCycleSetting = onCompleteCycleSetting,
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
 
                 ContactCycleButtons(
-                    onLeftButtonClick = onLaterClick,
+                    onLeftButtonClick = onMoveToPreviousStep,
                     onRightButtonClick = { /* TODO: 완료 로직 */ },
                     leftButtonText = "이전",
                     rightButtonText = "완료",
@@ -195,14 +226,18 @@ fun FriendContactCycleScreenPreview() {
             ),
         )
 
-    var currentStep by remember { mutableStateOf(ContactCycleStep.LOAD_CONTACTS) }
-
     NearTheme {
         FriendContactCycleScreen(
-            contacts = contacts,
-            currentStep = currentStep,
-            onNextClick = { currentStep = ContactCycleStep.SET_CYCLE },
-            onLaterClick = { currentStep = ContactCycleStep.LOAD_CONTACTS },
+            uiState =
+                FriendContactUIState(
+                    contacts = contacts,
+                ),
+            onMoveToNextStep = {},
+            onMoveToPreviousStep = {},
+            onToggleBulkSetting = {},
+            onOpenBottomSheet = {},
+            onCloseBottomSheet = {},
+            onCompleteCycleSetting = {},
         )
     }
 }

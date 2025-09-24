@@ -17,10 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -28,19 +24,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
-import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.utils.extensions.DateExtension
 
 @Composable
-fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
-    var isBulkSettingEnabled by remember { mutableStateOf(false) }
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var selectedCycle by remember { mutableStateOf<ReminderInterval?>(null) }
-
+fun ColumnScope.ContactCycleContent(
+    contacts: List<FriendContactUIModel>,
+    isBulkSettingEnabled: Boolean,
+    isBottomSheetVisible: Boolean,
+    selectedCycle: ReminderInterval?,
+    onToggleBulkSetting: () -> Unit,
+    onOpenBottomSheet: () -> Unit,
+    onCloseBottomSheet: () -> Unit,
+    onCompleteCycleSetting: (ReminderInterval) -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -56,15 +57,7 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
         NearBackgroundCheckbox(
             checked = isBulkSettingEnabled,
             onCheckedChange = { checked ->
-                if (checked) {
-                    // 체크 시: 바텀시트 표시
-                    isBulkSettingEnabled = true
-                    isBottomSheetVisible = true
-                } else {
-                    // 체크 해제 시: 미선택으로 돌아가고 설정한 값 리셋
-                    isBulkSettingEnabled = false
-                    selectedCycle = null
-                }
+                onToggleBulkSetting()
             },
         )
     }
@@ -80,13 +73,11 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
                     .border(
                         border = BorderStroke(1.dp, NearTheme.colors.GRAY03_EBEBEB),
                         shape = RoundedCornerShape(12.dp),
-                    )
-                    .padding(
+                    ).padding(
                         horizontal = 16.dp,
                         vertical = 14.dp,
-                    )
-                    .onNoRippleClick {
-                        isBottomSheetVisible = true
+                    ).onNoRippleClick {
+                        onOpenBottomSheet()
                     },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -152,15 +143,10 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
     CycleSettingBottomSheet(
         isVisible = isBottomSheetVisible,
         onDismiss = {
-            isBottomSheetVisible = false
-            // 바텀시트를 취소로 닫으면 체크박스도 해제
-            if (selectedCycle == null) {
-                isBulkSettingEnabled = false
-            }
+            onCloseBottomSheet()
         },
         onComplete = { selectedInterval ->
-            selectedCycle = selectedInterval
-            isBottomSheetVisible = false
+            onCompleteCycleSetting(selectedInterval)
         },
         currentSelectedInterval = selectedCycle,
     )
@@ -199,6 +185,13 @@ fun ContactCycleContentPreview() {
         ) {
             ContactCycleContent(
                 contacts = contacts,
+                isBulkSettingEnabled = true,
+                isBottomSheetVisible = false,
+                selectedCycle = ReminderInterval.EVERY_WEEK,
+                onToggleBulkSetting = {},
+                onOpenBottomSheet = {},
+                onCloseBottomSheet = {},
+                onCompleteCycleSetting = {},
             )
         }
     }

@@ -3,9 +3,11 @@ package com.alarmy.near.presentation.feature.friendcontactcycle.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
@@ -74,7 +77,6 @@ fun ColumnScope.ContactLoadContent(contacts: List<FriendContactUIModel>) {
                             Modifier
                                 .size(24.dp)
                                 .onNoRippleClick {
-                                    // TODO 리스트 제거
                                 },
                     )
                 }
@@ -124,5 +126,43 @@ fun FriendListItem(
         }
 
         content()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ContactLoadContentPreview() {
+    val contacts =
+        listOf(
+            FriendContactUIModel(
+                id = 1,
+                name = "신짱구",
+                photoUri = null,
+            ),
+            FriendContactUIModel(
+                id = 2,
+                name = "철수",
+                photoUri = null,
+            ),
+            FriendContactUIModel(
+                id = 3,
+                name = "유리",
+                photoUri = null,
+            ),
+        )
+
+    NearTheme {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            ContactLoadContent(
+                contacts = contacts,
+            )
+        }
     }
 }
