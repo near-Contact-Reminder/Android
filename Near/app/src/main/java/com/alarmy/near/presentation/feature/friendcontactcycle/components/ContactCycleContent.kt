@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.utils.extensions.DateExtension
@@ -55,10 +56,14 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
         NearBackgroundCheckbox(
             checked = isBulkSettingEnabled,
             onCheckedChange = { checked ->
-                isBulkSettingEnabled = checked
-                // 체크버튼이 활성화되면 바텀시트 표시
                 if (checked) {
+                    // 체크 시: 바텀시트 표시
+                    isBulkSettingEnabled = true
                     isBottomSheetVisible = true
+                } else {
+                    // 체크 해제 시: 미선택으로 돌아가고 설정한 값 리셋
+                    isBulkSettingEnabled = false
+                    selectedCycle = null
                 }
             },
         )
@@ -75,15 +80,21 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
                     .border(
                         border = BorderStroke(1.dp, NearTheme.colors.GRAY03_EBEBEB),
                         shape = RoundedCornerShape(12.dp),
-                    ).padding(
+                    )
+                    .padding(
                         horizontal = 16.dp,
                         vertical = 14.dp,
-                    ),
+                    )
+                    .onNoRippleClick {
+                        isBottomSheetVisible = true
+                    },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "매주 화요일",
+                text = selectedCycle?.let { DateExtension.getCycleText(it) } ?: "매주 ${DateExtension.getTodayDayOfWeekInKorean()}",
+                style = NearTheme.typography.B2_14_MEDIUM,
+                color = NearTheme.colors.BLACK_1A1A1A,
             )
 
             Image(
@@ -142,9 +153,14 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
         isVisible = isBottomSheetVisible,
         onDismiss = {
             isBottomSheetVisible = false
+            // 바텀시트를 취소로 닫으면 체크박스도 해제
+            if (selectedCycle == null) {
+                isBulkSettingEnabled = false
+            }
         },
         onComplete = { selectedInterval ->
             selectedCycle = selectedInterval
+            isBottomSheetVisible = false
         },
     )
 }
