@@ -162,6 +162,7 @@ fun ColumnScope.ContactCycleContent(contacts: List<FriendContactUIModel>) {
             selectedCycle = selectedInterval
             isBottomSheetVisible = false
         },
+        currentSelectedInterval = selectedCycle,
     )
 }
 

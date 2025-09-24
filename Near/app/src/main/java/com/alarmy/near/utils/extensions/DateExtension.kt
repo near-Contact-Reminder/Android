@@ -112,12 +112,14 @@ object DateExtension {
             ReminderInterval.EVERY_MONTH -> {
                 val calendar = Calendar.getInstance()
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
-                "매월 ${day}일"
+                "매달 ${day}일"
             }
             ReminderInterval.EVERY_SIX_MONTH -> {
                 val calendar = Calendar.getInstance()
+                val month = calendar.get(Calendar.MONTH) + 1 // Calendar의 월은 0부터 시작
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
-                "6개월마다 ${day}일"
+                val nextSixMonth = if (month <= 6) 10 else 4
+                "매년 $month/$day, $nextSixMonth/$day"
             }
         }
     }

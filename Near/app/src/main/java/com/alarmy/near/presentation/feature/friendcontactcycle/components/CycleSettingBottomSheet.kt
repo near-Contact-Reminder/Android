@@ -41,10 +41,13 @@ fun CycleSettingBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onComplete: (ReminderInterval) -> Unit = {},
+    currentSelectedInterval: ReminderInterval? = null,
     modifier: Modifier = Modifier,
 ) {
-    // 선택된 주기 상태 관리 (기본값: 매주)
-    var selectedInterval by remember { mutableStateOf<ReminderInterval?>(ReminderInterval.EVERY_WEEK) }
+    // 선택된 주기 상태 관리 (기존 선택값이 있으면 그것을 사용, 없으면 매주를 기본값으로)
+    var selectedInterval by remember(isVisible) { 
+        mutableStateOf<ReminderInterval?>(currentSelectedInterval ?: ReminderInterval.EVERY_WEEK) 
+    }
 
     if (isVisible) {
         val bottomSheetState =
