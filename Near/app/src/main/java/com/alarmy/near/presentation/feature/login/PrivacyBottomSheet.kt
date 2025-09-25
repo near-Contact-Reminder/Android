@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.login.components.NearBottomSheetDragHandle
 import com.alarmy.near.presentation.feature.login.components.TermsAgreementItem
 import com.alarmy.near.presentation.feature.login.model.TermType
@@ -59,7 +60,7 @@ fun PrivacyConsentBottomSheet(
                 // 바텀시트 제목
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "서비스 약관 동의",
+                    text = stringResource(R.string.privacy_consent_title),
                     style = NearTheme.typography.B1_16_BOLD,
                     textAlign = TextAlign.Start,
                 )
@@ -103,7 +104,7 @@ fun PrivacyConsentBottomSheet(
                     enabled = termsAgreementState.isAllRequiredTermsAgreed,
                 ) {
                     Text(
-                        text = "가입",
+                        text = stringResource(R.string.privacy_consent_signup_button),
                         style = NearTheme.typography.B1_16_BOLD,
                     )
                 }
@@ -127,7 +128,7 @@ private fun TermsAllCheckAgreementSection(
     Spacer(modifier = Modifier.size(8.dp))
 
     Text(
-        text = "약관 전체 동의",
+        text = stringResource(R.string.privacy_consent_all_agreement),
         style = NearTheme.typography.B2_14_BOLD,
     )
 }
@@ -141,17 +142,17 @@ private fun TermsAgreementSection(
     val termsList =
         listOf(
             Triple(
-                "[필수] ${stringResource(TermType.SERVICE_TERMS.titleRes)}",
+                "${stringResource(R.string.privacy_consent_required_prefix)} ${stringResource(TermType.SERVICE_TERMS.titleRes)}",
                 TermType.SERVICE_TERMS,
                 termsAgreementState.isServiceTermsAgreed,
             ),
             Triple(
-                "[필수] ${stringResource(TermType.PRIVACY_COLLECTION.titleRes)}",
+                "${stringResource(R.string.privacy_consent_required_prefix)} ${stringResource(TermType.PRIVACY_COLLECTION.titleRes)}",
                 TermType.PRIVACY_COLLECTION,
                 termsAgreementState.isPrivacyCollectionAgreed,
             ),
             Triple(
-                "[필수] ${stringResource(TermType.PRIVACY_POLICY.titleRes)}",
+                "${stringResource(R.string.privacy_consent_required_prefix)} ${stringResource(TermType.PRIVACY_POLICY.titleRes)}",
                 TermType.PRIVACY_POLICY,
                 termsAgreementState.isPrivacyPolicyAgreed,
             ),

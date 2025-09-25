@@ -131,6 +131,12 @@
     <string name="terms_service_agreed">서비스 이용약관</string>
     <string name="terms_personal_info">개인정보 수집 및 이용동의</string>
     <string name="terms_privacy_policy">개인정보 처리방침</string>
+    
+    <!-- 개인정보 동의 바텀시트 (Privacy Consent BottomSheet) -->
+    <string name="privacy_consent_title">서비스 약관 동의</string>
+    <string name="privacy_consent_all_agreement">약관 전체 동의</string>
+    <string name="privacy_consent_required_prefix">[필수]</string>
+    <string name="privacy_consent_signup_button">가입</string>
 
     <!-- 로그인 타입 (Login Type) -->
     <string name="login_type_kakao">카카오</string>
