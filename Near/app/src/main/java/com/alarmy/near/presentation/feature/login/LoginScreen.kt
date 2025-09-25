@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ProviderType
+import com.alarmy.near.presentation.feature.login.model.TermType
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
