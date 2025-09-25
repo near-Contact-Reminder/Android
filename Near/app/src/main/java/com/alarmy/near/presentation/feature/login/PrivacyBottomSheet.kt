@@ -16,6 +16,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -139,17 +140,17 @@ private fun TermsAgreementSection(
     val termsList =
         listOf(
             Triple(
-                "[필수] 서비스 이용 약관",
+                "[필수] ${stringResource(TermType.SERVICE_TERMS.titleRes)}",
                 TermType.SERVICE_TERMS,
                 termsAgreementState.isServiceTermsAgreed,
             ),
             Triple(
-                "[필수] 개인정보 수집 및 이용 동의서",
+                "[필수] ${stringResource(TermType.PRIVACY_COLLECTION.titleRes)}",
                 TermType.PRIVACY_COLLECTION,
                 termsAgreementState.isPrivacyCollectionAgreed,
             ),
             Triple(
-                "[필수] 개인정보 처리방침",
+                "[필수] ${stringResource(TermType.PRIVACY_POLICY.titleRes)}",
                 TermType.PRIVACY_POLICY,
                 termsAgreementState.isPrivacyPolicyAgreed,
             ),

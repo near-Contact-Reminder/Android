@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
-import com.alarmy.near.presentation.feature.contact.navigation.RouteContact
 import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
@@ -62,7 +61,6 @@ internal fun NearNavHost(
 
         // 로그인 화면 NavGraph
         loginNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
             onNavigateToHome = {
                 navController.navigateToHome(
                     navOptions =
@@ -71,6 +69,10 @@ internal fun NearNavHost(
                         },
                 )
             },
+            onNavigateToTerms = { title, url ->
+                navController.navigateToWebView(title, url)
+            },
+            onShowErrorSnackBar = onShowSnackbar,
         )
 
         // 홈 화면 NavGraph
@@ -145,30 +147,6 @@ internal fun NearNavHost(
             )
             navController.popBackStack()
         })
-
-        // 로그인 화면 NavGraph
-        loginNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onNavigateToHome = {
-                navController.navigateToHome(
-                    navOptions =
-                        navOptions {
-                            popUpTo(RouteLogin) { inclusive = true }
-                        },
-                )
-            },
-        )
-
-        // 홈 화면 NavGraph
-        homeNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onContactClick = { contactId ->
-                navController.navigateToFriendProfile(friendId = contactId)
-            },
-            onMyPageClick = {},
-            onAlarmClick = {},
-            onAddContactClick = {},
-        )
 
         contactNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
