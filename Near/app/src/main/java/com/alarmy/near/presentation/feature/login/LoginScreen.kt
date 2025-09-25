@@ -17,9 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,7 +25,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
@@ -40,8 +41,8 @@ internal fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
-    var showPrivacyBottomSheet by remember { mutableStateOf(false) }
+    val showPrivacyBottomSheet by viewModel.showPrivacyBottomSheet.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     // 약관 제목을 미리 가져옴
     val termsTitles = mapOf(
@@ -50,16 +51,17 @@ internal fun LoginRoute(
         TermType.PRIVACY_POLICY to stringResource(TermType.PRIVACY_POLICY.titleRes),
     )
 
-    // 통합된 이벤트 처리
+    // 웹뷰에서 돌아올 때 바텀시트 복원
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.restoreBottomSheetIfNeeded()
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                is LoginEvent.ShowPrivacyBottomSheet -> {
-                    showPrivacyBottomSheet = true
-                }
-
                 is LoginEvent.NavigateToHome -> {
-                    showPrivacyBottomSheet = false
                     onNavigateToHome()
                 }
 
@@ -84,21 +86,12 @@ internal fun LoginRoute(
     PrivacyConsentBottomSheet(
         isVisible = showPrivacyBottomSheet,
         onDismiss = {
-            showPrivacyBottomSheet = false
+            viewModel.dismissPrivacyBottomSheet()
         },
         onConsentComplete = {
             viewModel.onPrivacyConsentComplete()
         },
-        termsAgreementState = termsAgreementState,
-        onToggleAllTerms = {
-            viewModel.toggleAllTermsAgreement()
-        },
-        onToggleIndividualTerms = { termType ->
-            viewModel.toggleIndividualTermsAgreement(termType)
-        },
-        onShowTermsDetail = { termType ->
-            viewModel.showTermsDetail(termType)
-        },
+        viewModel = viewModel,
     )
 }
 

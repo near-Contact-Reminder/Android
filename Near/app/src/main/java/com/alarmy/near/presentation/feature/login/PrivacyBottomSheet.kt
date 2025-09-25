@@ -14,12 +14,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.login.components.NearBottomSheetDragHandle
 import com.alarmy.near.presentation.feature.login.components.TermsAgreementItem
@@ -35,11 +37,9 @@ fun PrivacyConsentBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onConsentComplete: () -> Unit,
-    termsAgreementState: TermsAgreementState,
-    onToggleAllTerms: () -> Unit,
-    onToggleIndividualTerms: (TermType) -> Unit,
-    onShowTermsDetail: (TermType) -> Unit,
+    viewModel: LoginViewModel,
 ) {
+    val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
     if (isVisible) {
         val bottomSheetState =
             rememberModalBottomSheetState(
@@ -75,14 +75,14 @@ fun PrivacyConsentBottomSheet(
                                 width = 1.dp,
                                 color = NearTheme.colors.GRAY03_EBEBEB,
                                 shape = RoundedCornerShape(12.dp),
-                            ).onNoRippleClick(onToggleAllTerms)
+                            ).onNoRippleClick { viewModel.toggleAllTermsAgreement() }
                             .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // 전체 체크
                     TermsAllCheckAgreementSection(
                         termsAgreementState = termsAgreementState,
-                        onToggleAllTerms = onToggleAllTerms,
+                        onToggleAllTerms = { viewModel.toggleAllTermsAgreement() },
                     )
                 }
 
@@ -91,8 +91,8 @@ fun PrivacyConsentBottomSheet(
                 // 개별 약관 동의
                 TermsAgreementSection(
                     termsAgreementState = termsAgreementState,
-                    onToggleIndividualTerms = onToggleIndividualTerms,
-                    onShowTermsDetail = onShowTermsDetail,
+                    onToggleIndividualTerms = { termType -> viewModel.toggleIndividualTermsAgreement(termType) },
+                    onShowTermsDetail = { termType -> viewModel.showTermsDetail(termType) },
                 )
 
                 Spacer(modifier = Modifier.size(32.dp))
@@ -180,18 +180,4 @@ private fun TermsAgreementSection(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PrivacyConsentBottomSheetPreview() {
-    NearTheme {
-        PrivacyConsentBottomSheet(
-            isVisible = true,
-            onDismiss = { },
-            onConsentComplete = { },
-            termsAgreementState = TermsAgreementState(),
-            onToggleAllTerms = { },
-            onToggleIndividualTerms = { },
-            onShowTermsDetail = { },
-        )
-    }
-}
+// Preview는 ViewModel이 필요하므로 제거하거나 다른 방식으로 구현

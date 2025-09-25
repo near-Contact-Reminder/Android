@@ -7,10 +7,14 @@ import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,9 +32,27 @@ class LoginViewModel
         private val _event = Channel<LoginEvent>()
         val event = _event.receiveAsFlow()
 
-        // 약관 동의 상태 관리
-        private val _termsAgreementState = MutableStateFlow(TermsAgreementState())
-        val termsAgreementState: StateFlow<TermsAgreementState> = _termsAgreementState.asStateFlow()
+        // 로그인 화면 상태 관리
+        private val _loginState = MutableStateFlow(LoginState())
+        val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+
+        // 개별 상태들을 편의를 위해 노출
+        val termsAgreementState: StateFlow<TermsAgreementState> =
+            _loginState
+                .map { it.termsAgreementState }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(),
+                    TermsAgreementState(),
+                )
+        val showPrivacyBottomSheet: StateFlow<Boolean> =
+            _loginState
+                .map { it.showPrivacyBottomSheet }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(),
+                    false,
+                )
 
         /**
          * 소셜 로그인 수행
@@ -42,7 +64,7 @@ class LoginViewModel
                     .performSocialLogin(providerType)
                     .onSuccess {
                         updateLoadingState(isLoading = false)
-                        _event.send(LoginEvent.ShowPrivacyBottomSheet)
+                        _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = true)
                     }.onFailure { exception ->
                         updateLoadingState(isLoading = false)
                         _event.send(LoginEvent.ShowError(exception))
@@ -55,8 +77,16 @@ class LoginViewModel
          */
         fun onPrivacyConsentComplete() {
             viewModelScope.launch {
+                _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
                 _event.send(LoginEvent.NavigateToHome)
             }
+        }
+
+        /**
+         * 프라이버시 바텀시트 닫기
+         */
+        fun dismissPrivacyBottomSheet() {
+            _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
         }
 
         /**
@@ -70,37 +100,44 @@ class LoginViewModel
          * 약관 전체 동의 토글
          */
         fun toggleAllTermsAgreement() {
-            val currentState = _termsAgreementState.value
-            val newAgreedState = !currentState.isAllAgreed
+            val currentTermsState = _loginState.value.termsAgreementState
+            val newAgreedState = !currentTermsState.isAllAgreed
 
-            _termsAgreementState.value =
-                currentState.copy(
+            val updatedTermsState =
+                currentTermsState.copy(
                     isAllAgreed = newAgreedState,
                     isServiceTermsAgreed = newAgreedState,
                     isPrivacyCollectionAgreed = newAgreedState,
                     isPrivacyPolicyAgreed = newAgreedState,
                 )
+
+            _loginState.value = _loginState.value.copy(termsAgreementState = updatedTermsState)
         }
 
         /**
          * 개별 약관 동의 토글
          */
         fun toggleIndividualTermsAgreement(termType: TermType) {
-            val currentState = _termsAgreementState.value
-            val newState =
+            val currentTermsState = _loginState.value.termsAgreementState
+            val newTermsState =
                 when (termType) {
-                    TermType.SERVICE_TERMS -> currentState.copy(isServiceTermsAgreed = !currentState.isServiceTermsAgreed)
-                    TermType.PRIVACY_COLLECTION -> currentState.copy(isPrivacyCollectionAgreed = !currentState.isPrivacyCollectionAgreed)
-                    TermType.PRIVACY_POLICY -> currentState.copy(isPrivacyPolicyAgreed = !currentState.isPrivacyPolicyAgreed)
+                    TermType.SERVICE_TERMS -> currentTermsState.copy(isServiceTermsAgreed = !currentTermsState.isServiceTermsAgreed)
+                    TermType.PRIVACY_COLLECTION ->
+                        currentTermsState.copy(
+                            isPrivacyCollectionAgreed = !currentTermsState.isPrivacyCollectionAgreed,
+                        )
+
+                    TermType.PRIVACY_POLICY -> currentTermsState.copy(isPrivacyPolicyAgreed = !currentTermsState.isPrivacyPolicyAgreed)
                 }
 
             // 모든 개별 약관이 동의되었는지 확인하여 전체 동의 상태 업데이트
             val isAllIndividualAgreed =
-                newState.isServiceTermsAgreed &&
-                    newState.isPrivacyCollectionAgreed &&
-                    newState.isPrivacyPolicyAgreed
+                newTermsState.isServiceTermsAgreed &&
+                    newTermsState.isPrivacyCollectionAgreed &&
+                    newTermsState.isPrivacyPolicyAgreed
 
-            _termsAgreementState.value = newState.copy(isAllAgreed = isAllIndividualAgreed)
+            val updatedTermsState = newTermsState.copy(isAllAgreed = isAllIndividualAgreed)
+            _loginState.value = _loginState.value.copy(termsAgreementState = updatedTermsState)
         }
 
         /**
@@ -108,10 +145,39 @@ class LoginViewModel
          */
         fun showTermsDetail(termType: TermType) {
             viewModelScope.launch {
+                _loginState.value =
+                    _loginState.value.copy(
+                        showPrivacyBottomSheet = false,
+                        hasNavigatedToWebView = true,
+                    )
+                delay(500)
                 _event.send(LoginEvent.ShowTermsDetail(termType))
             }
         }
+
+        /**
+         * 웹뷰에서 돌아온 후 바텀시트 복원
+         */
+        fun restoreBottomSheetIfNeeded() {
+            val currentState = _loginState.value
+            if (currentState.hasNavigatedToWebView && !currentState.showPrivacyBottomSheet) {
+                _loginState.value =
+                    currentState.copy(
+                        showPrivacyBottomSheet = true,
+                        hasNavigatedToWebView = false,
+                    )
+            }
+        }
     }
+
+/**
+ * 로그인 화면 통합 상태
+ */
+data class LoginState(
+    val termsAgreementState: TermsAgreementState = TermsAgreementState(),
+    val hasNavigatedToWebView: Boolean = false,
+    val showPrivacyBottomSheet: Boolean = false,
+)
 
 /**
  * 로그인 화면 UI 상태
@@ -142,8 +208,6 @@ data class TermsAgreementState(
 *
 * */
 sealed class LoginEvent {
-    object ShowPrivacyBottomSheet : LoginEvent()
-
     object NavigateToHome : LoginEvent()
 
     data class ShowTermsDetail(
