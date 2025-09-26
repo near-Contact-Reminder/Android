@@ -19,13 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.login.components.NearBottomSheetDragHandle
 import com.alarmy.near.presentation.feature.login.components.TermsAgreementItem
 import com.alarmy.near.presentation.feature.login.model.TermType
+import com.alarmy.near.presentation.feature.login.model.TermsItem
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
@@ -139,24 +139,25 @@ private fun TermsAgreementSection(
     onToggleIndividualTerms: (TermType) -> Unit,
     onShowTermsDetail: (TermType) -> Unit,
 ) {
-    val termsList =
-        listOf(
-            Triple(
-                "${stringResource(R.string.privacy_consent_required_prefix)} ${stringResource(TermType.SERVICE_TERMS.titleRes)}",
-                TermType.SERVICE_TERMS,
-                termsAgreementState.isServiceTermsAgreed,
-            ),
-            Triple(
-                "${stringResource(R.string.privacy_consent_required_prefix)} ${stringResource(TermType.PRIVACY_COLLECTION.titleRes)}",
-                TermType.PRIVACY_COLLECTION,
-                termsAgreementState.isPrivacyCollectionAgreed,
-            ),
-            Triple(
-                "${stringResource(R.string.privacy_consent_required_prefix)} ${stringResource(TermType.PRIVACY_POLICY.titleRes)}",
-                TermType.PRIVACY_POLICY,
-                termsAgreementState.isPrivacyPolicyAgreed,
-            ),
-        )
+    val requiredPrefix = stringResource(R.string.privacy_consent_required_prefix)
+
+    val termsList = listOf(
+        TermsItem(
+            title = "$requiredPrefix ${stringResource(TermType.SERVICE_TERMS.titleRes)}",
+            termType = TermType.SERVICE_TERMS,
+            isAgreed = termsAgreementState.isServiceTermsAgreed,
+        ),
+        TermsItem(
+            title = "$requiredPrefix ${stringResource(TermType.PRIVACY_COLLECTION.titleRes)}",
+            termType = TermType.PRIVACY_COLLECTION,
+            isAgreed = termsAgreementState.isPrivacyCollectionAgreed,
+        ),
+        TermsItem(
+            title = "$requiredPrefix ${stringResource(TermType.PRIVACY_POLICY.titleRes)}",
+            termType = TermType.PRIVACY_POLICY,
+            isAgreed = termsAgreementState.isPrivacyPolicyAgreed,
+        ),
+    )
 
     Column(
         modifier =
@@ -168,16 +169,14 @@ private fun TermsAgreementSection(
                     shape = RoundedCornerShape(12.dp),
                 ).padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
-        termsList.forEachIndexed { index, (text, termType, isChecked) ->
+        termsList.forEachIndexed { index, termsItem ->
             TermsAgreementItem(
-                text = text,
-                isChecked = isChecked,
-                onCheckedChange = { onToggleIndividualTerms(termType) },
-                onclick = { onShowTermsDetail(termType) },
+                text = termsItem.title,
+                isChecked = termsItem.isAgreed,
+                onCheckedChange = { onToggleIndividualTerms(termsItem.termType) },
+                onclick = { onShowTermsDetail(termsItem.termType) },
                 showDivider = index < termsList.size - 1,
             )
         }
     }
 }
-
-// Preview는 ViewModel이 필요하므로 제거하거나 다른 방식으로 구현
