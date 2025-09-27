@@ -95,6 +95,11 @@ internal fun LoginRoute(
         onConsentComplete = {
             viewModel.onPrivacyConsentComplete()
         },
+        onTermsClick = { termType ->
+            viewModel.markNavigatedToWebView()
+            val title = termsTitles[termType] ?: ""
+            onNavigateToWebView(title, termType.url)
+        },
         viewModel = viewModel,
     )
 }

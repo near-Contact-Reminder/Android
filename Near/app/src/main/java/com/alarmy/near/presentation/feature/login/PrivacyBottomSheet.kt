@@ -16,6 +16,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,6 +31,7 @@ import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +39,7 @@ fun PrivacyConsentBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onConsentComplete: () -> Unit,
+    onTermsClick: (TermType) -> Unit = {},
     viewModel: LoginViewModel,
 ) {
     val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
@@ -45,6 +48,15 @@ fun PrivacyConsentBottomSheet(
             rememberModalBottomSheetState(
                 skipPartiallyExpanded = true,
             )
+        val scope = rememberCoroutineScope()
+
+        // 바텀시트를 닫고 약관 페이지로 이동
+        val dismissAndNavigateToTerms = { termType: TermType ->
+            scope.launch {
+                bottomSheetState.hide()
+                onTermsClick(termType)
+            }
+        }
 
         ModalBottomSheet(
             onDismissRequest = onDismiss,
@@ -96,7 +108,9 @@ fun PrivacyConsentBottomSheet(
                             termType,
                         )
                     },
-                    onShowTermsDetail = { termType -> viewModel.showTermsDetail(termType) },
+                    onShowTermsDetail = { termType ->
+                        dismissAndNavigateToTerms(termType)
+                    },
                 )
 
                 Spacer(modifier = Modifier.size(32.dp))

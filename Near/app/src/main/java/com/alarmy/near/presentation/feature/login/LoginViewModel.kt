@@ -7,7 +7,6 @@ import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -141,18 +140,10 @@ class LoginViewModel
         }
 
         /**
-         * 약관 상세 보기 (웹뷰로 이동)
+         * 약관 상세 보기 시 웹뷰로 이동했음을 표시
          */
-        fun showTermsDetail(termType: TermType) {
-            viewModelScope.launch {
-                _loginState.value =
-                    _loginState.value.copy(
-                        showPrivacyBottomSheet = false,
-                        hasNavigatedToWebView = true,
-                    )
-                delay(500)
-                _event.send(LoginEvent.ShowTermsDetail(termType))
-            }
+        fun markNavigatedToWebView() {
+            _loginState.value = _loginState.value.copy(hasNavigatedToWebView = true)
         }
 
         /**
