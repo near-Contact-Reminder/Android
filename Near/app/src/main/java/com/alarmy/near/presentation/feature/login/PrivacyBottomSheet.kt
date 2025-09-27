@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,7 +26,6 @@ import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.login.components.NearBottomSheetDragHandle
 import com.alarmy.near.presentation.feature.login.components.TermsAgreementItem
 import com.alarmy.near.presentation.feature.login.model.TermType
-import com.alarmy.near.presentation.feature.login.model.TermsItem
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.component.checkbox.NearBackgroundCheckbox
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
@@ -91,7 +91,11 @@ fun PrivacyConsentBottomSheet(
                 // 개별 약관 동의
                 TermsAgreementSection(
                     termsAgreementState = termsAgreementState,
-                    onToggleIndividualTerms = { termType -> viewModel.toggleIndividualTermsAgreement(termType) },
+                    onToggleIndividualTerms = { termType ->
+                        viewModel.toggleIndividualTermsAgreement(
+                            termType,
+                        )
+                    },
                     onShowTermsDetail = { termType -> viewModel.showTermsDetail(termType) },
                 )
 
@@ -141,23 +145,15 @@ private fun TermsAgreementSection(
 ) {
     val requiredPrefix = stringResource(R.string.privacy_consent_required_prefix)
 
-    val termsList = listOf(
-        TermsItem(
-            title = "$requiredPrefix ${stringResource(TermType.SERVICE_TERMS.titleRes)}",
-            termType = TermType.SERVICE_TERMS,
-            isAgreed = termsAgreementState.isServiceTermsAgreed,
-        ),
-        TermsItem(
-            title = "$requiredPrefix ${stringResource(TermType.PRIVACY_COLLECTION.titleRes)}",
-            termType = TermType.PRIVACY_COLLECTION,
-            isAgreed = termsAgreementState.isPrivacyCollectionAgreed,
-        ),
-        TermsItem(
-            title = "$requiredPrefix ${stringResource(TermType.PRIVACY_POLICY.titleRes)}",
-            termType = TermType.PRIVACY_POLICY,
-            isAgreed = termsAgreementState.isPrivacyPolicyAgreed,
-        ),
-    )
+    // 약관 타입 목록을 상수로 정의하여 리컴포지션 시 재생성 방지
+    val terms =
+        remember {
+            listOf(
+                TermType.SERVICE_TERMS,
+                TermType.PRIVACY_COLLECTION,
+                TermType.PRIVACY_POLICY,
+            )
+        }
 
     Column(
         modifier =
@@ -169,13 +165,19 @@ private fun TermsAgreementSection(
                     shape = RoundedCornerShape(12.dp),
                 ).padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
-        termsList.forEachIndexed { index, termsItem ->
+        terms.forEachIndexed { index, termType ->
+            val isAgreed =
+                when (termType) {
+                    TermType.SERVICE_TERMS -> termsAgreementState.isServiceTermsAgreed
+                    TermType.PRIVACY_COLLECTION -> termsAgreementState.isPrivacyCollectionAgreed
+                    TermType.PRIVACY_POLICY -> termsAgreementState.isPrivacyPolicyAgreed
+                }
             TermsAgreementItem(
-                text = termsItem.title,
-                isChecked = termsItem.isAgreed,
-                onCheckedChange = { onToggleIndividualTerms(termsItem.termType) },
-                onclick = { onShowTermsDetail(termsItem.termType) },
-                showDivider = index < termsList.size - 1,
+                text = "$requiredPrefix ${stringResource(termType.titleRes)}",
+                isChecked = isAgreed,
+                onCheckedChange = { onToggleIndividualTerms(termType) },
+                onclick = { onShowTermsDetail(termType) },
+                showDivider = index < terms.size - 1,
             )
         }
     }
