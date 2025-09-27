@@ -38,6 +38,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 internal fun LoginRoute(
     onNavigateToHome: () -> Unit,
     onNavigateToWebView: (title: String, url: String) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -45,11 +46,12 @@ internal fun LoginRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     // 약관 제목을 미리 가져옴
-    val termsTitles = mapOf(
-        TermType.SERVICE_TERMS to stringResource(TermType.SERVICE_TERMS.titleRes),
-        TermType.PRIVACY_COLLECTION to stringResource(TermType.PRIVACY_COLLECTION.titleRes),
-        TermType.PRIVACY_POLICY to stringResource(TermType.PRIVACY_POLICY.titleRes),
-    )
+    val termsTitles =
+        mapOf(
+            TermType.SERVICE_TERMS to stringResource(TermType.SERVICE_TERMS.titleRes),
+            TermType.PRIVACY_COLLECTION to stringResource(TermType.PRIVACY_COLLECTION.titleRes),
+            TermType.PRIVACY_POLICY to stringResource(TermType.PRIVACY_POLICY.titleRes),
+        )
 
     // 웹뷰에서 돌아올 때 바텀시트 복원
     LaunchedEffect(lifecycleOwner) {
@@ -70,7 +72,9 @@ internal fun LoginRoute(
                     onNavigateToWebView(title, event.termType.url)
                 }
 
-                is LoginEvent.ShowError -> TODO()
+                is LoginEvent.ShowError -> {
+                    onShowErrorSnackBar(event.throwable)
+                }
             }
         }
     }

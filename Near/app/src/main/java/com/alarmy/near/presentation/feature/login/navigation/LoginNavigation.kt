@@ -25,6 +25,7 @@ fun NavGraphBuilder.loginNavGraph(
         LoginRoute(
             onNavigateToHome = onNavigateToHome,
             onNavigateToWebView = onNavigateToTerms,
+            onShowErrorSnackBar = onShowErrorSnackBar,
         )
     }
 }
