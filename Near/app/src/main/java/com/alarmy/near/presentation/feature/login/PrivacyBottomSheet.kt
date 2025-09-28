@@ -14,7 +14,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -22,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.login.components.NearBottomSheetDragHandle
 import com.alarmy.near.presentation.feature.login.components.TermsAgreementItem
@@ -37,12 +35,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun PrivacyConsentBottomSheet(
     isVisible: Boolean,
+    termsAgreementState: TermsAgreementState,
     onDismiss: () -> Unit,
     onConsentComplete: () -> Unit,
+    onToggleAllTerms: () -> Unit,
+    onToggleIndividualTerms: (TermType) -> Unit,
     onTermsClick: (TermType) -> Unit = {},
-    viewModel: LoginViewModel,
 ) {
-    val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
     if (isVisible) {
         val bottomSheetState =
             rememberModalBottomSheetState(
@@ -87,14 +86,15 @@ fun PrivacyConsentBottomSheet(
                                 width = 1.dp,
                                 color = NearTheme.colors.GRAY03_EBEBEB,
                                 shape = RoundedCornerShape(12.dp),
-                            ).onNoRippleClick { viewModel.toggleAllTermsAgreement() }
+                            )
+                            .onNoRippleClick { onToggleAllTerms() }
                             .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // 전체 체크
                     TermsAllCheckAgreementSection(
                         termsAgreementState = termsAgreementState,
-                        onToggleAllTerms = { viewModel.toggleAllTermsAgreement() },
+                        onToggleAllTerms = onToggleAllTerms,
                     )
                 }
 
@@ -103,11 +103,7 @@ fun PrivacyConsentBottomSheet(
                 // 개별 약관 동의
                 TermsAgreementSection(
                     termsAgreementState = termsAgreementState,
-                    onToggleIndividualTerms = { termType ->
-                        viewModel.toggleIndividualTermsAgreement(
-                            termType,
-                        )
-                    },
+                    onToggleIndividualTerms = onToggleIndividualTerms,
                     onShowTermsDetail = { termType ->
                         dismissAndNavigateToTerms(termType)
                     },
@@ -177,7 +173,8 @@ private fun TermsAgreementSection(
                     width = 1.dp,
                     color = NearTheme.colors.GRAY03_EBEBEB,
                     shape = RoundedCornerShape(12.dp),
-                ).padding(horizontal = 16.dp, vertical = 4.dp),
+                )
+                .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         terms.forEachIndexed { index, termType ->
             val isAgreed =

@@ -43,6 +43,7 @@ internal fun LoginRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val showPrivacyBottomSheet by viewModel.showPrivacyBottomSheet.collectAsStateWithLifecycle()
+    val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     // 약관 제목을 미리 가져옴
@@ -89,18 +90,24 @@ internal fun LoginRoute(
     // 개인정보 동의 바텀시트
     PrivacyConsentBottomSheet(
         isVisible = showPrivacyBottomSheet,
+        termsAgreementState = termsAgreementState,
         onDismiss = {
             viewModel.dismissPrivacyBottomSheet()
         },
         onConsentComplete = {
             viewModel.onPrivacyConsentComplete()
         },
+        onToggleAllTerms = {
+            viewModel.toggleAllTermsAgreement()
+        },
+        onToggleIndividualTerms = { termType ->
+            viewModel.toggleIndividualTermsAgreement(termType)
+        },
         onTermsClick = { termType ->
             viewModel.markNavigatedToWebView()
             val title = termsTitles[termType] ?: ""
             onNavigateToWebView(title, termType.url)
         },
-        viewModel = viewModel,
     )
 }
 
