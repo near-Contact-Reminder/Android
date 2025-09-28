@@ -18,11 +18,14 @@ fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
 // 로그인 화면 NavGraph 정의
 fun NavGraphBuilder.loginNavGraph(
     onNavigateToHome: () -> Unit,
+    onNavigateToTerms: (title: String, url: String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     composable<RouteLogin> {
         LoginRoute(
             onNavigateToHome = onNavigateToHome,
+            onNavigateToWebView = onNavigateToTerms,
+            onShowErrorSnackBar = onShowErrorSnackBar,
         )
     }
 }

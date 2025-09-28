@@ -25,21 +25,58 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ProviderType
+import com.alarmy.near.presentation.feature.login.model.TermType
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
 internal fun LoginRoute(
     onNavigateToHome: () -> Unit,
+    onNavigateToWebView: (title: String, url: String) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val showPrivacyBottomSheet by viewModel.showPrivacyBottomSheet.collectAsStateWithLifecycle()
+    val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // 약관 제목을 미리 가져옴
+    val termsTitles =
+        mapOf(
+            TermType.SERVICE_TERMS to stringResource(TermType.SERVICE_TERMS.titleRes),
+            TermType.PRIVACY_COLLECTION to stringResource(TermType.PRIVACY_COLLECTION.titleRes),
+            TermType.PRIVACY_POLICY to stringResource(TermType.PRIVACY_POLICY.titleRes),
+        )
+
+    // 웹뷰에서 돌아올 때 바텀시트 복원
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.restoreBottomSheetIfNeeded()
+        }
+    }
 
     LaunchedEffect(Unit) {
-        viewModel.loginSuccessEvent.collect {
-            onNavigateToHome()
+        viewModel.event.collect { event ->
+            when (event) {
+                is LoginEvent.NavigateToHome -> {
+                    onNavigateToHome()
+                }
+
+                is LoginEvent.ShowTermsDetail -> {
+                    val title = termsTitles[event.termType] ?: ""
+                    onNavigateToWebView(title, event.termType.url)
+                }
+
+                is LoginEvent.ShowError -> {
+                    onShowErrorSnackBar(event.throwable)
+                }
+            }
         }
     }
 
@@ -47,6 +84,29 @@ internal fun LoginRoute(
         uiState = uiState,
         onLoginClick = { providerType ->
             viewModel.performLogin(providerType)
+        },
+    )
+
+    // 개인정보 동의 바텀시트
+    PrivacyConsentBottomSheet(
+        isVisible = showPrivacyBottomSheet,
+        termsAgreementState = termsAgreementState,
+        onDismiss = {
+            viewModel.dismissPrivacyBottomSheet()
+        },
+        onConsentComplete = {
+            viewModel.onPrivacyConsentComplete()
+        },
+        onToggleAllTerms = {
+            viewModel.toggleAllTermsAgreement()
+        },
+        onToggleIndividualTerms = { termType ->
+            viewModel.toggleIndividualTermsAgreement(termType)
+        },
+        onTermsClick = { termType ->
+            viewModel.markNavigatedToWebView()
+            val title = termsTitles[termType] ?: ""
+            onNavigateToWebView(title, termType.url)
         },
     )
 }
