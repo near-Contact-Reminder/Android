@@ -8,6 +8,8 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
+import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.RouteFriendContactCycle
 import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.friendContactCycleNavGraph
 import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.navigateToFriendContactCycle
@@ -62,7 +64,6 @@ internal fun NearNavHost(
 
         // 로그인 화면 NavGraph
         loginNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
             onNavigateToHome = {
                 navController.navigateToHome(
                     navOptions =
@@ -71,6 +72,10 @@ internal fun NearNavHost(
                         },
                 )
             },
+            onNavigateToTerms = { title, url ->
+                navController.navigateToWebView(title, url)
+            },
+            onShowErrorSnackBar = onShowSnackbar,
         )
 
         // 홈 화면 NavGraph
@@ -159,28 +164,19 @@ internal fun NearNavHost(
             onShowErrorSnackBar = onShowSnackbar,
         )
 
-        // 로그인 화면 NavGraph
-        loginNavGraph(
+        // 연락처 선택 화면 NavGraph
+        contactNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
-            onNavigateToHome = {
-                navController.navigateToHome(
-                    navOptions =
-                        navOptions {
-                            popUpTo(RouteLogin) { inclusive = true }
-                        },
+            onBackClick = {
+                navController.popBackStack()
+            },
+            onCompletedSelection = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    CONTACT_SELECTION_COMPLETE_KEY,
+                    it,
                 )
+                navController.popBackStack()
             },
-        )
-
-        // 홈 화면 NavGraph
-        homeNavGraph(
-            onShowErrorSnackBar = onShowSnackbar,
-            onContactClick = { contactId ->
-                navController.navigateToFriendProfile(friendId = contactId)
-            },
-            onMyPageClick = {},
-            onAlarmClick = {},
-            onAddContactClick = {},
         )
     }
 }

@@ -131,10 +131,22 @@
     <string name="terms_service_agreed">서비스 이용약관</string>
     <string name="terms_personal_info">개인정보 수집 및 이용동의</string>
     <string name="terms_privacy_policy">개인정보 처리방침</string>
+    
+    <!-- 개인정보 동의 바텀시트 (Privacy Consent BottomSheet) -->
+    <string name="privacy_consent_title">서비스 약관 동의</string>
+    <string name="privacy_consent_all_agreement">약관 전체 동의</string>
+    <string name="privacy_consent_required_prefix">[필수]</string>
+    <string name="privacy_consent_signup_button">가입</string>
 
     <!-- 로그인 타입 (Login Type) -->
     <string name="login_type_kakao">카카오</string>
     <string name="login_type_etc">-</string>
     <string name="login_social_icon_description">소셜 로그인 아이콘</string>
+
+    <!-- 연락처 선택 -->
+    <string name="contact_title_text">연락처에서 불러오기</string>
+    <string name="contact_close_screen">화면 닫기</string>
+    <string name="context_search_placeholder">이름 검색</string>
+    <string name="contact_load_error">연락처를 불러오지 못했습니다.</string>
 
 </resources>
