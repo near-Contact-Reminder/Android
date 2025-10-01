@@ -7,12 +7,14 @@ import com.alarmy.near.presentation.feature.contact.state.ContactUiEvent
 import com.alarmy.near.presentation.feature.contact.state.ContactUiState
 import com.alarmy.near.presentation.feature.contact.state.SelectedContactUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -41,6 +43,7 @@ class ContactViewModel
                 selectedIds,
                 _searchQuery,
             ) { contacts, selectedIds, query ->
+                // 무거운 연산: filter, map, groupBy, sort
                 val filtered =
                     if (query.isBlank()) {
                         contacts
@@ -65,11 +68,12 @@ class ContactViewModel
                 ContactUiState.Success(
                     contacts = sorted,
                 )
-            }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000L),
-                ContactUiState.Loading,
-            )
+            }.flowOn(Dispatchers.Default) // 무거운 연산을 백그라운드 스레드에서 실행
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(5000L),
+                    ContactUiState.Loading, // 초기 상태: Loading
+                )
 
         // 한글 - 영어 - 특수문자 순으로 정렬하는 Comparator
         private val initialComparator =
