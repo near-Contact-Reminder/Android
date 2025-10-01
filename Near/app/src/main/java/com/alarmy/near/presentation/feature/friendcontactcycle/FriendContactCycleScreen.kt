@@ -50,13 +50,17 @@ internal fun FriendContactCycleRoute(
             when (event) {
                 is FriendContactUIEvent.MoveToNextStep -> viewModel.moveToNextStep()
                 is FriendContactUIEvent.MoveToPreviousStep -> viewModel.moveToPreviousStep()
-                is FriendContactUIEvent.LoadContacts -> viewModel.fetchContacts()
+                is FriendContactUIEvent.AddSelectedContacts -> viewModel.addSelectedContacts(event.contacts)
                 is FriendContactUIEvent.DeselectContact -> viewModel.deselectContact(event.contactId)
                 is FriendContactUIEvent.ToggleBulkSetting -> viewModel.toggleBulkSetting()
                 is FriendContactUIEvent.OpenBottomSheet -> viewModel.openBottomSheet()
                 is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
                 is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
-                is FriendContactUIEvent.SetContactCycle -> viewModel.setContactCycle(event.contactId, event.reminderInterval)
+                is FriendContactUIEvent.SetContactCycle ->
+                    viewModel.setContactCycle(
+                        event.contactId,
+                        event.reminderInterval,
+                    )
             }
         }
     }

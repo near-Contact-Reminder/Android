@@ -1,8 +1,11 @@
 package com.alarmy.near.presentation.feature.friendcontactcycle
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.model.ReminderInterval
+import com.alarmy.near.model.contact.Contact
+import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.ContactCycleStep
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIEvent
@@ -19,47 +22,9 @@ import javax.inject.Inject
 @HiltViewModel
 class FriendContactViewModel
     @Inject
-    constructor() : ViewModel() {
-        // 임시 데이터
-        private val dummyContacts =
-            listOf(
-                FriendContactUIModel(
-                    id = 1,
-                    name = "신짱구",
-                    photoUri = null,
-                ),
-                FriendContactUIModel(
-                    id = 2,
-                    name = "철수",
-                    photoUri = null,
-                ),
-                FriendContactUIModel(
-                    id = 3,
-                    name = "유리",
-                    photoUri = null,
-                ),
-                FriendContactUIModel(
-                    id = 4,
-                    name = "맹구",
-                    photoUri = null,
-                ),
-                FriendContactUIModel(
-                    id = 5,
-                    name = "액션가면",
-                    photoUri = null,
-                ),
-                FriendContactUIModel(
-                    id = 6,
-                    name = "흰둥이",
-                    photoUri = null,
-                ),
-                FriendContactUIModel(
-                    id = 7,
-                    name = "수지",
-                    photoUri = null,
-                ),
-            )
-
+    constructor(
+        private val savedStateHandle: SavedStateHandle,
+    ) : ViewModel() {
         private val _uiState = MutableStateFlow(FriendContactUIState())
         val uiState: StateFlow<FriendContactUIState> = _uiState.asStateFlow()
 
@@ -67,8 +32,7 @@ class FriendContactViewModel
         val uiEvent = _uiEvent.receiveAsFlow()
 
         init {
-            // 초기 연락처 로드
-            fetchContacts()
+            observeContactSelection()
         }
 
         // 이베트 처리 함수: 이번트가 많아 파라미터로 이벤트를 받아 send
@@ -98,37 +62,45 @@ class FriendContactViewModel
         }
 
         // 연락처 관련 함수
-        fun fetchContacts() {
+        private fun observeContactSelection() {
             viewModelScope.launch {
-                _uiState.value =
-                    _uiState.value.copy(
-                        isLoading = true,
-                        error = null,
-                    )
+                savedStateHandle
+                    .getStateFlow<List<Contact>?>(
+                        CONTACT_SELECTION_COMPLETE_KEY,
+                        null,
+                    ).collect { selectedContacts ->
+                        selectedContacts?.let { contacts ->
+                            val friendContacts =
+                                contacts.map { contact ->
+                                    FriendContactUIModel(
+                                        id = contact.id,
+                                        name = contact.name,
+                                        photoUri = contact.photoUri,
+                                    )
+                                }
+                            _uiState.value = _uiState.value.copy(contacts = friendContacts)
 
-                try {
-                    // 실제로는 Repository에서
-                    _uiState.value =
-                        _uiState.value.copy(
-                            contacts = dummyContacts,
-                            isLoading = false,
-                        )
-                } catch (e: Exception) {
-                    _uiState.value =
-                        _uiState.value.copy(
-                            isLoading = false,
-                            error = e.message ?: "연락처를 불러오는데 실패했습니다.",
-                        )
-                }
+                            // 처리 후 삭제
+                            savedStateHandle.remove<List<Contact>>(CONTACT_SELECTION_COMPLETE_KEY)
+                        }
+                    }
             }
+        }
+
+        fun addSelectedContacts(contacts: List<FriendContactUIModel>) {
+            _uiState.value =
+                _uiState.value.copy(
+                    contacts = contacts,
+                )
         }
 
         fun deselectContact(contactId: String) {
             val currentState = _uiState.value
-            val updatedContacts = currentState.contacts.filter { contact ->
-                contact.id.toString() != contactId
-            }
-            
+            val updatedContacts =
+                currentState.contacts.filter { contact ->
+                    contact.id.toString() != contactId
+                }
+
             _uiState.value = currentState.copy(contacts = updatedContacts)
         }
 
