@@ -34,8 +34,11 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 fun ColumnScope.ContactLoadContent(
     contacts: List<FriendContactUIModel>,
     onDeselectContact: (String) -> Unit,
+    onContactLoadClick: () -> Unit = {},
 ) {
-    NearListModuleBackground {
+    NearListModuleBackground(
+        onClick = onContactLoadClick,
+    ) {
         when (contacts.isEmpty()) {
             true -> {
                 Image(
@@ -167,6 +170,7 @@ fun ContactLoadContentPreview() {
             ContactLoadContent(
                 contacts = contacts,
                 onDeselectContact = {},
+                onContactLoadClick = {},
             )
         }
     }

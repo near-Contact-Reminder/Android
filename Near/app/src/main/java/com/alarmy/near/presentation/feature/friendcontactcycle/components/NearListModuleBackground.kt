@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 /**
@@ -24,11 +25,12 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
  *
  * 리스트 모듈의 배경 컴포넌트
  * - 연락처 아이콘과 "연락처에서 불러오기" 텍스트를 포함
- * - 왼쪽 중앙 정렬
+ * - onClick: 클릭 시 실행할 액션 (연락처 권한 요청 등)
  */
 @Composable
 fun NearListModuleBackground(
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
     Box(
@@ -48,6 +50,7 @@ fun NearListModuleBackground(
                 Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterStart)
+                    .onNoRippleClick { onClick() }
                     .padding(vertical = 18.dp, horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,

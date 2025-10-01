@@ -21,11 +21,13 @@ fun NavController.navigateToFriendContactCycle() {
  */
 fun NavGraphBuilder.friendContactCycleNavGraph(
     onNavigateToHome: () -> Unit,
+    onNavigateToContact: () -> Unit = {},
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit = { _ -> },
 ) {
     composable<RouteFriendContactCycle> {
         FriendContactCycleRoute(
             onNavigateToHome = onNavigateToHome,
+            onNavigateToContact = onNavigateToContact,
         )
     }
 }

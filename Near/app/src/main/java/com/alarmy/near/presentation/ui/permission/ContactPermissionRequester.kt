@@ -9,15 +9,18 @@ import com.alarmy.near.permission.rememberContactPermissionState
 
 @Composable
 fun ContactPermissionRequester(
-    onGranted: @Composable () -> Unit,
+    onGranted: () -> Unit,
     onDenied: @Composable (onRequestPermission: () -> Unit) -> Unit,
     onShowRationale: @Composable (onRequestPermission: () -> Unit) -> Unit = onDenied,
 ) {
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
-            onResult = {},
-        )
+        ) { isGranted ->
+            if (isGranted) {
+                onGranted()
+            }
+        }
 
     val permissionState = rememberContactPermissionState()
 

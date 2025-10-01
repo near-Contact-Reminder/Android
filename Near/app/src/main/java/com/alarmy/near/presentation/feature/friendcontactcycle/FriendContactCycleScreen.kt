@@ -13,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,11 +33,13 @@ import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendConta
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIEvent
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
+import com.alarmy.near.presentation.ui.permission.ContactPermissionRequester
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
 internal fun FriendContactCycleRoute(
     onNavigateToHome: () -> Unit,
+    onNavigateToContact: () -> Unit = {},
     viewModel: FriendContactViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -73,6 +78,7 @@ internal fun FriendContactCycleRoute(
             viewModel.onEvent(FriendContactUIEvent.SetContactCycle(contactId, reminderInterval))
         },
         onNavigateToHome = onNavigateToHome,
+        onNavigateToContact = onNavigateToContact,
     )
 }
 
@@ -88,7 +94,23 @@ fun FriendContactCycleScreen(
     onCompleteCycleSetting: (ReminderInterval) -> Unit,
     onSetContactCycle: (String, ReminderInterval) -> Unit,
     onNavigateToHome: () -> Unit,
+    onNavigateToContact: () -> Unit = {},
 ) {
+    var shouldCheckPermission by remember { mutableStateOf(false) }
+    var onRequestPermission: (() -> Unit)? by remember { mutableStateOf(null) }
+
+    ContactPermissionRequester(
+        onGranted = {
+            if (shouldCheckPermission) {
+                shouldCheckPermission = false
+                onNavigateToContact()
+            }
+        },
+        onDenied = { requestPermission ->
+            onRequestPermission = requestPermission
+        },
+    )
+
     NearFrame(
         modifier =
             Modifier
@@ -115,6 +137,12 @@ fun FriendContactCycleScreen(
                 ContactLoadContent(
                     contacts = uiState.contacts,
                     onDeselectContact = onDeselectContact,
+                    onContactLoadClick = {
+                        // NearListModuleBackground 클릭 시
+                        shouldCheckPermission = true
+                        // 권한이 없으면 요청
+                        onRequestPermission?.invoke()
+                    },
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
@@ -257,6 +285,7 @@ fun FriendContactCycleScreenPreview() {
             onCompleteCycleSetting = {},
             onSetContactCycle = { _, _ -> },
             onNavigateToHome = {},
+            onNavigateToContact = {},
         )
     }
 }
