@@ -22,15 +22,13 @@ sealed class FriendContactUIEvent {
 
     object OpenBottomSheet : FriendContactUIEvent()
 
+    // 개별 연락처 주기 설정 바텀시트 열기
+    data class OpenIndividualBottomSheet(val contactId: String) : FriendContactUIEvent()
+
     object CloseBottomSheet : FriendContactUIEvent()
 
     // 주기 설정 (CycleSettingBottomSheet 에서 처리)
     data class CompleteCycleSetting(
-        val reminderInterval: ReminderInterval,
-    ) : FriendContactUIEvent()
-
-    data class SetContactCycle(
-        val contactId: String,
         val reminderInterval: ReminderInterval,
     ) : FriendContactUIEvent()
 }

@@ -71,13 +71,9 @@ internal fun FriendContactCycleRoute(
                 is FriendContactUIEvent.DeselectContact -> viewModel.deselectContact(event.contactId)
                 is FriendContactUIEvent.ToggleBulkSetting -> viewModel.toggleBulkSetting()
                 is FriendContactUIEvent.OpenBottomSheet -> viewModel.openBottomSheet()
+                is FriendContactUIEvent.OpenIndividualBottomSheet -> viewModel.openIndividualBottomSheet(event.contactId)
                 is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
                 is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
-                is FriendContactUIEvent.SetContactCycle ->
-                    viewModel.setContactCycle(
-                        event.contactId,
-                        event.reminderInterval,
-                    )
             }
         }
     }
@@ -91,12 +87,12 @@ internal fun FriendContactCycleRoute(
         },
         onToggleBulkSetting = { viewModel.onEvent(FriendContactUIEvent.ToggleBulkSetting) },
         onOpenBottomSheet = { viewModel.onEvent(FriendContactUIEvent.OpenBottomSheet) },
+        onOpenIndividualBottomSheet = { contactId ->
+            viewModel.onEvent(FriendContactUIEvent.OpenIndividualBottomSheet(contactId))
+        },
         onCloseBottomSheet = { viewModel.onEvent(FriendContactUIEvent.CloseBottomSheet) },
         onCompleteCycleSetting = { reminderInterval ->
             viewModel.onEvent(FriendContactUIEvent.CompleteCycleSetting(reminderInterval))
-        },
-        onSetContactCycle = { contactId, reminderInterval ->
-            viewModel.onEvent(FriendContactUIEvent.SetContactCycle(contactId, reminderInterval))
         },
         onNavigateToHome = onNavigateToHome,
         onNavigateToContact = onNavigateToContact,
@@ -111,9 +107,9 @@ fun FriendContactCycleScreen(
     onDeselectContact: (String) -> Unit,
     onToggleBulkSetting: () -> Unit,
     onOpenBottomSheet: () -> Unit,
+    onOpenIndividualBottomSheet: (String) -> Unit,
     onCloseBottomSheet: () -> Unit,
     onCompleteCycleSetting: (ReminderInterval) -> Unit,
-    onSetContactCycle: (String, ReminderInterval) -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToContact: () -> Unit = {},
 ) {
@@ -192,9 +188,9 @@ fun FriendContactCycleScreen(
                     selectedCycle = uiState.selectedCycle,
                     onToggleBulkSetting = onToggleBulkSetting,
                     onOpenBottomSheet = onOpenBottomSheet,
+                    onOpenIndividualBottomSheet = onOpenIndividualBottomSheet,
                     onCloseBottomSheet = onCloseBottomSheet,
                     onCompleteCycleSetting = onCompleteCycleSetting,
-                    onSetContactCycle = onSetContactCycle,
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
@@ -302,9 +298,9 @@ fun FriendContactCycleScreenPreview() {
             onDeselectContact = {},
             onToggleBulkSetting = {},
             onOpenBottomSheet = {},
+            onOpenIndividualBottomSheet = {},
             onCloseBottomSheet = {},
             onCompleteCycleSetting = {},
-            onSetContactCycle = { _, _ -> },
             onNavigateToHome = {},
             onNavigateToContact = {},
         )

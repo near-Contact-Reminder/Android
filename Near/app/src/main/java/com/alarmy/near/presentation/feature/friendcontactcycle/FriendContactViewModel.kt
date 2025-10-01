@@ -7,6 +7,7 @@ import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.model.contact.Contact
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.ContactCycleStep
+import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.toFriendContactUIModel
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIEvent
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIState
@@ -102,17 +103,11 @@ class FriendContactViewModel
             val currentState = _uiState.value
 
             if (currentState.isBulkSettingEnabled) {
-                // 체크 해제 시: 미선택으로 돌아가고 설정한 값 리셋
-                val resetContacts =
-                    currentState.contacts.map { contact ->
-                        contact.copy(reminderInterval = null)
-                    }
-
+                // 체크 해제 시: 한번에 설정 모드만 해제, 각 연락처의 주기는 유지
                 _uiState.value =
                     currentState.copy(
                         isBulkSettingEnabled = false,
                         selectedCycle = null,
-                        contacts = resetContacts,
                     )
             } else {
                 // 체크 시: 바텀시트 표시
@@ -124,6 +119,7 @@ class FriendContactViewModel
             }
         }
 
+        // 한번에 설정 바텀시트 열기
         fun openBottomSheet() {
             _uiState.value =
                 _uiState.value.copy(
@@ -131,15 +127,26 @@ class FriendContactViewModel
                 )
         }
 
+        // 개별 설정 바텀시트 열기 (특정 연락처 선택)
+        fun openIndividualBottomSheet(contactId: String) {
+            _uiState.value =
+                _uiState.value.copy(
+                    isBottomSheetVisible = true,
+                    selectedContactId = contactId,
+                )
+        }
+
+        // 바텀시트 닫기 (취소 시 한번에 설정 모드도 해제)
         fun closeBottomSheet() {
             val currentState = _uiState.value
             _uiState.value =
                 currentState.copy(
                     isBottomSheetVisible = false,
+                    selectedContactId = null,
                 )
 
-            // 바텀시트를 취소로 닫으면 체크박스도 해제
-            if (currentState.selectedCycle == null) {
+            // 바텀시트를 취소로 닫으면 체크박스도 해제 (한번에 설정일 때만)
+            if (currentState.selectedCycle == null && currentState.isBulkSettingEnabled) {
                 _uiState.value =
                     _uiState.value.copy(
                         isBulkSettingEnabled = false,
@@ -147,15 +154,37 @@ class FriendContactViewModel
             }
         }
 
+        // 주기 설정 완료 (개별/한번에 설정 분기 처리)
         fun completeCycleSetting(reminderInterval: ReminderInterval) {
-            val currentState = _uiState.value
+            _uiState.value.run {
+                selectedContactId?.let {
+                    applyIndividualCycleSetting(this, reminderInterval)
+                } ?: applyBulkCycleSetting(this, reminderInterval)
+            }
+        }
 
-            // 한번에 설정으로 선택된 주기를 모든 연락처에 적용
-            val updatedContacts =
-                currentState.contacts.map { contact ->
-                    contact.copy(reminderInterval = reminderInterval)
-                }
+        // 개별 연락처 주기 설정 적용 (한번에 설정 모드가 true라면 해제합니다)
+        private fun applyIndividualCycleSetting(
+            currentState: FriendContactUIState,
+            reminderInterval: ReminderInterval,
+        ) {
+            val updatedContacts = updateContactCycle(currentState.selectedContactId!!, reminderInterval)
+            _uiState.value =
+                currentState.copy(
+                    isBottomSheetVisible = false,
+                    contacts = updatedContacts,
+                    selectedContactId = null,
+                    isBulkSettingEnabled = false,
+                    selectedCycle = null,
+                )
+        }
 
+        // 한번에 설정 주기 적용 (모든 연락처에 동일 주기 설정)
+        private fun applyBulkCycleSetting(
+            currentState: FriendContactUIState,
+            reminderInterval: ReminderInterval,
+        ) {
+            val updatedContacts = updateAllContactsCycle(reminderInterval)
             _uiState.value =
                 currentState.copy(
                     selectedCycle = reminderInterval,
@@ -164,20 +193,22 @@ class FriendContactViewModel
                 )
         }
 
-        fun setContactCycle(
+        // 개별 연락처의 주기만 업데이트
+        private fun updateContactCycle(
             contactId: String,
             reminderInterval: ReminderInterval,
-        ) {
-            val currentState = _uiState.value
-            val updatedContacts =
-                currentState.contacts.map { contact ->
-                    if (contact.id.toString() == contactId) {
-                        contact.copy(reminderInterval = reminderInterval)
-                    } else {
-                        contact
-                    }
+        ): List<FriendContactUIModel> =
+            _uiState.value.contacts.map { contact ->
+                if (contact.id.toString() == contactId) {
+                    contact.copy(reminderInterval = reminderInterval)
+                } else {
+                    contact
                 }
+            }
 
-            _uiState.value = currentState.copy(contacts = updatedContacts)
-        }
+        // 모든 연락처의 주기를 동일하게 업데이트
+        private fun updateAllContactsCycle(reminderInterval: ReminderInterval): List<FriendContactUIModel> =
+            _uiState.value.contacts.map { contact ->
+                contact.copy(reminderInterval = reminderInterval)
+            }
     }

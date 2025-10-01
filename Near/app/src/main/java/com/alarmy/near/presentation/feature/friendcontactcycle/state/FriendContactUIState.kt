@@ -13,6 +13,7 @@ data class FriendContactUIState(
     val isBulkSettingEnabled: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
     val selectedCycle: ReminderInterval? = null,
+    val selectedContactId: String? = null, // 개별 설정 중인 contact ID
     val isLoading: Boolean = false,
     val error: String? = null,
 ) {

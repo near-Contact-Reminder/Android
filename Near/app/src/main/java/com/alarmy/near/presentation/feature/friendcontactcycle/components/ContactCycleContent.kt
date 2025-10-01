@@ -39,9 +39,9 @@ fun ColumnScope.ContactCycleContent(
     selectedCycle: ReminderInterval?,
     onToggleBulkSetting: () -> Unit,
     onOpenBottomSheet: () -> Unit,
+    onOpenIndividualBottomSheet: (String) -> Unit,
     onCloseBottomSheet: () -> Unit,
     onCompleteCycleSetting: (ReminderInterval) -> Unit,
-    onSetContactCycle: (String, ReminderInterval) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -114,11 +114,18 @@ fun ColumnScope.ContactCycleContent(
                     contact = contact,
                 ) {
                     Row(
+                        modifier =
+                            Modifier.onNoRippleClick {
+                                // 개별 주기 설정 바텀시트 열기
+                                onOpenIndividualBottomSheet(contact.id.toString())
+                            },
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = selectedCycle?.let { DateExtension.getCycleText(it) } ?: "주기 설정",
+                            text =
+                                contact.reminderInterval?.let { DateExtension.getCycleText(it) }
+                                    ?: "주기 설정",
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )
@@ -191,9 +198,9 @@ fun ContactCycleContentPreview() {
                 selectedCycle = ReminderInterval.EVERY_WEEK,
                 onToggleBulkSetting = {},
                 onOpenBottomSheet = {},
+                onOpenIndividualBottomSheet = {},
                 onCloseBottomSheet = {},
                 onCompleteCycleSetting = {},
-                onSetContactCycle = { _, _ -> },
             )
         }
     }
