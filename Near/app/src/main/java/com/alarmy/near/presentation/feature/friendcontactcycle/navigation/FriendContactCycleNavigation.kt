@@ -24,8 +24,9 @@ fun NavGraphBuilder.friendContactCycleNavGraph(
     onNavigateToContact: () -> Unit = {},
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit = { _ -> },
 ) {
-    composable<RouteFriendContactCycle> {
+    composable<RouteFriendContactCycle> { backStackEntry ->
         FriendContactCycleRoute(
+            navBackStackEntry = backStackEntry,
             onNavigateToHome = onNavigateToHome,
             onNavigateToContact = onNavigateToContact,
         )

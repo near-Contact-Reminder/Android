@@ -1,7 +1,7 @@
 package com.alarmy.near.presentation.feature.friendcontactcycle.state
 
 import com.alarmy.near.model.ReminderInterval
-import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
+import com.alarmy.near.model.contact.Contact
 
 /**
  * FriendContactCycle 화면의 UI 이벤트
@@ -13,7 +13,7 @@ sealed class FriendContactUIEvent {
     object MoveToPreviousStep : FriendContactUIEvent()
 
     // 연락처 관련 이벤트
-    data class AddSelectedContacts(val contacts: List<FriendContactUIModel>) : FriendContactUIEvent()
+    data class AddSelectedContacts(val contacts: List<Contact>) : FriendContactUIEvent()
     
     data class DeselectContact(val contactId: String) : FriendContactUIEvent()
 

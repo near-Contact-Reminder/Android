@@ -23,8 +23,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import com.alarmy.near.R
 import com.alarmy.near.model.ReminderInterval
+import com.alarmy.near.model.contact.Contact
+import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleButtons
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleContent
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactLoadContent
@@ -38,11 +41,25 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
 internal fun FriendContactCycleRoute(
+    navBackStackEntry: NavBackStackEntry,
     onNavigateToHome: () -> Unit,
     onNavigateToContact: () -> Unit = {},
     viewModel: FriendContactViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Navigation에서 전달된 연락처 데이터 관찰
+    LaunchedEffect(Unit) {
+        navBackStackEntry.savedStateHandle
+            .get<List<Contact>>(
+                CONTACT_SELECTION_COMPLETE_KEY,
+            )?.let { contacts ->
+                viewModel.addSelectedContacts(contacts)
+                navBackStackEntry.savedStateHandle.remove<List<Contact>>(
+                    CONTACT_SELECTION_COMPLETE_KEY,
+                )
+            }
+    }
 
     // UI 이벤트 처리
     LaunchedEffect(viewModel.uiEvent) {

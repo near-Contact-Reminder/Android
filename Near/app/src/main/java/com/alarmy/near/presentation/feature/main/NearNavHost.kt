@@ -171,13 +171,11 @@ internal fun NearNavHost(
         // 연락처 선택 화면 NavGraph
         contactNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
-            onBackClick = {
-                navController.popBackStack()
-            },
-            onCompletedSelection = {
+            onBackClick = { navController.popBackStack() },
+            onCompletedSelection = { selectedContacts ->
                 navController.previousBackStackEntry?.savedStateHandle?.set(
                     CONTACT_SELECTION_COMPLETE_KEY,
-                    it,
+                    selectedContacts,
                 )
                 navController.popBackStack()
             },

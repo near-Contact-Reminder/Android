@@ -7,7 +7,7 @@ import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.model.contact.Contact
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.ContactCycleStep
-import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
+import com.alarmy.near.presentation.feature.friendcontactcycle.model.toFriendContactUIModel
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIEvent
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,27 +70,20 @@ class FriendContactViewModel
                         null,
                     ).collect { selectedContacts ->
                         selectedContacts?.let { contacts ->
-                            val friendContacts =
-                                contacts.map { contact ->
-                                    FriendContactUIModel(
-                                        id = contact.id,
-                                        name = contact.name,
-                                        photoUri = contact.photoUri,
-                                    )
-                                }
-                            _uiState.value = _uiState.value.copy(contacts = friendContacts)
-
-                            // 처리 후 삭제
-                            savedStateHandle.remove<List<Contact>>(CONTACT_SELECTION_COMPLETE_KEY)
+                            addSelectedContacts(contacts)
+                            savedStateHandle.remove<List<Contact>>(
+                                CONTACT_SELECTION_COMPLETE_KEY,
+                            )
                         }
                     }
             }
         }
 
-        fun addSelectedContacts(contacts: List<FriendContactUIModel>) {
+        fun addSelectedContacts(contacts: List<Contact>) {
+            val friendContacts = contacts.map { it.toFriendContactUIModel() }
             _uiState.value =
                 _uiState.value.copy(
-                    contacts = contacts,
+                    contacts = friendContacts,
                 )
         }
 
