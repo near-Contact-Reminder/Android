@@ -39,7 +39,7 @@ fun ColumnScope.ContactLoadContent(
         when (contacts.isEmpty()) {
             true -> {
                 Image(
-                    painter = painterResource(R.drawable.ic_24_down),
+                    painter = painterResource(R.drawable.ic_front_24_gray),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(NearTheme.colors.GRAY01_888888),
                 )
