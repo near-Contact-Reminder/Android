@@ -10,7 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.R
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.component.button.NearLineTypeButton
 import com.alarmy.near.presentation.ui.theme.NearTheme
@@ -19,8 +21,8 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 fun ContactCycleButtons(
     onLeftButtonClick: () -> Unit = {},
     onRightButtonClick: () -> Unit = {},
-    leftButtonText: String = "나중에 하기",
-    rightButtonText: String = "다음",
+    leftButtonText: String = stringResource(R.string.friend_contact_cycle_later_button),
+    rightButtonText: String = stringResource(R.string.friend_contact_cycle_next_button),
     isRightButtonEnabled: Boolean = true,
 ) {
     Row(

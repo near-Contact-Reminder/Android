@@ -29,6 +29,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alarmy.near.R
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.ui.component.checkbox.NearCheckbox
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
@@ -75,7 +76,7 @@ fun CycleSettingBottomSheet(
                         .padding(horizontal = 24.dp),
             ) {
                 Text(
-                    text = "주기 설정",
+                    text = stringResource(R.string.friend_contact_cycle_cycle_setting_text),
                     style = NearTheme.typography.B1_16_BOLD,
                 )
 
@@ -101,7 +102,7 @@ fun CycleSettingBottomSheet(
                                             fontWeight = NearTheme.typography.B2_14_MEDIUM.fontWeight,
                                         ),
                                 ) {
-                                    append("매주 ")
+                                    append(stringResource(R.string.friend_contact_cycle_weekly_prefix))
                                 }
                                 withStyle(
                                     style =
@@ -192,8 +193,8 @@ fun CycleSettingBottomSheet(
                             onDismiss()
                         }
                     },
-                    leftButtonText = "취소",
-                    rightButtonText = "완료",
+                    leftButtonText = stringResource(R.string.friend_contact_cycle_cancel_button),
+                    rightButtonText = stringResource(R.string.friend_contact_cycle_complete_button),
                 )
                 Spacer(modifier = Modifier.size(24.dp))
             }

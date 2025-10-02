@@ -149,4 +149,28 @@
     <string name="context_search_placeholder">이름 검색</string>
     <string name="contact_load_error">연락처를 불러오지 못했습니다.</string>
 
+    <!-- 친구 연락 주기 설정 (Friend Contact Cycle) -->
+    <string name="friend_contact_cycle_load_contacts_title">챙길 사람 불러오기</string>
+    <string name="friend_contact_cycle_set_cycle_title">챙김 주기 설정하기</string>
+    <string name="friend_contact_cycle_header_title">가까워지고 싶은 사람\n10명까지 선택해주세요</string>
+    <string name="friend_contact_cycle_header_subtitle">먼저, 더 가까워지고 싶은\n소중한 사람만 선택해보세요.</string>
+    <string name="friend_contact_cycle_setting_header_title">얼마나 자주\n챙기고 싶으세요?</string>
+    <string name="friend_contact_cycle_setting_header_subtitle">사람별로 챙기고 싶은 주기를 설정해주세요.</string>
+    <string name="friend_contact_cycle_contact_icon_description">연락처 아이콘</string>
+    <string name="friend_contact_cycle_contact_load_text">연락처에서 불러오기</string>
+    <string name="friend_contact_cycle_bulk_setting_text">한번에 설정</string>
+    <string name="friend_contact_cycle_reselect_text">다시 선택</string>
+    <string name="friend_contact_cycle_remove_friend_description">친구 제거</string>
+    <string name="friend_contact_cycle_cycle_setting_text">주기 설정</string>
+    <string name="friend_contact_cycle_weekly_format">매주 %1$s</string>
+    <string name="friend_contact_cycle_weekly_prefix">매주</string>
+    <string name="friend_contact_cycle_cancel_button">취소</string>
+    <string name="friend_contact_cycle_complete_button">완료</string>
+    <string name="friend_contact_cycle_later_button">나중에 하기</string>
+    <string name="friend_contact_cycle_next_button">다음</string>
+    <string name="friend_contact_cycle_previous_button">이전</string>
+    <string name="friend_contact_cycle_page_format">%1$d/2</string>
+    <string name="friend_contact_cycle_friend_init_error">친구 초기 설정에 실패했습니다.</string>
+    <string name="friend_contact_cycle_kakao_login_type">KAKAO</string>
+
 </resources>

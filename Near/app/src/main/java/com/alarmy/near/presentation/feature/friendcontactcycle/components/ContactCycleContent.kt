@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
@@ -49,7 +50,7 @@ fun ColumnScope.ContactCycleContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "한번에 설정",
+            text = stringResource(R.string.friend_contact_cycle_bulk_setting_text),
             style = NearTheme.typography.B2_14_MEDIUM,
             color = NearTheme.colors.GRAY01_888888,
         )
@@ -84,7 +85,7 @@ fun ColumnScope.ContactCycleContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = selectedCycle?.let { DateExtension.getCycleText(it) } ?: "매주 ${DateExtension.getTodayDayOfWeekInKorean()}",
+                text = selectedCycle?.let { DateExtension.getCycleText(it) } ?: stringResource(R.string.friend_contact_cycle_weekly_format, DateExtension.getTodayDayOfWeekInKorean()),
                 style = NearTheme.typography.B2_14_MEDIUM,
                 color = NearTheme.colors.BLACK_1A1A1A,
             )
@@ -125,7 +126,7 @@ fun ColumnScope.ContactCycleContent(
                         Text(
                             text =
                                 contact.reminderInterval?.let { DateExtension.getCycleText(it) }
-                                    ?: "주기 설정",
+                                    ?: stringResource(R.string.friend_contact_cycle_cycle_setting_text),
                             style = NearTheme.typography.B2_14_MEDIUM,
                             color = NearTheme.colors.GRAY01_888888,
                         )

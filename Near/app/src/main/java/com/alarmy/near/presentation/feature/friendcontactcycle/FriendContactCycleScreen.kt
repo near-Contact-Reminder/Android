@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -166,7 +167,7 @@ fun FriendContactCycleScreen(
 
         ContactCycleTopAppBar(
             pageIndex = uiState.currentStep.ordinal + 1,
-            title = uiState.currentStep.appbarTitle,
+            title = stringResource(uiState.currentStep.appbarTitleResId),
         )
 
         Spacer(modifier = Modifier.size(24.dp))
@@ -174,8 +175,8 @@ fun FriendContactCycleScreen(
         when (uiState.currentStep) {
             ContactCycleStep.LOAD_CONTACTS -> {
                 ContactCycleHeader(
-                    headerTitle = "가까워지고 싶은 사람\n10명까지 선택해주세요",
-                    headerSubTitle = "먼저, 더 가까워지고 싶은\n소중한 사람만 선택해보세요.",
+                    headerTitle = stringResource(R.string.friend_contact_cycle_header_title),
+                    headerSubTitle = stringResource(R.string.friend_contact_cycle_header_subtitle),
                 )
 
                 Spacer(modifier = Modifier.size(40.dp))
@@ -196,16 +197,16 @@ fun FriendContactCycleScreen(
                 ContactCycleButtons(
                     onLeftButtonClick = onNavigateToHome,
                     onRightButtonClick = onMoveToNextStep,
-                    leftButtonText = "나중에 하기",
-                    rightButtonText = "다음",
+                    leftButtonText = stringResource(R.string.friend_contact_cycle_later_button),
+                    rightButtonText = stringResource(R.string.friend_contact_cycle_next_button),
                     isRightButtonEnabled = uiState.contacts.isNotEmpty(),
                 )
             }
 
             ContactCycleStep.SET_CYCLE -> {
                 ContactCycleHeader(
-                    headerTitle = "얼마나 자주\n챙기고 싶으세요?",
-                    headerSubTitle = "사람별로 챙기고 싶은 주기를 설정해주세요.",
+                    headerTitle = stringResource(R.string.friend_contact_cycle_setting_header_title),
+                    headerSubTitle = stringResource(R.string.friend_contact_cycle_setting_header_subtitle),
                 )
 
                 Spacer(modifier = Modifier.size(40.dp))
@@ -227,8 +228,8 @@ fun FriendContactCycleScreen(
                 ContactCycleButtons(
                     onLeftButtonClick = onMoveToPreviousStep,
                     onRightButtonClick = onCompleteFriendInit,
-                    leftButtonText = "이전",
-                    rightButtonText = "완료",
+                    leftButtonText = stringResource(R.string.friend_contact_cycle_previous_button),
+                    rightButtonText = stringResource(R.string.friend_contact_cycle_complete_button),
                     isRightButtonEnabled = uiState.isAllContactsCycleSet,
                 )
             }
@@ -257,7 +258,7 @@ fun ContactCycleTopAppBar(
         )
 
         Text(
-            text = "$pageIndex/2",
+            text = stringResource(R.string.friend_contact_cycle_page_format, pageIndex),
             style =
                 NearTheme.typography.B2_14_MEDIUM.copy(
                     color = NearTheme.colors.GRAY01_888888,

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +52,7 @@ fun ColumnScope.ContactLoadContent(
             false -> {
                 // 리스트가 있을 때 "다시 선택" 텍스트 표시
                 Text(
-                    text = "다시 선택",
+                    text = stringResource(R.string.friend_contact_cycle_reselect_text),
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.BLUE01_5AA2E9,
                     textAlign = TextAlign.End,
@@ -77,7 +78,7 @@ fun ColumnScope.ContactLoadContent(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_32_cancel),
-                        contentDescription = "친구 제거",
+                        contentDescription = stringResource(R.string.friend_contact_cycle_remove_friend_description),
                         colorFilter = ColorFilter.tint(NearTheme.colors.GRAY01_888888),
                         modifier =
                             Modifier

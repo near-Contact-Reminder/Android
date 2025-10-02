@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
@@ -61,11 +62,11 @@ fun NearListModuleBackground(
             ) {
                 Image(
                     painter = painterResource(R.drawable.img_32_contact_square),
-                    contentDescription = "연락처 아이콘",
+                    contentDescription = stringResource(R.string.friend_contact_cycle_contact_icon_description),
                 )
 
                 Text(
-                    text = "연락처에서 불러오기",
+                    text = stringResource(R.string.friend_contact_cycle_contact_load_text),
                     style = NearTheme.typography.B2_14_MEDIUM,
                 )
             }
