@@ -64,7 +64,12 @@ internal fun NearNavHost(
         // 로그인 화면 NavGraph
         loginNavGraph(
             onNavigateToFriendContactCycle = {
-                navController.navigateToFriendContactCycle()
+                navController.navigateToFriendContactCycle(
+                    navOptions =
+                        navOptions {
+                            popUpTo(0) { inclusive = false }
+                        },
+                )
             },
             onNavigateToTerms = { title, url ->
                 navController.navigateToWebView(title, url)
@@ -80,7 +85,7 @@ internal fun NearNavHost(
             },
             onMyPageClick = { navController.navigateToMyProfile() },
             onAlarmClick = {},
-            onAddContactClick = {},
+            onAddContactClick = { navController.navigateToFriendContactCycle() },
         )
 
         myProfileNavGraph(
@@ -148,6 +153,7 @@ internal fun NearNavHost(
         // 친구 연락처 주기 설정 화면 NavGraph
         friendContactCycleNavGraph(
             onNavigateToHome = {
+                // FriendContactCycleScreen에서 홈으로 이동 (뒤로가기 스택 초기화)
                 navController.navigateToHome(
                     navOptions =
                         navOptions {

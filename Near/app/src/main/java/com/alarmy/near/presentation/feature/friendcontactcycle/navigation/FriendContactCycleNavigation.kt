@@ -2,6 +2,7 @@ package com.alarmy.near.presentation.feature.friendcontactcycle.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.alarmy.near.presentation.feature.friendcontactcycle.FriendContactCycleRoute
 import kotlinx.serialization.Serializable
@@ -12,10 +13,8 @@ object RouteFriendContactCycle
 /**
  * 친구 연락처 주기 설정 화면으로 이동하는 확장 함수
  */
-fun NavController.navigateToFriendContactCycle() {
-    navigate(RouteFriendContactCycle) {
-        popUpTo(0) { inclusive = false }
-    }
+fun NavController.navigateToFriendContactCycle(navOptions: NavOptions? = null) {
+    navigate(RouteFriendContactCycle, navOptions)
 }
 
 /**
