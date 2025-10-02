@@ -13,9 +13,13 @@ sealed class FriendContactUIEvent {
     object MoveToPreviousStep : FriendContactUIEvent()
 
     // 연락처 관련 이벤트
-    data class AddSelectedContacts(val contacts: List<Contact>) : FriendContactUIEvent()
-    
-    data class DeselectContact(val contactId: String) : FriendContactUIEvent()
+    data class AddSelectedContacts(
+        val contacts: List<Contact>,
+    ) : FriendContactUIEvent()
+
+    data class DeselectContact(
+        val contactId: String,
+    ) : FriendContactUIEvent()
 
     // 주기 설정 관련 이벤트 (ContactCycleContent에서 처리)
     object ToggleBulkSetting : FriendContactUIEvent()
@@ -23,7 +27,9 @@ sealed class FriendContactUIEvent {
     object OpenBottomSheet : FriendContactUIEvent()
 
     // 개별 연락처 주기 설정 바텀시트 열기
-    data class OpenIndividualBottomSheet(val contactId: String) : FriendContactUIEvent()
+    data class OpenIndividualBottomSheet(
+        val contactId: String,
+    ) : FriendContactUIEvent()
 
     object CloseBottomSheet : FriendContactUIEvent()
 

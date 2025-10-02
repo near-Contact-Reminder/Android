@@ -173,4 +173,10 @@
     <string name="friend_contact_cycle_friend_init_error">친구 초기 설정에 실패했습니다.</string>
     <string name="friend_contact_cycle_kakao_login_type">KAKAO</string>
 
+    <!-- 연락처 권한 거부 다이얼로그 -->
+    <string name="contact_permission_denied_title">휴대폰 기기의 연락처\n접근 권한을 켜주세요.</string>
+    <string name="contact_permission_denied_message">연락처에서 챙길 사람을 가져오려면\n기기 설정에서 연락처를 허용해주세요.</string>
+    <string name="contact_permission_go_to_settings">설정하러 가기</string>
+    <string name="contact_permission_cancel">취소</string>
+
 </resources>

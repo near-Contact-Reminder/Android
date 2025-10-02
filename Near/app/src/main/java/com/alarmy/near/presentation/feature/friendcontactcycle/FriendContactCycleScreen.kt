@@ -1,5 +1,7 @@
 package com.alarmy.near.presentation.feature.friendcontactcycle
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +37,7 @@ import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleButtons
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleContent
 import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactLoadContent
+import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactPermissionDeniedDialog
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.ContactCycleStep
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendContactUIEvent
@@ -41,6 +45,7 @@ import com.alarmy.near.presentation.feature.friendcontactcycle.state.FriendConta
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.permission.ContactPermissionRequester
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import com.alarmy.near.presentation.ui.util.AppSettingsUtil
 
 @Composable
 internal fun FriendContactCycleRoute(
@@ -129,18 +134,22 @@ fun FriendContactCycleScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToContact: () -> Unit = {},
 ) {
-    var shouldCheckPermission by remember { mutableStateOf(false) }
+    var showPermissionDeniedDialog by remember { mutableStateOf(false) }
     var onRequestPermission: (() -> Unit)? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
 
     ContactPermissionRequester(
         onGranted = {
-            if (shouldCheckPermission) {
-                shouldCheckPermission = false
-                onNavigateToContact()
-            }
+            onNavigateToContact()
         },
         onDenied = { requestPermission ->
             onRequestPermission = requestPermission
+        },
+        onShowRationale = { requestPermission ->
+            onRequestPermission = requestPermission
+        },
+        onPermissionDenied = {
+            showPermissionDeniedDialog = true
         },
     )
 
@@ -185,9 +194,7 @@ fun FriendContactCycleScreen(
                     contacts = uiState.contacts,
                     onDeselectContact = onDeselectContact,
                     onContactLoadClick = {
-                        // NearListModuleBackground 클릭 시
-                        shouldCheckPermission = true
-                        // 권한이 없으면 요청
+                        // NearListModuleBackground 클릭 시 권한 요청
                         onRequestPermission?.invoke()
                     },
                 )
@@ -236,6 +243,19 @@ fun FriendContactCycleScreen(
         }
 
         Spacer(modifier = Modifier.size(24.dp))
+    }
+
+    // 권한 거부 다이얼로그 표시
+    if (showPermissionDeniedDialog) {
+        ContactPermissionDeniedDialog(
+            onDismiss = {
+                showPermissionDeniedDialog = false
+            },
+            onGoToSettings = {
+                showPermissionDeniedDialog = false
+                AppSettingsUtil.openAppSettings(context)
+            },
+        )
     }
 }
 

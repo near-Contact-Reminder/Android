@@ -16,6 +16,9 @@ data class FriendContactUIState(
     val selectedContactId: String? = null, // 개별 설정 중인 contact ID
     val isLoading: Boolean = false,
     val error: String? = null,
+    // 권한 다이얼로그 관련 상태
+    val showPermissionDeniedDialog: Boolean = false,
+    val onRequestPermission: (() -> Unit)? = null,
 ) {
     /**
      * 모든 연락처의 주기 설정이 완료되었는지 확인
