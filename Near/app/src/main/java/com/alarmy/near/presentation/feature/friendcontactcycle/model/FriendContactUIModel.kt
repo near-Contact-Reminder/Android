@@ -9,7 +9,10 @@ import kotlinx.parcelize.Parcelize
 data class FriendContactUIModel(
     val id: Long,
     val name: String,
-    val photoUri: String?,
+    val photoUri: String? = null,
+    val phones: List<String> = emptyList(),
+    val birthDay: String? = null,
+    val memo: String? = null,
     val reminderInterval: ReminderInterval? = null,
 ) : Parcelable
 
@@ -21,4 +24,7 @@ fun Contact.toFriendContactUIModel(): FriendContactUIModel =
         id = id,
         name = name,
         photoUri = photoUri,
+        phones = phones,
+        birthDay = birthDay,
+        memo = memo,
     )

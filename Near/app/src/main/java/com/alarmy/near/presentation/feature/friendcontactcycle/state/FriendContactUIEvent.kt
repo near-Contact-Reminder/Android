@@ -31,4 +31,10 @@ sealed class FriendContactUIEvent {
     data class CompleteCycleSetting(
         val reminderInterval: ReminderInterval,
     ) : FriendContactUIEvent()
+
+    // 친구 초기 설정 완료
+    object CompleteFriendInit : FriendContactUIEvent()
+
+    // 홈 화면으로 이동
+    object NavigateToHome : FriendContactUIEvent()
 }

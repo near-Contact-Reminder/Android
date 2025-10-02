@@ -3,6 +3,8 @@ package com.alarmy.near.presentation.feature.friendcontactcycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.data.repository.FriendRepository
+import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.model.contact.Contact
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
@@ -16,6 +18,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +28,8 @@ class FriendContactViewModel
     @Inject
     constructor(
         private val savedStateHandle: SavedStateHandle,
+        private val friendRepository: FriendRepository,
+        private val memberRepository: MemberRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(FriendContactUIState())
         val uiState: StateFlow<FriendContactUIState> = _uiState.asStateFlow()
@@ -210,5 +215,40 @@ class FriendContactViewModel
         private fun updateAllContactsCycle(reminderInterval: ReminderInterval): List<FriendContactUIModel> =
             _uiState.value.contacts.map { contact ->
                 contact.copy(reminderInterval = reminderInterval)
+            }
+
+        // 서버에 친구 목록 전송
+        fun completeFriendInit() {
+            viewModelScope.launch {
+                try {
+                    _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+
+                    friendRepository
+                        .initFriends(
+                            contacts = _uiState.value.contacts,
+                            providerType = getCurrentUserProviderType(),
+                        ).collect { friendInitResponse ->
+                            _uiState.value = _uiState.value.copy(isLoading = false)
+                            _uiEvent.send(FriendContactUIEvent.NavigateToHome)
+                        }
+                } catch (e: Exception) {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isLoading = false,
+                            error = e.message ?: "친구 초기 설정에 실패했습니다.",
+                        )
+                }
+            }
+        }
+
+        // 현재 사용자의 로그인 타입 가져오기
+        private suspend fun getCurrentUserProviderType(): String =
+            runCatching {
+                memberRepository
+                    .getMyInfo()
+                    .first()
+                    .providerType
+            }.getOrElse { exception ->
+                "KAKAO"
             }
     }
