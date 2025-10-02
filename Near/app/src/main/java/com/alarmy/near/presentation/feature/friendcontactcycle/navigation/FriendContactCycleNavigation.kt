@@ -13,7 +13,9 @@ object RouteFriendContactCycle
  * 친구 연락처 주기 설정 화면으로 이동하는 확장 함수
  */
 fun NavController.navigateToFriendContactCycle() {
-    navigate(RouteFriendContactCycle)
+    navigate(RouteFriendContactCycle) {
+        popUpTo(0) { inclusive = false }
+    }
 }
 
 /**

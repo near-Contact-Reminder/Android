@@ -12,6 +12,7 @@ import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION
 import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.contact.navigation.navigateToContact
 import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.friendContactCycleNavGraph
+import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.navigateToFriendContactCycle
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
@@ -19,7 +20,6 @@ import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.frie
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
-import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
 import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
 import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
@@ -63,13 +63,8 @@ internal fun NearNavHost(
 
         // 로그인 화면 NavGraph
         loginNavGraph(
-            onNavigateToHome = {
-                navController.navigateToHome(
-                    navOptions =
-                        navOptions {
-                            popUpTo(RouteLogin) { inclusive = true }
-                        },
-                )
+            onNavigateToFriendContactCycle = {
+                navController.navigateToFriendContactCycle()
             },
             onNavigateToTerms = { title, url ->
                 navController.navigateToWebView(title, url)
