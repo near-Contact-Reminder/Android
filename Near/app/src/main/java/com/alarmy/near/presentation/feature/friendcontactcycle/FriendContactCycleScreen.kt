@@ -3,12 +3,14 @@ package com.alarmy.near.presentation.feature.friendcontactcycle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,9 +73,20 @@ internal fun FriendContactCycleRoute(
                 is FriendContactUIEvent.DeselectContact -> viewModel.deselectContact(event.contactId)
                 is FriendContactUIEvent.ToggleBulkSetting -> viewModel.toggleBulkSetting()
                 is FriendContactUIEvent.OpenBottomSheet -> viewModel.openBottomSheet()
-                is FriendContactUIEvent.OpenIndividualBottomSheet -> viewModel.openIndividualBottomSheet(event.contactId)
+                is FriendContactUIEvent.OpenIndividualBottomSheet ->
+                    viewModel.openIndividualBottomSheet(
+                        event.contactId,
+                    )
+
                 is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
                 is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
+                is FriendContactUIEvent.CompleteFriendInit -> {
+                    viewModel.completeFriendInit()
+                }
+
+                is FriendContactUIEvent.NavigateToHome -> {
+                    onNavigateToHome()
+                }
             }
         }
     }
@@ -94,6 +107,7 @@ internal fun FriendContactCycleRoute(
         onCompleteCycleSetting = { reminderInterval ->
             viewModel.onEvent(FriendContactUIEvent.CompleteCycleSetting(reminderInterval))
         },
+        onCompleteFriendInit = { viewModel.onEvent(FriendContactUIEvent.CompleteFriendInit) },
         onNavigateToHome = onNavigateToHome,
         onNavigateToContact = onNavigateToContact,
     )
@@ -110,6 +124,7 @@ fun FriendContactCycleScreen(
     onOpenIndividualBottomSheet: (String) -> Unit,
     onCloseBottomSheet: () -> Unit,
     onCompleteCycleSetting: (ReminderInterval) -> Unit,
+    onCompleteFriendInit: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToContact: () -> Unit = {},
 ) {
@@ -135,6 +150,20 @@ fun FriendContactCycleScreen(
                 .background(NearTheme.colors.WHITE_FFFFFF)
                 .padding(horizontal = 24.dp),
     ) {
+        if (uiState.isLoading) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(NearTheme.colors.WHITE_FFFFFF),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(
+                    color = NearTheme.colors.BLUE01_5AA2E9,
+                )
+            }
+        }
+
         ContactCycleTopAppBar(
             pageIndex = uiState.currentStep.ordinal + 1,
             title = uiState.currentStep.appbarTitle,
@@ -197,7 +226,7 @@ fun FriendContactCycleScreen(
 
                 ContactCycleButtons(
                     onLeftButtonClick = onMoveToPreviousStep,
-                    onRightButtonClick = onNavigateToHome,
+                    onRightButtonClick = onCompleteFriendInit,
                     leftButtonText = "이전",
                     rightButtonText = "완료",
                     isRightButtonEnabled = uiState.isAllContactsCycleSet,
@@ -273,17 +302,14 @@ fun FriendContactCycleScreenPreview() {
             FriendContactUIModel(
                 id = 1,
                 name = "신짱구",
-                photoUri = null,
             ),
             FriendContactUIModel(
                 id = 2,
                 name = "철수",
-                photoUri = null,
             ),
             FriendContactUIModel(
                 id = 3,
                 name = "유리",
-                photoUri = null,
             ),
         )
 
@@ -303,6 +329,7 @@ fun FriendContactCycleScreenPreview() {
             onCompleteCycleSetting = {},
             onNavigateToHome = {},
             onNavigateToContact = {},
+            onCompleteFriendInit = {},
         )
     }
 }
