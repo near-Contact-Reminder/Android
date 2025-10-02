@@ -1,8 +1,8 @@
 package com.alarmy.near.utils.extensions
 
+import com.alarmy.near.model.DayOfWeek
 import com.alarmy.near.model.ReminderInterval
 import java.util.Calendar
-import java.util.Locale
 
 /**
  * Date 관련 유틸리티 확장 함수들
@@ -104,7 +104,7 @@ object DateExtension {
     // 선택된 주기를 사용자 친화적인 텍스트로 변환
     fun getCycleText(reminderInterval: ReminderInterval): String {
         val todayDayOfWeek = getTodayDayOfWeekInKorean()
-        
+
         return when (reminderInterval) {
             ReminderInterval.EVERY_DAY -> "매일"
             ReminderInterval.EVERY_WEEK -> "매주 $todayDayOfWeek"
@@ -121,6 +121,41 @@ object DateExtension {
                 val nextSixMonth = if (month <= 6) 10 else 4
                 "매년 $month/$day, $nextSixMonth/$day"
             }
+        }
+    }
+
+    // ReminderInterval을 contactWeek 문자열로 변환
+    fun toContactWeekString(reminderInterval: ReminderInterval): String = reminderInterval.name
+
+    // 오늘 요일을 DayOfWeek enum으로 반환
+    fun getTodayDayOfWeek(): DayOfWeek {
+        val calendar = Calendar.getInstance()
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        return when (dayOfWeek) {
+            Calendar.SUNDAY -> DayOfWeek.SUNDAY
+            Calendar.MONDAY -> DayOfWeek.MONDAY
+            Calendar.TUESDAY -> DayOfWeek.TUESDAY
+            Calendar.WEDNESDAY -> DayOfWeek.WEDNESDAY
+            Calendar.THURSDAY -> DayOfWeek.THURSDAY
+            Calendar.FRIDAY -> DayOfWeek.FRIDAY
+            Calendar.SATURDAY -> DayOfWeek.SATURDAY
+            else -> DayOfWeek.SUNDAY
+        }
+    }
+
+    // 오늘 요일을 API 요청용 영어 문자열로 반환
+    fun getTodayDayOfWeekInEnglish(): String {
+        val calendar = Calendar.getInstance()
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        return when (dayOfWeek) {
+            Calendar.SUNDAY -> "SUNDAY"
+            Calendar.MONDAY -> "MONDAY"
+            Calendar.TUESDAY -> "TUESDAY"
+            Calendar.WEDNESDAY -> "WEDNESDAY"
+            Calendar.THURSDAY -> "THURSDAY"
+            Calendar.FRIDAY -> "FRIDAY"
+            Calendar.SATURDAY -> "SATURDAY"
+            else -> "MONDAY" // 기본값
         }
     }
 }
