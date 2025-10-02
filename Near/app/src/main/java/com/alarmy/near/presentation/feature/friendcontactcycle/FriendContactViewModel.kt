@@ -251,4 +251,13 @@ class FriendContactViewModel
             }.getOrElse { exception ->
                 "KAKAO"
             }
+
+        // 권한 관련 함수들
+        fun setPermissionRequestFunction(requestPermission: () -> Unit) {
+            _uiState.value = _uiState.value.copy(onRequestPermission = requestPermission)
+        }
+
+        fun updatePermissionDeniedDialog(show: Boolean) {
+            _uiState.value = _uiState.value.copy(showPermissionDeniedDialog = show)
+        }
     }

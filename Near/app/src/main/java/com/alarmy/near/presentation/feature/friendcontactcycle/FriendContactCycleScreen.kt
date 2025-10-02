@@ -1,7 +1,5 @@
 package com.alarmy.near.presentation.feature.friendcontactcycle
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -86,13 +81,8 @@ internal fun FriendContactCycleRoute(
 
                 is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
                 is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
-                is FriendContactUIEvent.CompleteFriendInit -> {
-                    viewModel.completeFriendInit()
-                }
-
-                is FriendContactUIEvent.NavigateToHome -> {
-                    onNavigateToHome()
-                }
+                is FriendContactUIEvent.CompleteFriendInit -> viewModel.completeFriendInit()
+                is FriendContactUIEvent.NavigateToHome -> onNavigateToHome()
             }
         }
     }
@@ -116,6 +106,15 @@ internal fun FriendContactCycleRoute(
         onCompleteFriendInit = { viewModel.onEvent(FriendContactUIEvent.CompleteFriendInit) },
         onNavigateToHome = onNavigateToHome,
         onNavigateToContact = onNavigateToContact,
+        onSetPermissionRequestFunction = { requestPermission ->
+            viewModel.setPermissionRequestFunction(requestPermission)
+        },
+        onShowPermissionDeniedDialog = {
+            viewModel.updatePermissionDeniedDialog(true)
+        },
+        onHidePermissionDeniedDialog = {
+            viewModel.updatePermissionDeniedDialog(false)
+        },
     )
 }
 
@@ -133,9 +132,10 @@ fun FriendContactCycleScreen(
     onCompleteFriendInit: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToContact: () -> Unit = {},
+    onSetPermissionRequestFunction: ((() -> Unit) -> Unit) = {},
+    onShowPermissionDeniedDialog: () -> Unit = {},
+    onHidePermissionDeniedDialog: () -> Unit = {},
 ) {
-    var showPermissionDeniedDialog by remember { mutableStateOf(false) }
-    var onRequestPermission: (() -> Unit)? by remember { mutableStateOf(null) }
     val context = LocalContext.current
 
     ContactPermissionRequester(
@@ -143,13 +143,13 @@ fun FriendContactCycleScreen(
             onNavigateToContact()
         },
         onDenied = { requestPermission ->
-            onRequestPermission = requestPermission
+            onSetPermissionRequestFunction(requestPermission)
         },
         onShowRationale = { requestPermission ->
-            onRequestPermission = requestPermission
+            onSetPermissionRequestFunction(requestPermission)
         },
         onPermissionDenied = {
-            showPermissionDeniedDialog = true
+            onShowPermissionDeniedDialog()
         },
     )
 
@@ -195,7 +195,7 @@ fun FriendContactCycleScreen(
                     onDeselectContact = onDeselectContact,
                     onContactLoadClick = {
                         // NearListModuleBackground 클릭 시 권한 요청
-                        onRequestPermission?.invoke()
+                        uiState.onRequestPermission?.invoke()
                     },
                 )
 
@@ -246,13 +246,13 @@ fun FriendContactCycleScreen(
     }
 
     // 권한 거부 다이얼로그 표시
-    if (showPermissionDeniedDialog) {
+    if (uiState.showPermissionDeniedDialog) {
         ContactPermissionDeniedDialog(
             onDismiss = {
-                showPermissionDeniedDialog = false
+                onHidePermissionDeniedDialog()
             },
             onGoToSettings = {
-                showPermissionDeniedDialog = false
+                onHidePermissionDeniedDialog()
                 AppSettingsUtil.openAppSettings(context)
             },
         )
@@ -351,6 +351,9 @@ fun FriendContactCycleScreenPreview() {
             onNavigateToHome = {},
             onNavigateToContact = {},
             onCompleteFriendInit = {},
+            onSetPermissionRequestFunction = {},
+            onShowPermissionDeniedDialog = {},
+            onHidePermissionDeniedDialog = {},
         )
     }
 }
