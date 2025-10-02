@@ -68,7 +68,7 @@ class ContactViewModel
                 ContactUiState.Success(
                     contacts = sorted,
                 )
-            }.flowOn(Dispatchers.Default) // 무거운 연산을 백그라운드 스레드에서 실행
+            }.flowOn(Dispatchers.IO) // 무거운 연산을 백그라운드 스레드에서 실행
                 .stateIn(
                     viewModelScope,
                     SharingStarted.WhileSubscribed(5000L),
