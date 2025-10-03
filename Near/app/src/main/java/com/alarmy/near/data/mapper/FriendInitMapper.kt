@@ -13,24 +13,16 @@ import com.alarmy.near.network.response.ContactFrequencyInitEntity
 import com.alarmy.near.network.response.FriendInitItemEntity
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.utils.extensions.DateExtension
+import com.alarmy.near.utils.PhoneNumberFormatter
 
 /**
- * 010 전화번호를 010-0000-0000 형태로 포맷팅하는 함수
- * - //010-0000-0000 으로 앞에 //가 붙는 경우
- * - 01012341234로 하이픈이 없는 경우
- * 최종적으로 010-0000-0000 형태로 변환합니다.
+ * PhoneNumberFormatter를 사용하여 전화번호를 포맷팅하는 함수
+ * - 다양한 전화번호 형식 지원 (휴대폰, 지역번호 등)
+ * - 한국 전화번호 형식으로 통일 (010-0000-0000, 02-0000-0000 등)
+ * - 잘못된 형식의 경우 원본 반환
  */
 private fun String.formatPhoneNumber(): String {
-    // 1. 불필요한 문자들 제거
-    val cleaned =
-        this
-            .replace("//", "") // // 제거
-            .replace("-", "") // 하이픈 제거 (하이픈이 없는 경우 위치값으로 넣어줘야 하기때문에 우선 제거)
-            .replace(" ", "") // 공백 제거
-            .trim()
-
-    // 2. 000-0000-0000 형태로 포맷팅
-    return "${cleaned.substring(0, 3)}-${cleaned.substring(3, 7)}-${cleaned.substring(7)}"
+    return PhoneNumberFormatter.formatPhoneNumber(this)
 }
 
 /**
