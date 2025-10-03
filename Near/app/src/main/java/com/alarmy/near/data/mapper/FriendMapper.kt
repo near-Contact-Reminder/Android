@@ -12,12 +12,13 @@ import com.alarmy.near.network.request.FriendRequest
 import com.alarmy.near.network.response.AnniversaryEntity
 import com.alarmy.near.network.response.ContactFrequencyEntity
 import com.alarmy.near.network.response.FriendEntity
+import com.alarmy.near.utils.logger.NearLog
 
 fun FriendEntity.toModel(): Friend =
     Friend(
         friendId = friendId,
         imageUrl = imageUrl,
-        relation = Relation.valueOf(relation),
+        relation = relation.toRelation(),
         name = name,
         contactFrequency = contactFrequency.toModel(),
         birthday = birthday,
@@ -29,8 +30,8 @@ fun FriendEntity.toModel(): Friend =
 
 fun ContactFrequencyEntity.toModel(): ContactFrequency =
     ContactFrequency(
-        reminderInterval = ReminderInterval.valueOf(contactWeek),
-        dayOfWeek = DayOfWeek.valueOf(dayOfWeek),
+        reminderInterval = contactWeek.toReminderInterval(),
+        dayOfWeek = dayOfWeek.toDayOfWeek(),
     )
 
 fun AnniversaryEntity.toModel(): Anniversary =
@@ -63,3 +64,30 @@ fun Anniversary.toRequest(): AnniversaryRequest =
         title = title,
         date = date,
     )
+
+/**
+ * 안전한 ReminderInterval 변환 (로깅 포함)
+ */
+private fun String.toReminderInterval(): ReminderInterval =
+    runCatching { ReminderInterval.valueOf(this) }
+        .onFailure { exception ->
+            NearLog.w("잘못된 연락 주기 값: '$this', 기본값(EVERY_WEEK) 사용")
+        }.getOrDefault(ReminderInterval.EVERY_WEEK)
+
+/**
+ * 안전한 DayOfWeek 변환 (로깅 포함)
+ */
+private fun String.toDayOfWeek(): DayOfWeek =
+    runCatching { DayOfWeek.valueOf(this) }
+        .onFailure { exception ->
+            NearLog.w("잘못된 요일 값: '$this', 기본값(MONDAY) 사용")
+        }.getOrDefault(DayOfWeek.MONDAY)
+
+/**
+ * 안전한 Relation 변환 (로깅 포함)
+ */
+private fun String.toRelation(): Relation =
+    runCatching { Relation.valueOf(this) }
+        .onFailure { exception ->
+            NearLog.w("잘못된 관계 값: '$this', 기본값(FRIEND) 사용")
+        }.getOrDefault(Relation.FRIEND)

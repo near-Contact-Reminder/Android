@@ -14,6 +14,7 @@ import com.alarmy.near.network.response.FriendInitItemEntity
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.utils.PhoneNumberFormatter
 import com.alarmy.near.utils.extensions.DateExtension
+import com.alarmy.near.utils.logger.NearLog
 
 /**
  * PhoneNumberFormatter를 사용하여 전화번호를 포맷팅하는 함수
@@ -21,9 +22,7 @@ import com.alarmy.near.utils.extensions.DateExtension
  * - 한국 전화번호 형식으로 통일 (010-0000-0000, 02-0000-0000 등)
  * - 잘못된 형식의 경우 원본 반환
  */
-private fun String.formatPhoneNumber(): String {
-    return PhoneNumberFormatter.formatPhoneNumber(this)
-}
+private fun String.formatPhoneNumber(): String = PhoneNumberFormatter.formatPhoneNumber(this)
 
 /**
  * UI 모델을 서버 요청 모델로 변환
@@ -46,8 +45,8 @@ fun FriendContactUIModel.toFriendInitItemRequest(providerType: String): FriendIn
  */
 fun ContactFrequencyInitEntity.toModel(): ContactFrequency =
     ContactFrequency(
-        reminderInterval = ReminderInterval.valueOf(contactWeek),
-        dayOfWeek = DayOfWeek.valueOf(dayOfWeek),
+        reminderInterval = contactWeek.toReminderInterval(),
+        dayOfWeek = dayOfWeek.toDayOfWeek(),
     )
 
 /**
@@ -71,7 +70,7 @@ fun FriendInitItemEntity.toModel(): Friend =
         memo = memo,
         birthday = null,
         imageUrl = preSignedImageUrl,
-        relation = Relation.valueOf(source),
+        relation = source.toRelation(),
         contactFrequency = contactFrequency.toModel(),
         anniversaryList = anniversary?.let { listOf(it.toModel()) } ?: emptyList(),
         lastContactAt = nextContactAt,
@@ -85,3 +84,21 @@ private fun createContactFrequencyRequest(reminderInterval: ReminderInterval): C
         contactWeek = DateExtension.toContactWeekString(reminderInterval),
         dayOfWeek = DateExtension.getTodayDayOfWeekInEnglish(),
     )
+
+private fun String.toReminderInterval(): ReminderInterval =
+    runCatching { ReminderInterval.valueOf(this) }
+        .onFailure { exception ->
+            NearLog.w("잘못된 연락 주기 값: '$this', 기본값(EVERY_WEEK) 사용")
+        }.getOrDefault(ReminderInterval.EVERY_WEEK)
+
+private fun String.toDayOfWeek(): DayOfWeek =
+    runCatching { DayOfWeek.valueOf(this) }
+        .onFailure { exception ->
+            NearLog.w("잘못된 요일 값: '$this', 기본값(MONDAY) 사용")
+        }.getOrDefault(DayOfWeek.MONDAY)
+
+private fun String.toRelation(): Relation =
+    runCatching { Relation.valueOf(this) }
+        .onFailure { exception ->
+            NearLog.w("잘못된 관계 값: '$this', 기본값(FRIEND) 사용")
+        }.getOrDefault(Relation.FRIEND)
