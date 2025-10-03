@@ -107,6 +107,9 @@ dependencies {
 
     // Splash Screen API
     implementation(libs.androidx.core.splashscreen)
+    
+    // libphonenumber-android for phone number formatting
+    implementation("io.michaelrocks:libphonenumber-android:9.0.15")
 }
 
 fun getProperty(propertyKey: String): String = gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
