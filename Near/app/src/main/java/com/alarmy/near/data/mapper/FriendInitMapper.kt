@@ -12,8 +12,8 @@ import com.alarmy.near.network.response.AnniversaryInitEntity
 import com.alarmy.near.network.response.ContactFrequencyInitEntity
 import com.alarmy.near.network.response.FriendInitItemEntity
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
-import com.alarmy.near.utils.extensions.DateExtension
 import com.alarmy.near.utils.PhoneNumberFormatter
+import com.alarmy.near.utils.extensions.DateExtension
 
 /**
  * PhoneNumberFormatter를 사용하여 전화번호를 포맷팅하는 함수
@@ -31,7 +31,7 @@ private fun String.formatPhoneNumber(): String {
 fun FriendContactUIModel.toFriendInitItemRequest(providerType: String): FriendInitItemRequest =
     FriendInitItemRequest(
         name = name,
-        phone = phones.first().formatPhoneNumber(),
+        phone = phones.firstOrNull()?.formatPhoneNumber() ?: "",
         memo = memo,
         birthDay = birthDay,
         source = providerType,
