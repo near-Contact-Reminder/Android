@@ -74,18 +74,22 @@ object DateExtension {
                 // 매일: 다음 날
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             }
+
             ReminderInterval.EVERY_WEEK -> {
                 // 매주: 다음 주 같은 요일
                 calendar.add(Calendar.WEEK_OF_YEAR, 1)
             }
+
             ReminderInterval.EVERY_TWO_WEEK -> {
                 // 격주: 2주 후 같은 요일
                 calendar.add(Calendar.WEEK_OF_YEAR, 2)
             }
+
             ReminderInterval.EVERY_MONTH -> {
                 // 매월: 다음 달 같은 날
                 calendar.add(Calendar.MONTH, 1)
             }
+
             ReminderInterval.EVERY_SIX_MONTH -> {
                 // 반년: 6개월 후 같은 날
                 calendar.add(Calendar.MONTH, 6)
@@ -114,11 +118,17 @@ object DateExtension {
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
                 "매달 ${day}일"
             }
+
             ReminderInterval.EVERY_SIX_MONTH -> {
                 val calendar = Calendar.getInstance()
                 val month = calendar.get(Calendar.MONTH) + 1 // Calendar의 월은 0부터 시작
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
-                val nextSixMonth = if (month <= 6) 10 else 4
+                // 6개월 후의 월을 계산
+                val nextSixMonthCalendar =
+                    (calendar.clone() as Calendar).apply {
+                        add(Calendar.MONTH, 6)
+                    }
+                val nextSixMonth = nextSixMonthCalendar.get(Calendar.MONTH) + 1
                 "매년 $month/$day, $nextSixMonth/$day"
             }
         }
