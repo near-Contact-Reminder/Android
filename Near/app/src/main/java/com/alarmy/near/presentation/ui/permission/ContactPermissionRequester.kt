@@ -29,7 +29,10 @@ fun ContactPermissionRequester(
     val permissionState = rememberContactPermissionState()
 
     when (permissionState) {
-        PermissionState.GRANTED -> onGranted()
+        PermissionState.GRANTED -> {
+            // 권한이 이미 허용된 경우, 자동으로 onGranted를 호출하지 않음
+            // 사용자가 명시적으로 권한을 요청했을 때만 launcher를 통해 처리
+        }
         PermissionState.DENIED -> onDenied { launcher.launch(Manifest.permission.READ_CONTACTS) }
         PermissionState.SHOW_RATIONALE -> onShowRationale { launcher.launch(Manifest.permission.READ_CONTACTS) }
     }
