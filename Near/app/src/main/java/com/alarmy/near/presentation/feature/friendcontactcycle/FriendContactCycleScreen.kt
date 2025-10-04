@@ -69,20 +69,6 @@ internal fun FriendContactCycleRoute(
     LaunchedEffect(viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is FriendContactUIEvent.MoveToNextStep -> viewModel.moveToNextStep()
-                is FriendContactUIEvent.MoveToPreviousStep -> viewModel.moveToPreviousStep()
-                is FriendContactUIEvent.AddSelectedContacts -> viewModel.addSelectedContacts(event.contacts)
-                is FriendContactUIEvent.DeselectContact -> viewModel.deselectContact(event.contactId)
-                is FriendContactUIEvent.ToggleBulkSetting -> viewModel.toggleBulkSetting()
-                is FriendContactUIEvent.OpenBottomSheet -> viewModel.openBottomSheet()
-                is FriendContactUIEvent.OpenIndividualBottomSheet ->
-                    viewModel.openIndividualBottomSheet(
-                        event.contactId,
-                    )
-
-                is FriendContactUIEvent.CloseBottomSheet -> viewModel.closeBottomSheet()
-                is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
-                is FriendContactUIEvent.CompleteFriendInit -> viewModel.completeFriendInit()
                 is FriendContactUIEvent.NavigateToHome -> onNavigateToHome()
                 is FriendContactUIEvent.ShowError -> onShowErrorSnackBar(event.throwable)
             }
@@ -91,21 +77,15 @@ internal fun FriendContactCycleRoute(
 
     FriendContactCycleScreen(
         uiState = uiState,
-        onMoveToNextStep = { viewModel.onEvent(FriendContactUIEvent.MoveToNextStep) },
-        onMoveToPreviousStep = { viewModel.onEvent(FriendContactUIEvent.MoveToPreviousStep) },
-        onDeselectContact = { contactId ->
-            viewModel.onEvent(FriendContactUIEvent.DeselectContact(contactId))
-        },
-        onToggleBulkSetting = { viewModel.onEvent(FriendContactUIEvent.ToggleBulkSetting) },
-        onOpenBottomSheet = { viewModel.onEvent(FriendContactUIEvent.OpenBottomSheet) },
-        onOpenIndividualBottomSheet = { contactId ->
-            viewModel.onEvent(FriendContactUIEvent.OpenIndividualBottomSheet(contactId))
-        },
-        onCloseBottomSheet = { viewModel.onEvent(FriendContactUIEvent.CloseBottomSheet) },
-        onCompleteCycleSetting = { reminderInterval ->
-            viewModel.onEvent(FriendContactUIEvent.CompleteCycleSetting(reminderInterval))
-        },
-        onCompleteFriendInit = { viewModel.onEvent(FriendContactUIEvent.CompleteFriendInit) },
+        onMoveToNextStep = { viewModel.moveToNextStep() },
+        onMoveToPreviousStep = { viewModel.moveToPreviousStep() },
+        onDeselectContact = { contactId -> viewModel.deselectContact(contactId) },
+        onToggleBulkSetting = { viewModel.toggleBulkSetting() },
+        onOpenBottomSheet = { viewModel.openBottomSheet() },
+        onOpenIndividualBottomSheet = { contactId -> viewModel.openIndividualBottomSheet(contactId) },
+        onCloseBottomSheet = { viewModel.closeBottomSheet() },
+        onCompleteCycleSetting = { reminderInterval -> viewModel.completeCycleSetting(reminderInterval) },
+        onCompleteFriendInit = { viewModel.completeFriendInit() },
         onNavigateToHome = onNavigateToHome,
         onNavigateToContact = onNavigateToContact,
         onSetPermissionRequestFunction = { requestPermission ->

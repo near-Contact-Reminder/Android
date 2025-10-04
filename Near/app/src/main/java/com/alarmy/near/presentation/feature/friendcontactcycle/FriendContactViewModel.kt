@@ -42,13 +42,6 @@ class FriendContactViewModel
             observeContactSelection()
         }
 
-        // 이베트 처리 함수: 이번트가 많아 파라미터로 이벤트를 받아 send
-        fun onEvent(event: FriendContactUIEvent) {
-            viewModelScope.launch {
-                _uiEvent.send(event)
-            }
-        }
-
         // 화면 분기 관련 함수
         fun moveToNextStep() {
             viewModelScope.launch {
