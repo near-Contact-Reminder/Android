@@ -30,6 +30,7 @@ fun NavGraphBuilder.friendContactCycleNavGraph(
             navBackStackEntry = backStackEntry,
             onNavigateToHome = onNavigateToHome,
             onNavigateToContact = onNavigateToContact,
+            onShowErrorSnackBar = onShowErrorSnackBar,
         )
     }
 }

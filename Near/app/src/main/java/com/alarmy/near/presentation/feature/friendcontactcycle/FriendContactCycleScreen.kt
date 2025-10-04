@@ -47,6 +47,7 @@ internal fun FriendContactCycleRoute(
     navBackStackEntry: NavBackStackEntry,
     onNavigateToHome: () -> Unit,
     onNavigateToContact: () -> Unit = {},
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     viewModel: FriendContactViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -83,6 +84,7 @@ internal fun FriendContactCycleRoute(
                 is FriendContactUIEvent.CompleteCycleSetting -> viewModel.completeCycleSetting(event.reminderInterval)
                 is FriendContactUIEvent.CompleteFriendInit -> viewModel.completeFriendInit()
                 is FriendContactUIEvent.NavigateToHome -> onNavigateToHome()
+                is FriendContactUIEvent.ShowError -> onShowErrorSnackBar(event.throwable)
             }
         }
     }

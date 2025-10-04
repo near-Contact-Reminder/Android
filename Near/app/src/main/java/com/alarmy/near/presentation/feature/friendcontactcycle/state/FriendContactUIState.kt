@@ -15,7 +15,6 @@ data class FriendContactUIState(
     val selectedCycle: ReminderInterval? = null,
     val selectedContactId: String? = null, // 개별 설정 중인 contact ID
     val isLoading: Boolean = false,
-    val error: String? = null,
     // 권한 다이얼로그 관련 상태
     val showPermissionDeniedDialog: Boolean = false,
     val onRequestPermission: (() -> Unit)? = null,

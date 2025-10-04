@@ -221,7 +221,7 @@ class FriendContactViewModel
         fun completeFriendInit() {
             viewModelScope.launch {
                 try {
-                    _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+                    _uiState.value = _uiState.value.copy(isLoading = true)
 
                     friendRepository
                         .initFriends(
@@ -232,11 +232,8 @@ class FriendContactViewModel
                             _uiEvent.send(FriendContactUIEvent.NavigateToHome)
                         }
                 } catch (e: Exception) {
-                    _uiState.value =
-                        _uiState.value.copy(
-                            isLoading = false,
-                            error = e.message ?: "친구 초기 설정에 실패했습니다.",
-                        )
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                    _uiEvent.send(FriendContactUIEvent.ShowError(e))
                 }
             }
         }
