@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.data.repository.MemberRepository
+import com.alarmy.near.model.ProviderType
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.model.contact.Contact
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
@@ -246,7 +247,7 @@ class FriendContactViewModel
                     .first()
                     .providerType
             }.getOrElse { exception ->
-                "KAKAO"
+                ProviderType.KAKAO.name
             }
 
         // 권한 관련 함수들
