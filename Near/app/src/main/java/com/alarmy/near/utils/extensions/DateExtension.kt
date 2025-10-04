@@ -149,7 +149,7 @@ object DateExtension {
             Calendar.THURSDAY -> DayOfWeek.THURSDAY
             Calendar.FRIDAY -> DayOfWeek.FRIDAY
             Calendar.SATURDAY -> DayOfWeek.SATURDAY
-            else -> DayOfWeek.SUNDAY
+            else -> throw IllegalStateException("Invalid day of week: $dayOfWeek")
         }
     }
 
@@ -165,7 +165,7 @@ object DateExtension {
             Calendar.THURSDAY -> "THURSDAY"
             Calendar.FRIDAY -> "FRIDAY"
             Calendar.SATURDAY -> "SATURDAY"
-            else -> "MONDAY" // 기본값
+            else -> throw IllegalStateException("Invalid day of week: $dayOfWeek")
         }
     }
 }
