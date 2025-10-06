@@ -12,7 +12,7 @@ fun ContactPermissionRequester(
     onGranted: () -> Unit,
     onDenied: @Composable (onRequestPermission: () -> Unit) -> Unit,
     onShowRationale: @Composable (onRequestPermission: () -> Unit) -> Unit = onDenied,
-    onPermissionDenied: (() -> Unit)? = null, // 권한 거부 시 콜백 추가
+    onPermissionDenied: () -> Unit = {}, // 권한 거부 시 콜백
 ) {
     val launcher =
         rememberLauncherForActivityResult(
@@ -22,7 +22,7 @@ fun ContactPermissionRequester(
                 onGranted()
             } else {
                 // 권한이 거부된 경우 콜백 호출
-                onPermissionDenied?.invoke()
+                onPermissionDenied()
             }
         }
 
