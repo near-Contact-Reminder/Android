@@ -128,6 +128,11 @@
     <string name="withdraw_other_reason_placeholder">편하게 의견을 남겨주세요.</string>
     <string name="withdraw_cancel_button">그만두기</string>
     <string name="withdraw_confirm_button">탈퇴하기</string>
+    
+    <!-- withdraw confirm dialog   -->
+    <string name="withdraw_confirm_content">탈퇴 시 계정 및 이용 내역이\n모두 삭제되며, 복구가 불가능합니다.\n정말 탈퇴하시겠습니까?</string>
+    <string name="withdraw_confirm_cancel">취소</string>
+    <string name="withdraw_confirm_withdraw">탈퇴하기</string>
 
     <!-- 텍스트필드 (TextField) -->
     <string name="textfield_error_message">1글자 이상 입력해주세요.</string>
