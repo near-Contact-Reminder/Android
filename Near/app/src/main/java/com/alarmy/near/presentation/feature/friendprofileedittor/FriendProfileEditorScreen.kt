@@ -46,11 +46,11 @@ import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
+import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.SaveConfirmDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
-import com.alarmy.near.presentation.ui.component.dialog.NearBasicDialog
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
 import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
 import com.alarmy.near.presentation.ui.component.textfield.NearTextField
@@ -162,13 +162,9 @@ fun FriendProfileEditorScreen(
     }
 
     if (saveConfirmDialogState) {
-        NearBasicDialog(
-            onDismiss = { onSaveConfirmDialogStateChanged(false) },
-            body = stringResource(R.string.editor_save_confirm_content),
-            dismissButtonText = stringResource(R.string.editor_save_confirm_cancel),
-            confirmButtonText = stringResource(R.string.editor_save_confirm_save),
-            onDismissButtonClick = { onSaveConfirmDialogStateChanged(false) },
-            onConfirmButtonClick = {
+        SaveConfirmDialog(
+            onDismissRequest = { onSaveConfirmDialogStateChanged(false) },
+            onConfirm = {
                 onSaveConfirmDialogStateChanged(false)
                 onSubmit()
             },
