@@ -8,13 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -54,6 +50,7 @@ import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendP
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
+import com.alarmy.near.presentation.ui.component.dialog.NearBasicDialog
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
 import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
 import com.alarmy.near.presentation.ui.component.textfield.NearTextField
@@ -70,6 +67,7 @@ fun FriendProfileEditorRoute(
 ) {
     val friendProfileEditorUIState = viewModel.uiState.collectAsStateWithLifecycle()
     val warningDialogState = remember { mutableStateOf(false) }
+    val saveConfirmDialogState = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(viewModel.uiEvent) {
@@ -103,6 +101,7 @@ fun FriendProfileEditorRoute(
     FriendProfileEditorScreen(
         friendProfileEditorUIState = friendProfileEditorUIState.value,
         dialogState = warningDialogState.value,
+        saveConfirmDialogState = saveConfirmDialogState.value,
         onClickBackButton = viewModel::onExit,
         onNameChanged = viewModel::onNameChanged,
         onRelationChanged = viewModel::onRelationChanged,
@@ -116,6 +115,7 @@ fun FriendProfileEditorRoute(
         onSubmit = viewModel::onSubmit,
         onEditorExit = onClickBackButton,
         onCloseDialog = { warningDialogState.value = false },
+        onSaveConfirmDialogStateChanged = { saveConfirmDialogState.value = it },
     )
 }
 
@@ -124,6 +124,7 @@ fun FriendProfileEditorRoute(
 fun FriendProfileEditorScreen(
     modifier: Modifier = Modifier,
     dialogState: Boolean = false,
+    saveConfirmDialogState: Boolean = false,
     friendProfileEditorUIState: FriendProfileEditorUIState,
     onClickBackButton: () -> Unit = {},
     onNameChanged: (String) -> Unit = {},
@@ -138,6 +139,7 @@ fun FriendProfileEditorScreen(
     onSubmit: () -> Unit = {},
     onEditorExit: () -> Unit = {},
     onCloseDialog: () -> Unit = {},
+    onSaveConfirmDialogStateChanged: (Boolean) -> Unit = {},
 ) {
     val showBottomSheet = remember { mutableStateOf(false) }
     if (showBottomSheet.value) {
@@ -158,6 +160,20 @@ fun FriendProfileEditorScreen(
             },
         )
     }
+
+    if (saveConfirmDialogState) {
+        NearBasicDialog(
+            onDismiss = { onSaveConfirmDialogStateChanged(false) },
+            body = stringResource(R.string.editor_save_confirm_content),
+            dismissButtonText = stringResource(R.string.editor_save_confirm_cancel),
+            confirmButtonText = stringResource(R.string.editor_save_confirm_save),
+            onDismissButtonClick = { onSaveConfirmDialogStateChanged(false) },
+            onConfirmButtonClick = {
+                onSaveConfirmDialogStateChanged(false)
+                onSubmit()
+            },
+        )
+    }
     NearFrame(modifier = modifier) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
@@ -169,7 +185,7 @@ fun FriendProfileEditorScreen(
                         Text(
                             modifier =
                                 Modifier.onNoRippleClick(onClick = {
-                                    onSubmit()
+                                    onSaveConfirmDialogStateChanged(true)
                                 }),
                             text = stringResource(R.string.friend_profile_editor_edit_complete_text),
                             style = NearTheme.typography.B1_16_BOLD,
