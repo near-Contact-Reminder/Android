@@ -1,8 +1,10 @@
 package com.alarmy.near.network.service
 
+import com.alarmy.near.network.request.FriendInitRequest
 import com.alarmy.near.network.request.FriendRequest
 import com.alarmy.near.network.response.CommonMessageEntity
 import com.alarmy.near.network.response.FriendEntity
+import com.alarmy.near.network.response.FriendInitEntity
 import com.alarmy.near.network.response.FriendRecordEntity
 import com.alarmy.near.network.response.FriendSummaryEntity
 import com.alarmy.near.network.response.MonthlyFriendEntity
@@ -45,4 +47,9 @@ interface FriendService {
     suspend fun recordContact(
         @Path("friendId") friendId: String,
     ): CommonMessageEntity
+
+    @POST("/friend/init")
+    suspend fun initFriends(
+        @Body friendInitRequest: FriendInitRequest,
+    ): FriendInitEntity
 }

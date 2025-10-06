@@ -73,7 +73,12 @@ fun ContactRoute(
 
     when (uiState) {
         is ContactUiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(NearTheme.colors.WHITE_FFFFFF),
+            ) {
                 CircularProgressIndicator(
                     color = NearTheme.colors.BLUE01_5AA2E9,
                     modifier = Modifier.align(Alignment.Center),
@@ -83,7 +88,10 @@ fun ContactRoute(
 
         is ContactUiState.Error -> {
             Box(modifier = Modifier.fillMaxSize()) {
-                Text(modifier = Modifier.align(Alignment.Center), text = stringResource(R.string.contact_load_error))
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(R.string.contact_load_error),
+                )
             }
         }
 

@@ -10,6 +10,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
+import com.alarmy.near.presentation.feature.contact.navigation.navigateToContact
+import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.friendContactCycleNavGraph
+import com.alarmy.near.presentation.feature.friendcontactcycle.navigation.navigateToFriendContactCycle
 import com.alarmy.near.presentation.feature.friendprofile.navigation.friendProfileNavGraph
 import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToFriendProfile
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
@@ -17,7 +20,6 @@ import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.frie
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
-import com.alarmy.near.presentation.feature.login.navigation.RouteLogin
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
 import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
 import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
@@ -61,11 +63,11 @@ internal fun NearNavHost(
 
         // 로그인 화면 NavGraph
         loginNavGraph(
-            onNavigateToHome = {
-                navController.navigateToHome(
+            onNavigateToFriendContactCycle = {
+                navController.navigateToFriendContactCycle(
                     navOptions =
                         navOptions {
-                            popUpTo(RouteLogin) { inclusive = true }
+                            popUpTo(0) { inclusive = false }
                         },
                 )
             },
@@ -83,7 +85,7 @@ internal fun NearNavHost(
             },
             onMyPageClick = { navController.navigateToMyProfile() },
             onAlarmClick = {},
-            onAddContactClick = {},
+            onAddContactClick = { navController.navigateToFriendContactCycle() },
         )
 
         myProfileNavGraph(
@@ -148,15 +150,33 @@ internal fun NearNavHost(
             navController.popBackStack()
         })
 
+        // 친구 연락처 주기 설정 화면 NavGraph
+        friendContactCycleNavGraph(
+            onNavigateToHome = {
+                // FriendContactCycleScreen에서 홈으로 이동 (뒤로가기 스택 초기화)
+                navController.navigateToHome(
+                    navOptions =
+                        navOptions {
+                            popUpTo(0) { inclusive = true }
+                        },
+                )
+            },
+            onNavigateToContact = {
+                navController.navigateToContact(
+                    navOptions = navOptions { },
+                )
+            },
+            onShowErrorSnackBar = onShowSnackbar,
+        )
+
+        // 연락처 선택 화면 NavGraph
         contactNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
-            onBackClick = {
-                navController.popBackStack()
-            },
-            onCompletedSelection = {
+            onBackClick = { navController.popBackStack() },
+            onCompletedSelection = { selectedContacts ->
                 navController.previousBackStackEntry?.savedStateHandle?.set(
                     CONTACT_SELECTION_COMPLETE_KEY,
-                    it,
+                    selectedContacts,
                 )
                 navController.popBackStack()
             },

@@ -36,7 +36,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
 internal fun LoginRoute(
-    onNavigateToHome: () -> Unit,
+    onNavigateToFriendContactCycle: () -> Unit,
     onNavigateToWebView: (title: String, url: String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
@@ -65,7 +65,7 @@ internal fun LoginRoute(
         viewModel.event.collect { event ->
             when (event) {
                 is LoginEvent.NavigateToHome -> {
-                    onNavigateToHome()
+                    onNavigateToFriendContactCycle()
                 }
 
                 is LoginEvent.ShowTermsDetail -> {

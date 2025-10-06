@@ -9,20 +9,30 @@ import com.alarmy.near.permission.rememberContactPermissionState
 
 @Composable
 fun ContactPermissionRequester(
-    onGranted: @Composable () -> Unit,
+    onGranted: () -> Unit,
     onDenied: @Composable (onRequestPermission: () -> Unit) -> Unit,
     onShowRationale: @Composable (onRequestPermission: () -> Unit) -> Unit = onDenied,
+    onPermissionDenied: () -> Unit = {}, // 권한 거부 시 콜백
 ) {
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
-            onResult = {},
-        )
+        ) { isGranted ->
+            if (isGranted) {
+                onGranted()
+            } else {
+                // 권한이 거부된 경우 콜백 호출
+                onPermissionDenied()
+            }
+        }
 
     val permissionState = rememberContactPermissionState()
 
     when (permissionState) {
-        PermissionState.GRANTED -> onGranted()
+        PermissionState.GRANTED -> {
+            // 권한이 이미 허용된 경우, 자동으로 onGranted를 호출하지 않음
+            // 사용자가 명시적으로 권한을 요청했을 때만 launcher를 통해 처리
+        }
         PermissionState.DENIED -> onDenied { launcher.launch(Manifest.permission.READ_CONTACTS) }
         PermissionState.SHOW_RATIONALE -> onShowRationale { launcher.launch(Manifest.permission.READ_CONTACTS) }
     }

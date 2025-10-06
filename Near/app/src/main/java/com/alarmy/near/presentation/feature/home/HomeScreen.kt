@@ -317,7 +317,7 @@ internal fun HomeScreen(
                         ) {
                             NearDropdownMenuItem(
                                 onClick = {
-                                    // TODO 연락처 화면 이동
+                                    onAddContactClick()
                                     dropdownState.value = false
                                 },
                                 text = stringResource(R.string.home_menu_text_add_friend),
