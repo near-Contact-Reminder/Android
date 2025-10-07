@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.feature.friendprofileedittor
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -69,6 +70,9 @@ fun FriendProfileEditorRoute(
     val warningDialogState = remember { mutableStateOf(false) }
     val saveConfirmDialogState = remember { mutableStateOf(false) }
     val context = LocalContext.current
+    BackHandler {
+        viewModel.onExit()
+    }
 
     LaunchedEffect(viewModel.uiEvent) {
         launch {
