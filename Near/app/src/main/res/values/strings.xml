@@ -92,6 +92,11 @@
     <string name="editor_exit_content">화면을 나가면 \n수정 내용은 저장되지 않아요.</string>
     <string name="editor_exit_confirm">확인</string>
     <string name="editor_exit_dismiss">취소</string>
+    
+    <!-- editor save confirm dialog   -->
+    <string name="editor_save_confirm_content">수정을 완료하시겠습니까?</string>
+    <string name="editor_save_confirm_save">저장</string>
+    <string name="editor_save_confirm_cancel">취소</string>
     <string name="day_of_week_monday">월요일</string>
     <string name="day_of_week_tuesday">화요일</string>
     <string name="day_of_week_wednesday">수요일</string>
@@ -123,6 +128,11 @@
     <string name="withdraw_other_reason_placeholder">편하게 의견을 남겨주세요.</string>
     <string name="withdraw_cancel_button">그만두기</string>
     <string name="withdraw_confirm_button">탈퇴하기</string>
+    
+    <!-- withdraw confirm dialog   -->
+    <string name="withdraw_confirm_content">탈퇴 시 계정 및 이용 내역이\n모두 삭제되며, 복구가 불가능합니다.\n정말 탈퇴하시겠습니까?</string>
+    <string name="withdraw_confirm_cancel">취소</string>
+    <string name="withdraw_confirm_withdraw">탈퇴하기</string>
 
     <!-- 텍스트필드 (TextField) -->
     <string name="textfield_error_message">1글자 이상 입력해주세요.</string>

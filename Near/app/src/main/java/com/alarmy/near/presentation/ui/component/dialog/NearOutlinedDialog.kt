@@ -25,7 +25,7 @@ fun NearOutlinedDialog(
     dismissButtonText: String,
     confirmButtonText: String,
     onDismissButtonClick: (() -> Unit),
-    onConfirmButtonClick: (() -> Unit),
+    onConfirm: (() -> Unit),
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -72,7 +72,10 @@ fun NearOutlinedDialog(
                     contentPadding = PaddingValues(16.dp),
                     enabled = true,
                     text = confirmButtonText,
-                    onClick = onConfirmButtonClick,
+                    onClick = {
+                        onConfirm()
+                        onDismiss()
+                    },
                 )
             }
         },
@@ -92,7 +95,7 @@ fun NearOutlinedDialogPreview() {
             confirmButtonText = "취소",
             dismissButtonText = "설정으로 이동",
             onDismissButtonClick = {},
-            onConfirmButtonClick = {},
+            onConfirm = {},
         )
     }
 }

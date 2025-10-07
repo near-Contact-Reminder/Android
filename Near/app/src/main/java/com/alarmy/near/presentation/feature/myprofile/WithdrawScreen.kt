@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.myprofile.dialog.WithdrawConfirmDialog
 import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearCancelTopAppBar
@@ -41,6 +43,7 @@ fun WithdrawRoute(
     onShowErrorSnackBar: (Throwable?) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val withdrawConfirmDialogState = remember { mutableStateOf(false) }
 
     // 통합된 이벤트 처리
     LaunchedEffect(viewModel.uiEvent) {
@@ -61,20 +64,24 @@ fun WithdrawRoute(
 
     WithdrawScreen(
         uiState = uiState,
+        withdrawConfirmDialogState = withdrawConfirmDialogState.value,
         onSelectReason = viewModel::selectReason,
         onUpdateOtherReasonText = viewModel::updateOtherReasonText,
         onSubmitWithdrawRequest = viewModel::submitWithdrawRequest,
         onNavigateBack = viewModel::onNavigateBack,
+        onWithdrawConfirmDialogStateChanged = { withdrawConfirmDialogState.value = it },
     )
 }
 
 @Composable
 fun WithdrawScreen(
     uiState: WithdrawUiState,
+    withdrawConfirmDialogState: Boolean = false,
     onSelectReason: (WithdrawReason) -> Unit,
     onUpdateOtherReasonText: (String) -> Unit,
     onSubmitWithdrawRequest: () -> Unit,
     onNavigateBack: () -> Unit,
+    onWithdrawConfirmDialogStateChanged: (Boolean) -> Unit = {},
 ) {
     // 4개의 탈퇴 사유 리스트 생성
     val withdrawReasons = remember { WithdrawReason.entries }
@@ -171,13 +178,21 @@ fun WithdrawScreen(
                 modifier = Modifier.weight(1f),
                 enabled = uiState.isWithdrawButtonEnabled,
                 onClick = {
-                    onSubmitWithdrawRequest()
+                    onWithdrawConfirmDialogStateChanged(true)
                 },
                 text = stringResource(R.string.withdraw_confirm_button),
                 contentPadding = PaddingValues(vertical = 16.dp),
             )
         }
         Spacer(modifier = Modifier.size(24.dp))
+    }
+    
+    // 탈퇴 확인 다이얼로그
+    if (withdrawConfirmDialogState) {
+        WithdrawConfirmDialog(
+            onDismissRequest = { onWithdrawConfirmDialogStateChanged(false) },
+            onConfirm = onSubmitWithdrawRequest,
+        )
     }
 }
 
