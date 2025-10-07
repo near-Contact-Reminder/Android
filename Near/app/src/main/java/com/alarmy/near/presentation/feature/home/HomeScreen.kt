@@ -78,7 +78,7 @@ internal fun HomeRoute(
     LaunchedEffect(Unit) {
         launch {
             viewModel.errorEvent.collect {
-                onShowErrorSnackBar(it)
+                onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
             }
         }
     }
