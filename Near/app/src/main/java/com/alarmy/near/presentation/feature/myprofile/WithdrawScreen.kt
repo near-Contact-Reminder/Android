@@ -191,10 +191,7 @@ fun WithdrawScreen(
     if (withdrawConfirmDialogState) {
         WithdrawConfirmDialog(
             onDismissRequest = { onWithdrawConfirmDialogStateChanged(false) },
-            onConfirm = {
-                onWithdrawConfirmDialogStateChanged(false)
-                onSubmitWithdrawRequest()
-            },
+            onConfirm = onSubmitWithdrawRequest,
         )
     }
 }

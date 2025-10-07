@@ -21,7 +21,7 @@ internal fun WithdrawConfirmDialog(
         dismissButtonText = stringResource(R.string.withdraw_confirm_cancel),
         confirmButtonText = stringResource(R.string.withdraw_confirm_withdraw),
         onDismissButtonClick = onDismissRequest,
-        onConfirmButtonClick = onConfirm,
+        onConfirm = onConfirm,
     )
 }
 
