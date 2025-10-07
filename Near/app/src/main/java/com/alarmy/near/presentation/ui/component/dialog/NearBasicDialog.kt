@@ -25,7 +25,7 @@ fun NearBasicDialog(
     dismissButtonText: String,
     confirmButtonText: String,
     onDismissButtonClick: (() -> Unit),
-    onConfirmButtonClick: (() -> Unit),
+    onConfirm: (() -> Unit),
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -66,7 +66,10 @@ fun NearBasicDialog(
 
                 NearBasicButton(
                     modifier = Modifier.weight(1f),
-                    onClick = onConfirmButtonClick,
+                    onClick = {
+                        onConfirm()
+                        onDismiss()
+                    },
                     contentPadding = PaddingValues(16.dp),
                 ) {
                     Text(
@@ -92,7 +95,7 @@ fun NearBasicDialogPreview() {
             dismissButtonText = "취소",
             confirmButtonText = "설정으로 이동",
             onDismissButtonClick = {},
-            onConfirmButtonClick = {},
+            onConfirm = {},
         )
     }
 }

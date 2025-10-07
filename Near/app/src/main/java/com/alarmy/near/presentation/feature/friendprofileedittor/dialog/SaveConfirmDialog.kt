@@ -20,7 +20,7 @@ internal fun SaveConfirmDialog(
         dismissButtonText = stringResource(R.string.editor_save_confirm_cancel),
         confirmButtonText = stringResource(R.string.editor_save_confirm_save),
         onDismissButtonClick = onDismissRequest,
-        onConfirmButtonClick = onConfirm,
+        onConfirm = onConfirm,
     )
 }
 

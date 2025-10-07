@@ -21,7 +21,7 @@ internal fun EditorExitDialog(
         dismissButtonText = stringResource(R.string.editor_exit_dismiss),
         confirmButtonText = stringResource(R.string.editor_exit_confirm),
         onDismissButtonClick = onDismissRequest,
-        onConfirmButtonClick = onConfirm,
+        onConfirm = onConfirm,
     )
 }
 

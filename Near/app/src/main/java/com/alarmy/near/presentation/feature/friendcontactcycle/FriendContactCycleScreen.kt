@@ -230,11 +230,8 @@ fun FriendContactCycleScreen(
     // 권한 거부 다이얼로그 표시
     if (uiState.showPermissionDeniedDialog) {
         ContactPermissionDeniedDialog(
-            onDismiss = {
-                onHidePermissionDeniedDialog()
-            },
+            onDismiss = onHidePermissionDeniedDialog,
             onGoToSettings = {
-                onHidePermissionDeniedDialog()
                 AppSettingsUtil.openAppSettings(context)
             },
         )

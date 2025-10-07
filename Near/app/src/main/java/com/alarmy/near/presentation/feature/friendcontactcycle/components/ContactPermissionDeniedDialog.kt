@@ -22,7 +22,7 @@ fun ContactPermissionDeniedDialog(
         dismissButtonText = stringResource(R.string.contact_permission_cancel),
         confirmButtonText = stringResource(R.string.contact_permission_go_to_settings),
         onDismissButtonClick = onDismiss,
-        onConfirmButtonClick = onGoToSettings,
+        onConfirm = onGoToSettings,
     )
 }
 

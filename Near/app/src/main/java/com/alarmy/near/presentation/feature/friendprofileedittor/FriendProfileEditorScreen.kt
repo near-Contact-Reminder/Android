@@ -164,10 +164,7 @@ fun FriendProfileEditorScreen(
     if (saveConfirmDialogState) {
         SaveConfirmDialog(
             onDismissRequest = { onSaveConfirmDialogStateChanged(false) },
-            onConfirm = {
-                onSaveConfirmDialogStateChanged(false)
-                onSubmit()
-            },
+            onConfirm = onSubmit,
         )
     }
     NearFrame(modifier = modifier) {
