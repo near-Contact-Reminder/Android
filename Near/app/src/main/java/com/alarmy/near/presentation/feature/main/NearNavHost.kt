@@ -18,6 +18,7 @@ import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToF
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
+import com.alarmy.near.presentation.feature.home.navigation.HOME_FRIEND_DELETE_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
@@ -137,6 +138,12 @@ internal fun NearNavHost(
                             },
                     ),
             )
+        }, onDeleteFriendSuccess = {
+            navController.previousBackStackEntry?.savedStateHandle?.set(
+                HOME_FRIEND_DELETE_COMPLETE_KEY,
+                it,
+            )
+            navController.popBackStack()
         })
 
         // 친구 프로필 편집 화면 NavGraph

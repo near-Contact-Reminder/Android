@@ -41,6 +41,7 @@ fun NavGraphBuilder.friendProfileNavGraph(
     onEditFriendInfo: (Friend) -> Unit = {},
     onClickCallButton: (phoneNumber: String) -> Unit = {},
     onClickMessageButton: (phoneNumber: String) -> Unit = {},
+    onDeleteFriendSuccess: (friendId: String) -> Unit = {},
 ) {
     composable<RouteFriendProfile> { backStackEntry ->
         val viewModel: FriendProfileViewModel = hiltViewModel()
@@ -55,6 +56,7 @@ fun NavGraphBuilder.friendProfileNavGraph(
             onEditFriendInfo = onEditFriendInfo,
             onClickCallButton = onClickCallButton,
             onClickMessageButton = onClickMessageButton,
+            onDeleteFriendSuccess = onDeleteFriendSuccess,
         )
     }
 }
