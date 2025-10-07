@@ -37,7 +37,7 @@ fun MessageButton(
                 disabledContainerColor = Color(0xfff7f7f7),
                 disabledContentColor = NearTheme.colors.GRAY02_B7B7B7,
             ),
-        contentPadding = PaddingValues(start = 42.dp, end = 45.dp, top = 12.dp, bottom = 12.dp),
+        contentPadding = PaddingValues(top = 12.dp, bottom = 12.dp),
         enabled = enabled,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
