@@ -37,7 +37,6 @@ fun NavGraphBuilder.homeNavGraph(
         friendId?.let {
             viewModel.deleteFriend(it)
         }
-        friendId
         HomeRoute(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onContactClick = onContactClick,
