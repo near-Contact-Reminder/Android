@@ -12,23 +12,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -46,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -146,6 +142,7 @@ fun FriendProfileScreen(
 ) {
     val currentTabPosition = remember { mutableIntStateOf(0) }
     val dropdownState = remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     NearFrame(modifier = modifier) {
         Box {
@@ -157,6 +154,7 @@ fun FriendProfileScreen(
                             Modifier
                                 .align(Alignment.TopStart)
                                 .fillMaxSize()
+                                .verticalScroll(scrollState)
                                 .background(NearTheme.colors.WHITE_FFFFFF),
                     ) {
                         if (recordSuccessDialogState) {
@@ -215,14 +213,14 @@ fun FriendProfileScreen(
                                                 onEditFriendInfo(friend)
                                                 dropdownState.value = false
                                             },
-                                            text = stringResource(R.string.friend_profile_info_edit)
+                                            text = stringResource(R.string.friend_profile_info_edit),
                                         )
                                         NearDropdownMenuItem(
                                             onClick = {
                                                 onDeleteFriend(friend.friendId)
                                                 dropdownState.value = false
                                             },
-                                            text = stringResource(R.string.friend_profile_info_delete)
+                                            text = stringResource(R.string.friend_profile_info_delete),
                                         )
                                     }
                                 }
@@ -390,6 +388,7 @@ fun FriendProfileScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 20.dp)
+                                .padding(bottom = 24.dp)
                                 .align(Alignment.BottomCenter),
                         contentPadding = PaddingValues(vertical = 17.dp),
                         enabled = friend.isContactedToday.not(),
@@ -450,6 +449,7 @@ private fun ProfileTab(
         ProfileMemoInfo(
             content = friend.memo,
         )
+        Spacer(modifier = Modifier.height(76.dp))
     }
 }
 
