@@ -9,11 +9,14 @@ import com.alarmy.near.model.member.MemberInfo
 import com.alarmy.near.model.monthly.MonthlyFriend
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,8 +27,10 @@ class HomeViewModel
         memberRepository: MemberRepository,
     ) : ViewModel() {
         private val _errorEvent = Channel<Throwable?>()
-        val errorEvent = _errorEvent.receiveAsFlow()
 
+        private val deletedFriendIdsFlow = MutableStateFlow<Set<String>>(setOf())
+
+        val errorEvent = _errorEvent.receiveAsFlow()
         val memberInfoFlow: StateFlow<MemberInfo?> =
             memberRepository.getMyInfo().stateIn(
                 viewModelScope,
@@ -34,8 +39,13 @@ class HomeViewModel
             )
 
         val friendsFlow: StateFlow<List<FriendSummary>> =
-            friendRepository
-                .fetchFriends()
+            combine(
+                friendRepository
+                    .fetchFriends(),
+                deletedFriendIdsFlow,
+            ) { friends, deletedIds ->
+                friends.filter { it.id !in deletedIds }
+            }
                 .catch {
                     _errorEvent.send(it)
                 }.stateIn(
@@ -55,4 +65,10 @@ class HomeViewModel
                     started = SharingStarted.WhileSubscribed(5_000),
                     initialValue = emptyList(),
                 )
+
+        fun deleteFriend(friendId: String) {
+            viewModelScope.launch {
+                deletedFriendIdsFlow.emit(deletedFriendIdsFlow.value + friendId)
+            }
     }
+}
