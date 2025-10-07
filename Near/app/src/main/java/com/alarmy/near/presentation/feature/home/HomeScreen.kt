@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
 import com.alarmy.near.model.friendsummary.FriendSummary
+import com.alarmy.near.model.member.MemberInfo
 import com.alarmy.near.model.monthly.MonthlyFriend
 import com.alarmy.near.model.monthly.MonthlyFriendType
 import com.alarmy.near.presentation.feature.home.component.MyContacts
@@ -81,6 +82,7 @@ internal fun HomeRoute(
             }
         }
     }
+    val memberInfo = viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     val friends = viewModel.friendsFlow.collectAsStateWithLifecycle()
     val monthlyFriends = viewModel.monthlyFriendFlow.collectAsStateWithLifecycle()
     HomeScreen(
@@ -90,6 +92,7 @@ internal fun HomeRoute(
         onAddContactClick = onAddContactClick,
         contacts = friends.value,
         monthlyFriends = monthlyFriends.value,
+        memberInfo = memberInfo.value,
     )
 }
 
@@ -101,6 +104,7 @@ internal fun HomeScreen(
     onMyPageClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
+    memberInfo: MemberInfo?,
     contacts: List<FriendSummary>,
     monthlyFriends: List<MonthlyFriend>,
 ) {
@@ -155,7 +159,7 @@ internal fun HomeScreen(
             Text(
                 text =
                     buildAnnotatedString {
-                        append("주지스님,\n")
+                        append("${memberInfo?.nickname}님,\n")
                         withStyle(
                             SpanStyle(
                                 fontWeight = FontWeight.Bold,
@@ -392,6 +396,15 @@ internal fun HomeScreenPreview() {
                         nextContactAt = "2025-09-30",
                     )
                 },
+            memberInfo =
+                MemberInfo(
+                    memberId = "posidonium",
+                    username = "주지스님",
+                    nickname = "Audra Day",
+                    imageUrl = "https://search.yahoo.com/search?p=class",
+                    notificationAgreedAt = "comprehensam",
+                    providerType = "sumo",
+                ),
         )
     }
 }
