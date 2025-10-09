@@ -37,7 +37,7 @@ fun CallButton(
                 disabledContainerColor = Color(0xfff7f7f7),
                 disabledContentColor = NearTheme.colors.GRAY02_B7B7B7,
             ),
-        contentPadding = PaddingValues(start = 42.dp, end = 45.dp, top = 12.dp, bottom = 12.dp),
+        contentPadding = PaddingValues(top = 12.dp, bottom = 12.dp),
         enabled = enabled,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -47,6 +47,7 @@ fun CallButton(
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
+                maxLines = 1,
                 text = stringResource(R.string.friend_profile_call),
                 style = NearTheme.typography.B2_14_MEDIUM,
             )
