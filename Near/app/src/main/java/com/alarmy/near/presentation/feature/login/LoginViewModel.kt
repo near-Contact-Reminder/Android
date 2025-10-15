@@ -1,7 +1,7 @@
 package com.alarmy.near.presentation.feature.login
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
@@ -22,7 +22,7 @@ class LoginViewModel
     @Inject
     constructor(
         private val authRepository: AuthRepository,
-    ) : ViewModel() {
+    ) : BaseViewModel() {
         // UI 상태 관리
         private val _uiState = MutableStateFlow(LoginUiState())
         val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -66,7 +66,7 @@ class LoginViewModel
                         _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = true)
                     }.onFailure { exception ->
                         updateLoadingState(isLoading = false)
-                        _event.send(LoginEvent.ShowError(exception))
+                        handleError(exception, "로그인에 실패했습니다")
                     }
             }
         }
@@ -203,9 +203,5 @@ sealed class LoginEvent {
 
     data class ShowTermsDetail(
         val termType: TermType,
-    ) : LoginEvent()
-
-    data class ShowError(
-        val throwable: Throwable?,
     ) : LoginEvent()
 }

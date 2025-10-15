@@ -61,6 +61,7 @@ internal fun LoginRoute(
         }
     }
 
+    // UI 이벤트 처리
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
@@ -72,11 +73,14 @@ internal fun LoginRoute(
                     val title = termsTitles[event.termType] ?: ""
                     onNavigateToWebView(title, event.termType.url)
                 }
-
-                is LoginEvent.ShowError -> {
-                    onShowErrorSnackBar(event.throwable)
-                }
             }
+        }
+    }
+
+    // 에러 이벤트 처리
+    LaunchedEffect(Unit) {
+        viewModel.errorEvent.collect { throwable ->
+            onShowErrorSnackBar(throwable)
         }
     }
 

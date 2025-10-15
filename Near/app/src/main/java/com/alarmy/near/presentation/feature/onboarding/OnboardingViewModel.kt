@@ -1,7 +1,7 @@
 package com.alarmy.near.presentation.feature.onboarding
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.repository.OnBoardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val onBoardingRepository: OnBoardingRepository,
-) : ViewModel() {
+) : BaseViewModel() {
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
 
