@@ -61,6 +61,7 @@ fun ContactRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
+    // UI 이벤트 처리
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -68,6 +69,13 @@ fun ContactRoute(
                     onCompletedSelection(event.selectedContacts)
                 }
             }
+        }
+    }
+
+    // 에러 이벤트 처리
+    LaunchedEffect(Unit) {
+        viewModel.errorEvent.collect { throwable ->
+            onShowErrorSnackBar(throwable)
         }
     }
 

@@ -1,7 +1,7 @@
 package com.alarmy.near.presentation.feature.contact
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.repository.ContactRepository
 import com.alarmy.near.presentation.feature.contact.state.ContactUiEvent
 import com.alarmy.near.presentation.feature.contact.state.ContactUiState
@@ -26,7 +26,7 @@ class ContactViewModel
     @Inject
     constructor(
         contactRepository: ContactRepository,
-    ) : ViewModel() {
+    ) : BaseViewModel() {
         private val _uiEvent = Channel<ContactUiEvent>()
         val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -35,7 +35,10 @@ class ContactViewModel
         val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
         // 원본 연락처 리스트
-        private val contactsFlow = contactRepository.fetchAllContacts()
+        private val contactsFlow =
+            contactRepository
+                .fetchAllContacts()
+                .handleError()
 
         val uiState: StateFlow<ContactUiState> =
             combine(
