@@ -1,7 +1,7 @@
 package com.alarmy.near.presentation.feature.myprofile
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.mapper.toMyProfileInfoUIModel
 import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.data.repository.MemberRepository
@@ -12,7 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -25,11 +24,7 @@ class MyProfileViewModel
     constructor(
         private val memberRepository: MemberRepository,
         private val authRepository: AuthRepository,
-    ) : ViewModel() {
-        // 에러 이벤트 관리
-        private val _errorEvent = Channel<Throwable?>()
-        val errorEvent = _errorEvent.receiveAsFlow()
-
+    ) : BaseViewModel() {
         // UI 이벤트 관리
         private val _uiEvent = Channel<MyProfileUiEvent>()
         val uiEvent = _uiEvent.receiveAsFlow()
@@ -38,9 +33,8 @@ class MyProfileViewModel
         val uiState: StateFlow<MyProfileUiState> =
             memberRepository
                 .getMyInfo()
-                .catch { throwable ->
-                    _errorEvent.send(throwable)
-                }.map { memberInfo ->
+                .handleError()
+                .map { memberInfo ->
                     MyProfileUiState(
                         isLoading = false,
                         memberInfo = memberInfo.toMyProfileInfoUIModel(),
@@ -78,7 +72,7 @@ class MyProfileViewModel
                 }.onSuccess {
                     _uiEvent.trySend(MyProfileUiEvent.Logout)
                 }.onFailure { exception ->
-                    _errorEvent.send(exception)
+                    handleError(exception, "로그아웃에 실패했습니다")
                 }
             }
         }
@@ -111,10 +105,6 @@ data class MyProfileUiState(
  * MyProfile UI 이벤트
  */
 sealed class MyProfileUiEvent {
-    data class ShowError(
-        val throwable: Throwable,
-    ) : MyProfileUiEvent()
-
     object NavigateBack : MyProfileUiEvent()
 
     object Logout : MyProfileUiEvent()

@@ -65,7 +65,7 @@ internal fun MyProfileRoute(
     // 에러 이벤트 처리
     LaunchedEffect(viewModel.errorEvent) {
         viewModel.errorEvent.collect { throwable ->
-            throwable?.let { onShowErrorSnackBar(it) }
+            onShowErrorSnackBar(throwable)
         }
     }
 
@@ -75,10 +75,6 @@ internal fun MyProfileRoute(
             when (event) {
                 is MyProfileUiEvent.NavigateBack -> {
                     onNavigateBack()
-                }
-
-                is MyProfileUiEvent.ShowError -> {
-                    onShowErrorSnackBar(event.throwable)
                 }
 
                 is MyProfileUiEvent.Logout -> {

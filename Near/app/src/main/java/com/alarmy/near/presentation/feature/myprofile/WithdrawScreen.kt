@@ -45,20 +45,25 @@ fun WithdrawRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val withdrawConfirmDialogState = remember { mutableStateOf(false) }
 
-    // 통합된 이벤트 처리
+    // UI 이벤트 처리
     LaunchedEffect(viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is WithdrawUiEvent.NavigateBack -> {
                     onNavigateBack()
                 }
+
                 is WithdrawUiEvent.NavigateToLogin -> {
                     onNavigateToLogin()
                 }
-                is WithdrawUiEvent.ShowError -> {
-                    onShowErrorSnackBar(event.throwable)
-                }
             }
+        }
+    }
+
+    // 에러 이벤트 처리
+    LaunchedEffect(viewModel.errorEvent) {
+        viewModel.errorEvent.collect { throwable ->
+            onShowErrorSnackBar(throwable)
         }
     }
 
@@ -186,7 +191,7 @@ fun WithdrawScreen(
         }
         Spacer(modifier = Modifier.size(24.dp))
     }
-    
+
     // 탈퇴 확인 다이얼로그
     if (withdrawConfirmDialogState) {
         WithdrawConfirmDialog(

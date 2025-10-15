@@ -1,9 +1,9 @@
 package com.alarmy.near.presentation.feature.myprofile
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.repository.AuthRepository
 import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.presentation.feature.myprofile.model.WithdrawReason
@@ -14,7 +14,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +25,7 @@ class WithdrawViewModel
         private val memberRepository: MemberRepository,
         private val authRepository: AuthRepository,
         savedStateHandle: SavedStateHandle,
-    ) : ViewModel() {
+    ) : BaseViewModel() {
         private val nickname: String = savedStateHandle.toRoute<RouteWithdraw>().nickname
 
         // UI 상태 관리
@@ -67,7 +66,7 @@ class WithdrawViewModel
             val reason = currentState.selectedReason
 
             if (reason == null) {
-                _uiEvent.trySend(WithdrawUiEvent.ShowError(Exception("탈퇴 사유를 선택해주세요.")))
+                sendErrorEvent(Exception())
                 return
             }
 
@@ -78,19 +77,17 @@ class WithdrawViewModel
                 )
 
             viewModelScope.launch {
-                val customReason = if (currentState.isOtherReasonSelected) {
-                    currentState.otherReasonText.takeIf { it.isNotEmpty() }
-                } else {
-                    null
-                }
+                val customReason =
+                    if (currentState.isOtherReasonSelected) {
+                        currentState.otherReasonText.takeIf { it.isNotEmpty() }
+                    } else {
+                        null
+                    }
 
                 memberRepository
                     .withdraw(reason, customReason)
-                    .catch { error ->
-                        // 실패 시 에러 처리
-                        NearLog.d(error.message.toString())
-                        onWithdrawFailure(error)
-                    }.collect {
+                    .handleError()
+                    .collect {
                         // 성공 시 로그아웃 로직 실행
                         onWithdrawSuccess()
                     }
@@ -109,17 +106,9 @@ class WithdrawViewModel
                 }.onFailure { exception ->
                     NearLog.d(exception.message.toString())
                     _uiState.value = _uiState.value.copy(isLoading = false)
-                    _uiEvent.trySend(WithdrawUiEvent.ShowError(exception))
+                    handleError(exception)
                 }
             }
-        }
-
-        /**
-         * 탈퇴 실패 시 호출되는 함수
-         */
-        private fun onWithdrawFailure(exception: Throwable) {
-            _uiState.value = _uiState.value.copy(isLoading = false)
-            _uiEvent.trySend(WithdrawUiEvent.ShowError(exception))
         }
 
         /**
@@ -163,8 +152,4 @@ sealed class WithdrawUiEvent {
     object NavigateBack : WithdrawUiEvent()
 
     object NavigateToLogin : WithdrawUiEvent()
-
-    data class ShowError(
-        val throwable: Throwable?,
-    ) : WithdrawUiEvent()
 }
