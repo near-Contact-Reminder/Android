@@ -47,7 +47,6 @@ import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
-import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.SaveConfirmDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
@@ -68,7 +67,6 @@ fun FriendProfileEditorRoute(
 ) {
     val friendProfileEditorUIState = viewModel.uiState.collectAsStateWithLifecycle()
     val warningDialogState = remember { mutableStateOf(false) }
-    val saveConfirmDialogState = remember { mutableStateOf(false) }
     val context = LocalContext.current
     BackHandler {
         viewModel.onExit()
@@ -105,7 +103,6 @@ fun FriendProfileEditorRoute(
     FriendProfileEditorScreen(
         friendProfileEditorUIState = friendProfileEditorUIState.value,
         dialogState = warningDialogState.value,
-        saveConfirmDialogState = saveConfirmDialogState.value,
         onClickBackButton = viewModel::onExit,
         onNameChanged = viewModel::onNameChanged,
         onRelationChanged = viewModel::onRelationChanged,
@@ -119,7 +116,6 @@ fun FriendProfileEditorRoute(
         onSubmit = viewModel::onSubmit,
         onEditorExit = onClickBackButton,
         onCloseDialog = { warningDialogState.value = false },
-        onSaveConfirmDialogStateChanged = { saveConfirmDialogState.value = it },
     )
 }
 
@@ -128,7 +124,6 @@ fun FriendProfileEditorRoute(
 fun FriendProfileEditorScreen(
     modifier: Modifier = Modifier,
     dialogState: Boolean = false,
-    saveConfirmDialogState: Boolean = false,
     friendProfileEditorUIState: FriendProfileEditorUIState,
     onClickBackButton: () -> Unit = {},
     onNameChanged: (String) -> Unit = {},
@@ -143,7 +138,6 @@ fun FriendProfileEditorScreen(
     onSubmit: () -> Unit = {},
     onEditorExit: () -> Unit = {},
     onCloseDialog: () -> Unit = {},
-    onSaveConfirmDialogStateChanged: (Boolean) -> Unit = {},
 ) {
     val showBottomSheet = remember { mutableStateOf(false) }
     if (showBottomSheet.value) {
@@ -165,12 +159,6 @@ fun FriendProfileEditorScreen(
         )
     }
 
-    if (saveConfirmDialogState) {
-        SaveConfirmDialog(
-            onDismissRequest = { onSaveConfirmDialogStateChanged(false) },
-            onConfirm = onSubmit,
-        )
-    }
     NearFrame(modifier = modifier) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
@@ -182,7 +170,7 @@ fun FriendProfileEditorScreen(
                         Text(
                             modifier =
                                 Modifier.onNoRippleClick(onClick = {
-                                    onSaveConfirmDialogStateChanged(true)
+                                    onSubmit()
                                 }),
                             text = stringResource(R.string.friend_profile_editor_edit_complete_text),
                             style = NearTheme.typography.B1_16_BOLD,
