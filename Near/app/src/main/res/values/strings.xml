@@ -8,6 +8,19 @@
     <string name="common_menu_button_description">메뉴</string>
     <string name="network_error_message">네트워크 에러가 발생했습니다.</string>
 
+    <!--  에러 메시지 (Error Messages)  -->
+    <string name="error_network">네트워크 연결을 확인해주세요</string>
+    <string name="error_auth">로그인이 필요합니다</string>
+    <string name="error_server">서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요</string>
+    <string name="error_client">잘못된 요청입니다</string>
+    <string name="error_timeout">요청 시간이 초과되었습니다. 다시 시도해주세요</string>
+    <string name="error_unknown">알 수 없는 오류가 발생했습니다</string>
+    <string name="error_default">오류가 발생했습니다</string>
+    <string name="error_bad_request">잘못된 요청입니다</string>
+    <string name="error_unauthorized">인증에 실패했습니다. 다시 로그인해주세요</string>
+    <string name="error_forbidden">권한이 없습니다</string>
+    <string name="error_not_found">요청하신 정보를 찾을 수 없습니다</string>
+
     <!--  스플래쉬 (Splash)  -->
     <string name="near_splash_background">스플래쉬 배경</string>
 
@@ -92,7 +105,7 @@
     <string name="editor_exit_content">화면을 나가면 \n수정 내용은 저장되지 않아요.</string>
     <string name="editor_exit_confirm">확인</string>
     <string name="editor_exit_dismiss">취소</string>
-    
+
     <!-- editor save confirm dialog   -->
     <string name="editor_save_confirm_content">수정을 완료하시겠습니까?</string>
     <string name="editor_save_confirm_save">저장</string>
@@ -128,7 +141,7 @@
     <string name="withdraw_other_reason_placeholder">편하게 의견을 남겨주세요.</string>
     <string name="withdraw_cancel_button">그만두기</string>
     <string name="withdraw_confirm_button">탈퇴하기</string>
-    
+
     <!-- withdraw confirm dialog   -->
     <string name="withdraw_confirm_content">탈퇴 시 계정 및 이용 내역이\n모두 삭제되며, 복구가 불가능합니다.\n정말 탈퇴하시겠습니까?</string>
     <string name="withdraw_confirm_cancel">취소</string>
@@ -141,7 +154,7 @@
     <string name="terms_service_agreed">서비스 이용약관</string>
     <string name="terms_personal_info">개인정보 수집 및 이용동의</string>
     <string name="terms_privacy_policy">개인정보 처리방침</string>
-    
+
     <!-- 개인정보 동의 바텀시트 (Privacy Consent BottomSheet) -->
     <string name="privacy_consent_title">서비스 약관 동의</string>
     <string name="privacy_consent_all_agreement">약관 전체 동의</string>
