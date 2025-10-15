@@ -18,7 +18,7 @@ android {
         applicationId = "com.alarmy.near"
         minSdk = 27
         targetSdk = 35
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -107,7 +107,7 @@ dependencies {
 
     // Splash Screen API
     implementation(libs.androidx.core.splashscreen)
-    
+
     // libphonenumber-android for phone number formatting
     implementation("io.michaelrocks:libphonenumber-android:9.0.15")
 }
