@@ -40,9 +40,9 @@ object NetworkModule {
         OkHttpClient
             .Builder()
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(testTokenInterceptor)
-//            .addInterceptor(tokenInterceptor)
-//            .authenticator(tokenAuthenticator)
+//            .addInterceptor(testTokenInterceptor)
+            .addInterceptor(tokenInterceptor)
+            .authenticator(tokenAuthenticator)
             .build()
 
     @Provides
