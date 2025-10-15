@@ -91,14 +91,12 @@ fun FriendProfileRoute(
     val friendState = viewModel.friendFlow.collectAsStateWithLifecycle()
     val friendShipRecordState = viewModel.friendShipRecordStateFlow.collectAsStateWithLifecycle()
     val recordSuccessDialogState = remember { mutableStateOf(false) }
+
+    // UI 이벤트 처리
     LaunchedEffect(viewModel.uiEvent) {
         launch {
             viewModel.uiEvent.collect { event ->
                 when (event) {
-                    is FriendProfileUIEvent.NetworkError -> {
-                        onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
-                    }
-
                     is FriendProfileUIEvent.DeleteFriendSuccess -> {
                         onDeleteFriendSuccess(event.friendId)
                     }
@@ -110,6 +108,14 @@ fun FriendProfileRoute(
             }
         }
     }
+
+    // 에러 이벤트 처리
+    LaunchedEffect(viewModel.errorEvent) {
+        viewModel.errorEvent.collect { throwable ->
+            onShowErrorSnackBar(throwable)
+        }
+    }
+
     FriendProfileScreen(
         friendState = friendState.value,
         friendShipRecordState = friendShipRecordState.value,

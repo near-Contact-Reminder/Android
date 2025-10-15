@@ -1,9 +1,9 @@
 package com.alarmy.near.presentation.feature.friendprofileedittor
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
@@ -18,7 +18,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ class FriendProfileEditorViewModel
     constructor(
         savedStateHandle: SavedStateHandle,
         private val friendRepository: FriendRepository,
-    ) : ViewModel() {
+    ) : BaseViewModel() {
         private val friend: Friend =
             savedStateHandle.toRoute<RouteFriendProfileEditor>(RouteFriendProfileEditor.routeTypeMap).friend
 
@@ -193,8 +192,8 @@ class FriendProfileEditorViewModel
                                 phone = friend.phone ?: "",
                                 lastContactAt = friend.lastContactAt ?: "",
                             ),
-                    ).catch {
-                    }.collect {
+                    ).handleError()
+                    .collect {
                         _uiEvent.send(FriendProfileEditorUIEvent.FriendProfileEditSuccess(it))
                     }
             }

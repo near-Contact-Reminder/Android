@@ -1,9 +1,9 @@
 package com.alarmy.near.presentation.feature.friendprofile
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.FriendRecord
@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -33,7 +32,7 @@ class FriendProfileViewModel
     constructor(
         savedStateHandle: SavedStateHandle,
         private val friendRepository: FriendRepository,
-    ) : ViewModel() {
+    ) : BaseViewModel() {
         private val friendId: String =
             savedStateHandle.toRoute<RouteFriendProfile>().friendId
         private val _uiEvent = Channel<FriendProfileUIEvent>()
@@ -56,9 +55,9 @@ class FriendProfileViewModel
                 .fetchFriendById(friendId)
                 .onEach { friend ->
                     _friendFlow.value = FriendState.Success(friend)
-                }.catch { error ->
+                }.catch { throwable ->
                     _friendFlow.value = FriendState.Error("데이터를 가져오는데 실패했습니다.")
-                    _uiEvent.send(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
+                    handleError(throwable)
                 }.launchIn(viewModelScope)
         }
 
@@ -73,14 +72,14 @@ class FriendProfileViewModel
                             isLoading = false,
                         )
                     }
-                }.catch { error ->
+                }.catch { throwable ->
                     _friendShipRecordStateFlow.update {
                         it.copy(
                             isEmpty = true,
                             isLoading = false,
                         )
                     }
-                    _uiEvent.send(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
+                    handleError(throwable)
                 }.launchIn(viewModelScope)
         }
 
@@ -90,8 +89,8 @@ class FriendProfileViewModel
                 .onEach {
                     _uiEvent.send(FriendProfileUIEvent.DeleteFriendSuccess(friendId))
                     // event
-                }.catch { error ->
-                    _uiEvent.send(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
+                }.catch { throwable ->
+                    handleError(throwable)
                 }.launchIn(viewModelScope)
         }
 
@@ -123,8 +122,8 @@ class FriendProfileViewModel
                     }
 
                     // event
-                }.catch { error ->
-                    _uiEvent.send(FriendProfileUIEvent.NetworkError) // UI에서 단발성 이벤트로도 쓸 수 있음
+                }.catch { throwable ->
+                    handleError(throwable)
                 }.launchIn(viewModelScope)
         }
 
