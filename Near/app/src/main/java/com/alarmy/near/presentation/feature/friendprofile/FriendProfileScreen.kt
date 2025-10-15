@@ -142,7 +142,7 @@ fun FriendProfileScreen(
 ) {
     val currentTabPosition = remember { mutableIntStateOf(0) }
     val dropdownState = remember { mutableStateOf(false) }
-    val scrollState = rememberScrollState()
+//    val scrollState = rememberScrollState()
 
     NearFrame(modifier = modifier) {
         Box {
@@ -154,7 +154,7 @@ fun FriendProfileScreen(
                             Modifier
                                 .align(Alignment.TopStart)
                                 .fillMaxSize()
-                                .verticalScroll(scrollState)
+//                                .verticalScroll(scrollState)
                                 .background(NearTheme.colors.WHITE_FFFFFF),
                     ) {
                         if (recordSuccessDialogState) {
