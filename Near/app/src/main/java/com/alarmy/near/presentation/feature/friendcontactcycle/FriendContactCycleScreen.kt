@@ -70,8 +70,14 @@ internal fun FriendContactCycleRoute(
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is FriendContactUIEvent.NavigateToHome -> onNavigateToHome()
-                is FriendContactUIEvent.ShowError -> onShowErrorSnackBar(event.throwable)
             }
+        }
+    }
+
+    // 에러 이벤트 처리
+    LaunchedEffect(viewModel.errorEvent) {
+        viewModel.errorEvent.collect { throwable ->
+            onShowErrorSnackBar(throwable)
         }
     }
 

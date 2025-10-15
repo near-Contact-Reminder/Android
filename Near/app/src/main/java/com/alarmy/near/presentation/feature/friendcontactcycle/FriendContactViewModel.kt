@@ -1,8 +1,8 @@
 package com.alarmy.near.presentation.feature.friendcontactcycle
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alarmy.near.core.viewmodel.BaseViewModel
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.model.ProviderType
@@ -31,7 +31,7 @@ class FriendContactViewModel
         private val savedStateHandle: SavedStateHandle,
         private val friendRepository: FriendRepository,
         private val memberRepository: MemberRepository,
-    ) : ViewModel() {
+    ) : BaseViewModel() {
         private val _uiState = MutableStateFlow(FriendContactUIState())
         val uiState: StateFlow<FriendContactUIState> = _uiState.asStateFlow()
 
@@ -227,7 +227,7 @@ class FriendContactViewModel
                         }
                 } catch (e: Exception) {
                     _uiState.value = _uiState.value.copy(isLoading = false)
-                    _uiEvent.send(FriendContactUIEvent.ShowError(e))
+                    handleError(e, "친구 초기 설정에 실패했습니다")
                 }
             }
         }
