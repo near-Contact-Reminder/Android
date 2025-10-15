@@ -13,7 +13,6 @@ import com.alarmy.near.network.service.FriendService
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.utils.extensions.apiCallFlow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class DefaultFriendRepository
@@ -22,51 +21,42 @@ class DefaultFriendRepository
         private val friendService: FriendService,
     ) : FriendRepository {
         override fun fetchFriends(): Flow<List<FriendSummary>> =
-            flow {
-                emit(
-                    friendService.fetchFriends().map {
-                        it.toModel()
-                    },
-                )
+            apiCallFlow {
+                friendService.fetchFriends().map { it.toModel() }
             }
 
         override fun fetchMonthlyFriends(): Flow<List<MonthlyFriend>> =
-            flow {
-                emit(
-                    friendService.fetchMonthlyFriends().map {
-                        it.toModel()
-                    },
-                )
+            apiCallFlow {
+                friendService.fetchMonthlyFriends().map { it.toModel() }
             }
 
         override fun fetchFriendById(friendId: String): Flow<Friend> =
-            flow {
-                emit(friendService.fetchFriendById(friendId).toModel())
+            apiCallFlow {
+                friendService.fetchFriendById(friendId).toModel()
             }
 
         override fun updateFriend(
             friendId: String,
             friend: Friend,
         ): Flow<Friend> =
-            flow {
-                emit(friendService.updateFriend(friendId, friend.toRequest()).toModel())
+            apiCallFlow {
+                friendService.updateFriend(friendId, friend.toRequest()).toModel()
             }
 
         override fun deleteFriend(friendId: String): Flow<Unit> =
-            flow {
+            apiCallFlow {
                 friendService.deleteFriend(friendId)
-                emit(Unit)
             }
 
         override fun fetchFriendRecord(friendId: String): Flow<List<FriendRecord>> =
-            flow {
-                emit(friendService.fetchFriendRecord(friendId).map { it.toModel() })
+            apiCallFlow {
+                friendService.fetchFriendRecord(friendId).map { it.toModel() }
             }
 
         override fun recordContact(friendId: String): Flow<String> =
-            flow {
+            apiCallFlow {
                 val response = friendService.recordContact(friendId)
-                emit(response.message) // CommonMessageEntity.message 라고 가정
+                response.message // CommonMessageEntity.message 라고 가정
             }
 
         override fun initFriends(
