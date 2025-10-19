@@ -35,6 +35,10 @@ class LoginViewModel
         private val _loginState = MutableStateFlow(LoginState())
         val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
+        // 임시 토큰 저장 (개인정보 동의 전)
+        private var tempAccessToken: String? = null
+        private var tempProviderType: ProviderType? = null
+
         // 개별 상태들을 편의를 위해 노출
         val termsAgreementState: StateFlow<TermsAgreementState> =
             _loginState
@@ -61,8 +65,12 @@ class LoginViewModel
                 updateLoadingState(isLoading = true)
                 authRepository
                     .performSocialLogin(providerType)
-                    .onSuccess {
+                    .onSuccess { accessToken ->
                         updateLoadingState(isLoading = false)
+                        // 토큰을 ViewModel 내부에 임시 저장
+                        tempAccessToken = accessToken
+                        tempProviderType = providerType
+                        // 개인정보 동의 바텀시트 표시
                         _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = true)
                     }.onFailure { exception ->
                         updateLoadingState(isLoading = false)
@@ -76,8 +84,23 @@ class LoginViewModel
          */
         fun onPrivacyConsentComplete() {
             viewModelScope.launch {
-                _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
-                _event.send(LoginEvent.NavigateToHome)
+                val accessToken = tempAccessToken
+                val providerType = tempProviderType
+
+                updateLoadingState(isLoading = true)
+                authRepository
+                    .socialLogin(accessToken!!, providerType!!)
+                    .onSuccess {
+                        updateLoadingState(isLoading = false)
+                        _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
+                        tempAccessToken = null
+                        tempProviderType = null
+                        _event.send(LoginEvent.NavigateToHome)
+                    }.onFailure { exception ->
+                        updateLoadingState(isLoading = false)
+                        _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
+                        _event.send(LoginEvent.ShowError(exception))
+                    }
             }
         }
 
@@ -86,6 +109,8 @@ class LoginViewModel
          */
         fun dismissPrivacyBottomSheet() {
             _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
+            tempAccessToken = null
+            tempProviderType = null
         }
 
         /**

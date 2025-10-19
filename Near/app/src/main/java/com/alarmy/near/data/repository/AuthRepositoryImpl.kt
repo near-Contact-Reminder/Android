@@ -16,13 +16,13 @@ class AuthRepositoryImpl
         private val socialLoginProcessor: SocialLoginProcessor,
         private val tokenManager: TokenManager,
     ) : AuthRepository {
-        override suspend fun performSocialLogin(providerType: ProviderType): Result<Unit> =
+        override suspend fun performSocialLogin(providerType: ProviderType): Result<String> =
             try {
                 val result = socialLoginProcessor.processLogin(providerType)
 
                 if (result.isSuccess) {
                     val accessToken = result.getOrThrow()
-                    socialLogin(accessToken, providerType)
+                    Result.success(accessToken)
                 } else {
                     Result.failure(
                         createLoginException(

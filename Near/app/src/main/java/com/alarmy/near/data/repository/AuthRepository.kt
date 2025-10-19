@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     // 소셜 로그인 수행
-    suspend fun performSocialLogin(providerType: ProviderType): Result<Unit>
+    suspend fun performSocialLogin(providerType: ProviderType): Result<String>
 
     /**
      * 소셜 로그인 수행 (토큰 직접 전달)
