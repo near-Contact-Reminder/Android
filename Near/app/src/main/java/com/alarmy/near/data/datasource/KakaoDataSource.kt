@@ -29,6 +29,8 @@ class KakaoDataSource
 
         override suspend fun login(): Result<String> =
             try {
+                unlinkKakaoAccount()
+
                 // Activity Context 우선 사용, 없으면 Application Context 사용
                 val activityContext = activityContextProvider.getActivityContext()
                 val context = activityContext ?: applicationContext
@@ -47,6 +49,16 @@ class KakaoDataSource
                 }
             } catch (exception: Exception) {
                 Result.failure(exception)
+            }
+
+        /**
+         * 카카오 계정 연결 끊기
+         */
+        private suspend fun unlinkKakaoAccount() =
+            suspendCancellableCoroutine { continuation ->
+                UserApiClient.instance.unlink { error ->
+                    continuation.resume(Unit)
+                }
             }
 
         private suspend fun loginWithKakaoTalk(context: Context): String =
