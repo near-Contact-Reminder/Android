@@ -1,6 +1,7 @@
 package com.alarmy.near.data.datasource
 
 import android.content.Context
+import com.alarmy.near.data.provider.ActivityContextProvider
 import com.alarmy.near.model.ProviderType
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -21,17 +22,22 @@ import kotlin.coroutines.resume
 class KakaoDataSource
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @ApplicationContext private val applicationContext: Context,
+        private val activityContextProvider: ActivityContextProvider,
     ) : SocialLoginDataSource {
         override val supportedType: ProviderType = ProviderType.KAKAO
 
         override suspend fun login(): Result<String> =
             try {
+                // Activity Context 우선 사용, 없으면 Application Context 사용
+                val activityContext = activityContextProvider.getActivityContext()
+                val context = activityContext ?: applicationContext
+
                 val token =
                     if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-                        loginWithKakaoTalk()
+                        loginWithKakaoTalk(context)
                     } else {
-                        loginWithKakaoAccount()
+                        loginWithKakaoAccount(context)
                     }
 
                 if (token.isNotEmpty()) {
@@ -43,18 +49,12 @@ class KakaoDataSource
                 Result.failure(exception)
             }
 
-        private suspend fun loginWithKakaoTalk(): String =
+        private suspend fun loginWithKakaoTalk(context: Context): String =
             suspendCancellableCoroutine { continuation ->
                 UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                     when {
                         error != null -> {
-                            if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                                continuation.resume("")
-                            } else {
-                                UserApiClient.instance.loginWithKakaoAccount(context) { retryToken, retryError ->
-                                    handleLoginResult(retryToken, retryError, continuation)
-                                }
-                            }
+                            continuation.resume("")
                         }
                         token != null -> continuation.resume(token.accessToken)
                         else -> continuation.resume("")
@@ -62,7 +62,7 @@ class KakaoDataSource
                 }
             }
 
-        private suspend fun loginWithKakaoAccount(): String =
+        private suspend fun loginWithKakaoAccount(context: Context): String =
             suspendCancellableCoroutine { continuation ->
                 UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
                     handleLoginResult(token, error, continuation)

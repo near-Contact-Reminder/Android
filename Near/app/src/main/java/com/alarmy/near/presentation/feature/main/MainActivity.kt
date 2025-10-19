@@ -10,18 +10,27 @@ import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.alarmy.near.presentation.provider.ActivityContextProviderImpl
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
 
+    @Inject
+    lateinit var activityContextProvider: ActivityContextProviderImpl
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
 
         super.onCreate(savedInstanceState)
+
+        // Activity Context 설정
+        activityContextProvider.setActivityContext(this)
+
         enableEdgeToEdge()
         setupSplashScreen(splashScreen)
 
@@ -35,6 +44,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Activity Context 제거
+        activityContextProvider.setActivityContext(null)
     }
 
     /**
