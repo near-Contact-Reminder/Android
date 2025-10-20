@@ -87,12 +87,20 @@ class LoginViewModel
                 val accessToken = tempAccessToken
                 val providerType = tempProviderType
 
+                // 프로세스 종료로 인한 데이터 유실 방어
+                if (accessToken == null || providerType == null) {
+                    _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
+                    _event.send(LoginEvent.ShowError(Exception("로그인 정보가 유실되었습니다. 다시 시도해주세요.")))
+                    return@launch
+                }
+
                 updateLoadingState(isLoading = true)
                 authRepository
-                    .socialLogin(accessToken!!, providerType!!)
+                    .socialLogin(accessToken, providerType)
                     .onSuccess {
                         updateLoadingState(isLoading = false)
                         _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
+                        // 임시 토큰 초기화
                         tempAccessToken = null
                         tempProviderType = null
                         _event.send(LoginEvent.NavigateToHome)
