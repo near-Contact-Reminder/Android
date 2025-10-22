@@ -97,6 +97,7 @@ internal fun LoginRoute(
             when (providerType) {
                 ProviderType.KAKAO -> {
                     scope.launch {
+                        unlinkKakao()
                         performKakaoLogin(
                             context = context,
                             onSuccess = { accessToken ->
@@ -248,8 +249,6 @@ private suspend fun performKakaoLogin(
     onFailure: (Throwable) -> Unit,
 ) {
     try {
-        logoutKakao()
-
         val accessToken =
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
                 loginWithKakaoTalk(context)
@@ -270,9 +269,9 @@ private suspend fun performKakaoLogin(
 /**
  * 카카오 로그아웃
  */
-private suspend fun logoutKakao(): Unit =
+private suspend fun unlinkKakao(): Unit =
     suspendCancellableCoroutine { continuation ->
-        UserApiClient.instance.logout { error ->
+        UserApiClient.instance.unlink { error ->
             continuation.resume(Unit)
         }
     }
