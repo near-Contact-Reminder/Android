@@ -60,17 +60,13 @@ class LoginViewModel
             accessToken: String,
             providerType: ProviderType,
         ) {
-            viewModelScope.launch {
-                authRepository
-                    .performSocialLogin(accessToken, providerType)
-                    .onSuccess {
-                        updateLoadingState(isLoading = false)
-                        _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = true)
-                    }.onFailure { exception ->
-                        updateLoadingState(isLoading = false)
-                        _event.send(LoginEvent.ShowError(exception))
-                    }
-            }
+            updateLoadingState(isLoading = false)
+            _loginState.value =
+                _loginState.value.copy(
+                    socialLoginToken = accessToken,
+                    providerType = providerType,
+                    showPrivacyBottomSheet = true,
+                )
         }
 
         /**
@@ -88,8 +84,31 @@ class LoginViewModel
          */
         fun onPrivacyConsentComplete() {
             viewModelScope.launch {
-                _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
-                _event.send(LoginEvent.NavigateToHome)
+                val currentState = _loginState.value
+                val token = currentState.socialLoginToken
+                val providerType = currentState.providerType
+
+                if (token == null || providerType == null) {
+                    _event.send(LoginEvent.ShowError(Exception("로그인 정보가 없습니다")))
+                    return@launch
+                }
+
+                updateLoadingState(isLoading = true)
+                authRepository
+                    .performSocialLogin(token, providerType)
+                    .onSuccess {
+                        updateLoadingState(isLoading = false)
+                        _loginState.value =
+                            _loginState.value.copy(
+                                showPrivacyBottomSheet = false,
+                                socialLoginToken = null,
+                                providerType = null,
+                            )
+                        _event.send(LoginEvent.NavigateToHome)
+                    }.onFailure { exception ->
+                        updateLoadingState(isLoading = false)
+                        _event.send(LoginEvent.ShowError(exception))
+                    }
             }
         }
 
@@ -97,7 +116,12 @@ class LoginViewModel
          * 프라이버시 바텀시트 닫기
          */
         fun dismissPrivacyBottomSheet() {
-            _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
+            _loginState.value =
+                _loginState.value.copy(
+                    showPrivacyBottomSheet = false,
+                    socialLoginToken = null,
+                    providerType = null,
+                )
         }
 
         /**
@@ -180,6 +204,8 @@ data class LoginState(
     val termsAgreementState: TermsAgreementState = TermsAgreementState(),
     val hasNavigatedToWebView: Boolean = false,
     val showPrivacyBottomSheet: Boolean = false,
+    val socialLoginToken: String? = null,
+    val providerType: ProviderType? = null,
 )
 
 /**
