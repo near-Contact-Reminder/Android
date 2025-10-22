@@ -110,7 +110,7 @@ internal fun LoginRoute(
                     }
                 }
 
-                ProviderType.ETC -> TODO()
+                ProviderType.ETC -> {  }
             }
         },
     )
