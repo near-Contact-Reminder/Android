@@ -40,6 +40,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 @Composable
@@ -247,6 +248,8 @@ private suspend fun performKakaoLogin(
     onFailure: (Throwable) -> Unit,
 ) {
     try {
+        logoutKakao()
+
         val accessToken =
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
                 loginWithKakaoTalk(context)
@@ -265,10 +268,20 @@ private suspend fun performKakaoLogin(
 }
 
 /**
+ * 카카오 로그아웃
+ */
+private suspend fun logoutKakao(): Unit =
+    suspendCancellableCoroutine { continuation ->
+        UserApiClient.instance.logout { error ->
+            continuation.resume(Unit)
+        }
+    }
+
+/**
  * 카카오톡으로 로그인
  */
 private suspend fun loginWithKakaoTalk(context: android.content.Context): String =
-    kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
+    suspendCancellableCoroutine { continuation ->
         UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
             when {
                 error != null -> {
@@ -285,7 +298,7 @@ private suspend fun loginWithKakaoTalk(context: android.content.Context): String
  * 카카오 계정으로 로그인
  */
 private suspend fun loginWithKakaoAccount(context: android.content.Context): String =
-    kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
+    suspendCancellableCoroutine { continuation ->
         UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
             handleKakaoLoginResult(token, error, continuation)
         }
