@@ -272,14 +272,7 @@ private suspend fun loginWithKakaoTalk(context: android.content.Context): String
         UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
             when {
                 error != null -> {
-                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                        continuation.resume("")
-                    } else {
-                        // 카카오톡 로그인 실패 시 카카오 계정으로 재시도
-                        UserApiClient.instance.loginWithKakaoAccount(context) { retryToken, retryError ->
-                            handleKakaoLoginResult(retryToken, retryError, continuation)
-                        }
-                    }
+                    continuation.resume("")
                 }
 
                 token != null -> continuation.resume(token.accessToken)
