@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +35,12 @@ import com.alarmy.near.R
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
 
 @Composable
 internal fun LoginRoute(
@@ -45,6 +53,8 @@ internal fun LoginRoute(
     val showPrivacyBottomSheet by viewModel.showPrivacyBottomSheet.collectAsStateWithLifecycle()
     val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     // 약관 제목을 미리 가져옴
     val termsTitles =
@@ -83,7 +93,23 @@ internal fun LoginRoute(
     LoginScreen(
         uiState = uiState,
         onLoginClick = { providerType ->
-            viewModel.performLogin(providerType)
+            when (providerType) {
+                ProviderType.KAKAO -> {
+                    scope.launch {
+                        performKakaoLogin(
+                            context = context,
+                            onSuccess = { accessToken ->
+                                viewModel.onSocialLoginSuccess(accessToken, ProviderType.KAKAO)
+                            },
+                            onFailure = { exception ->
+                                viewModel.onSocialLoginFailure(exception)
+                            },
+                        )
+                    }
+                }
+
+                ProviderType.ETC -> TODO()
+            }
         },
     )
 
@@ -210,6 +236,88 @@ private object LoginScreenConstants {
     const val LOGO_SIZE = 160
     const val DESCRIPTION_SPACING = 12
     const val BOTTOM_SPACING = 96
+}
+
+/**
+ * 카카오 로그인 수행
+ */
+private suspend fun performKakaoLogin(
+    context: android.content.Context,
+    onSuccess: (String) -> Unit,
+    onFailure: (Throwable) -> Unit,
+) {
+    try {
+        val accessToken =
+            if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+                loginWithKakaoTalk(context)
+            } else {
+                loginWithKakaoAccount(context)
+            }
+
+        if (accessToken.isNotEmpty()) {
+            onSuccess(accessToken)
+        } else {
+            onFailure(Exception("사용자가 로그인을 취소했습니다"))
+        }
+    } catch (exception: Exception) {
+        onFailure(exception)
+    }
+}
+
+/**
+ * 카카오톡으로 로그인
+ */
+private suspend fun loginWithKakaoTalk(context: android.content.Context): String =
+    kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
+        UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+            when {
+                error != null -> {
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        continuation.resume("")
+                    } else {
+                        // 카카오톡 로그인 실패 시 카카오 계정으로 재시도
+                        UserApiClient.instance.loginWithKakaoAccount(context) { retryToken, retryError ->
+                            handleKakaoLoginResult(retryToken, retryError, continuation)
+                        }
+                    }
+                }
+
+                token != null -> continuation.resume(token.accessToken)
+                else -> continuation.resume("")
+            }
+        }
+    }
+
+/**
+ * 카카오 계정으로 로그인
+ */
+private suspend fun loginWithKakaoAccount(context: android.content.Context): String =
+    kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
+        UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+            handleKakaoLoginResult(token, error, continuation)
+        }
+    }
+
+/**
+ * 카카오 로그인 결과 처리
+ */
+private fun handleKakaoLoginResult(
+    token: OAuthToken?,
+    error: Throwable?,
+    continuation: kotlinx.coroutines.CancellableContinuation<String>,
+) {
+    when {
+        error != null -> {
+            if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                continuation.resume("")
+            } else {
+                continuation.resumeWith(Result.failure(error))
+            }
+        }
+
+        token != null -> continuation.resume(token.accessToken)
+        else -> continuation.resume("")
+    }
 }
 
 @Preview(showBackground = true)

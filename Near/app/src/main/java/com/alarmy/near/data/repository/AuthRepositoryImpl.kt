@@ -1,6 +1,5 @@
 package com.alarmy.near.data.repository
 
-import com.alarmy.near.data.datasource.SocialLoginProcessor
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.network.auth.TokenManager
 import com.alarmy.near.network.request.SocialLoginRequest
@@ -13,36 +12,9 @@ class AuthRepositoryImpl
     @Inject
     constructor(
         private val authService: AuthService,
-        private val socialLoginProcessor: SocialLoginProcessor,
         private val tokenManager: TokenManager,
     ) : AuthRepository {
-        override suspend fun performSocialLogin(providerType: ProviderType): Result<Unit> =
-            try {
-                val result = socialLoginProcessor.processLogin(providerType)
-
-                if (result.isSuccess) {
-                    val accessToken = result.getOrThrow()
-                    socialLogin(accessToken, providerType)
-                } else {
-                    Result.failure(
-                        createLoginException(
-                            providerType = providerType,
-                            errorMessage = result.exceptionOrNull()?.message,
-                            defaultMessage = "로그인에 실패했습니다",
-                        ),
-                    )
-                }
-            } catch (exception: Exception) {
-                Result.failure(
-                    createLoginException(
-                        providerType = providerType,
-                        errorMessage = exception.message,
-                        defaultMessage = "로그인 중 오류가 발생했습니다",
-                    ),
-                )
-            }
-
-        override suspend fun socialLogin(
+        override suspend fun performSocialLogin(
             accessToken: String,
             providerType: ProviderType,
         ): Result<Unit> =
@@ -93,15 +65,6 @@ class AuthRepositoryImpl
         override fun observeLoginStatus(): Flow<Boolean> = tokenManager.observeLoginStatus()
 
         override suspend fun refreshToken(): Boolean = tokenManager.refreshToken()
-
-        private fun createLoginException(
-            providerType: ProviderType,
-            errorMessage: String?,
-            defaultMessage: String,
-        ): Exception {
-            val finalMessage = errorMessage ?: "$providerType $defaultMessage"
-            return Exception(finalMessage)
-        }
 
         // TODO 추후 에러 메시지 변경
         private fun getHttpErrorMessage(httpCode: Int): String =

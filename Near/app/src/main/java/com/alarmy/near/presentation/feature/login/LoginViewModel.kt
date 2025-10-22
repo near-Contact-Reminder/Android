@@ -56,11 +56,13 @@ class LoginViewModel
         /**
          * 소셜 로그인 수행
          */
-        fun performLogin(providerType: ProviderType) {
+        fun onSocialLoginSuccess(
+            accessToken: String,
+            providerType: ProviderType,
+        ) {
             viewModelScope.launch {
-                updateLoadingState(isLoading = true)
                 authRepository
-                    .performSocialLogin(providerType)
+                    .performSocialLogin(accessToken, providerType)
                     .onSuccess {
                         updateLoadingState(isLoading = false)
                         _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = true)
@@ -68,6 +70,16 @@ class LoginViewModel
                         updateLoadingState(isLoading = false)
                         _event.send(LoginEvent.ShowError(exception))
                     }
+            }
+        }
+
+        /**
+         * 소셜 로그인 실패 시 에러 처리
+         */
+        fun onSocialLoginFailure(exception: Throwable) {
+            viewModelScope.launch {
+                updateLoadingState(isLoading = false)
+                _event.send(LoginEvent.ShowError(exception))
             }
         }
 
