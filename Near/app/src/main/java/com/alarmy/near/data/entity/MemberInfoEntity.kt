@@ -12,6 +12,6 @@ data class MemberInfoEntity(
     val username: String,
     val nickname: String,
     val imageUrl: String?,
-    val notificationAgreedAt: String?,
+    val notificationAgreedAt: String? = "", // TODO #Issue: 52 Default 값 추후 제거 필요
     val providerType: String,
 )

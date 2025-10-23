@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.feature.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.FriendRepository
@@ -32,11 +33,15 @@ class HomeViewModel
 
         val errorEvent = _errorEvent.receiveAsFlow()
         val memberInfoFlow: StateFlow<MemberInfo?> =
-            memberRepository.getMyInfo().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5_000),
-                null,
-            )
+            memberRepository
+                .getMyInfo()
+                .catch {
+                    _errorEvent.send(it)
+                }.stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(5_000),
+                    null,
+                )
 
         val friendsFlow: StateFlow<List<FriendSummary>> =
             combine(
@@ -45,14 +50,13 @@ class HomeViewModel
                 deletedFriendIdsFlow,
             ) { friends, deletedIds ->
                 friends.filter { it.id !in deletedIds }
-            }
-                .catch {
-                    _errorEvent.send(it)
-                }.stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = emptyList(),
-                )
+            }.catch {
+                _errorEvent.send(it)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList(),
+            )
 
         val monthlyFriendFlow:
             StateFlow<List<MonthlyFriend>> =
@@ -70,5 +74,5 @@ class HomeViewModel
             viewModelScope.launch {
                 deletedFriendIdsFlow.emit(deletedFriendIdsFlow.value + friendId)
             }
+        }
     }
-}
