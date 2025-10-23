@@ -19,6 +19,8 @@ class AuthRepositoryImpl
             providerType: ProviderType,
         ): Result<Unit> =
             try {
+                validateAccessToken(accessToken)
+
                 val request =
                     SocialLoginRequest(
                         accessToken = accessToken,
@@ -43,6 +45,15 @@ class AuthRepositoryImpl
                 val errorMessage = exception.message ?: "알 수 없는 오류가 발생했습니다"
                 Result.failure(Exception(errorMessage))
             }
+
+        private fun validateAccessToken(accessToken: String) {
+            require(accessToken.isNotBlank()) {
+                "액세스 토큰이 비어있습니다"
+            }
+            require(accessToken.length >= MIN_TOKEN_LENGTH) {
+                "액세스 토큰 형식이 올바르지 않습니다"
+            }
+        }
 
         override suspend fun logout() {
             tokenManager.clearAllTokens()
@@ -75,4 +86,8 @@ class AuthRepositoryImpl
                 500 -> "서버에 문제가 발생했습니다"
                 else -> "로그인 중 오류가 발생했습니다"
             }
+
+        companion object {
+            private const val MIN_TOKEN_LENGTH = 10
+        }
     }
