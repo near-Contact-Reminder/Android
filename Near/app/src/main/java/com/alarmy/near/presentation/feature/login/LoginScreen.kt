@@ -109,7 +109,7 @@ internal fun LoginRoute(
                     }
                 }
 
-                ProviderType.ETC -> {  }
+                // 다른 로그인 타입이 추가된 경우 ProviderType 수정
             }
         },
     )
