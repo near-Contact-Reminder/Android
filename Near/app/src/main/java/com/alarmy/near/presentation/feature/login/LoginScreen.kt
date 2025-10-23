@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.feature.login
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -97,7 +98,6 @@ internal fun LoginRoute(
             when (providerType) {
                 ProviderType.KAKAO -> {
                     scope.launch {
-                        unlinkKakao()
                         performKakaoLogin(
                             context = context,
                             onSuccess = { accessToken ->
@@ -244,10 +244,11 @@ private object LoginScreenConstants {
  * 카카오 로그인 수행
  */
 private suspend fun performKakaoLogin(
-    context: android.content.Context,
+    context: Context,
     onSuccess: (String) -> Unit,
     onFailure: (Throwable) -> Unit,
 ) {
+    unlinkKakao()
     try {
         val accessToken =
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
