@@ -102,6 +102,7 @@ class FriendProfileViewModel
                     _uiEvent.send(FriendProfileUIEvent.RecordFriendShipSuccess)
                     _friendShipRecordStateFlow.update { recordState ->
                         recordState.copy(
+                            isEmpty = false,
                             records =
                                 listOf(
                                     FriendRecord(
