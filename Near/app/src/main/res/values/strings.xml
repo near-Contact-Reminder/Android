@@ -25,6 +25,7 @@
     <string name="near_logo_title">Near 타이틀</string>
     <string name="login_near_description">소중한 사람들과 더 가까워지는 시간</string>
     <string name="login_kakao_login_button_text">카카오 로그인 버튼</string>
+    <string name="login_user_cancelled">사용자가 로그인을 취소했습니다</string>
 
     <!-- home  -->
     <string name="home_my_profile_button_text">MY</string>

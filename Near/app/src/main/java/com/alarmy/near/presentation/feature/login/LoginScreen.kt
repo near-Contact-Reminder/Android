@@ -37,9 +37,8 @@ import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -256,12 +255,7 @@ private suspend fun performKakaoLogin(
             } else {
                 loginWithKakaoAccount(context)
             }
-
-        if (accessToken.isNotEmpty()) {
-            onSuccess(accessToken)
-        } else {
-            onFailure(Exception("사용자가 로그인을 취소했습니다"))
-        }
+        onSuccess(accessToken)
     } catch (exception: Exception) {
         onFailure(exception)
     }
@@ -280,27 +274,30 @@ private suspend fun unlinkKakao(): Unit =
 /**
  * 카카오톡으로 로그인
  */
-private suspend fun loginWithKakaoTalk(context: android.content.Context): String =
+private suspend fun loginWithKakaoTalk(context: Context): String =
     suspendCancellableCoroutine { continuation ->
         UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-            when {
-                error != null -> {
-                    continuation.resume("")
-                }
-
-                token != null -> continuation.resume(token.accessToken)
-                else -> continuation.resume("")
-            }
+            handleKakaoLoginResult(
+                token,
+                error,
+                context.getString(R.string.login_user_cancelled),
+                continuation,
+            )
         }
     }
 
 /**
  * 카카오 계정으로 로그인
  */
-private suspend fun loginWithKakaoAccount(context: android.content.Context): String =
+private suspend fun loginWithKakaoAccount(context: Context): String =
     suspendCancellableCoroutine { continuation ->
         UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
-            handleKakaoLoginResult(token, error, continuation)
+            handleKakaoLoginResult(
+                token,
+                error,
+                context.getString(R.string.login_user_cancelled),
+                continuation,
+            )
         }
     }
 
@@ -310,19 +307,19 @@ private suspend fun loginWithKakaoAccount(context: android.content.Context): Str
 private fun handleKakaoLoginResult(
     token: OAuthToken?,
     error: Throwable?,
-    continuation: kotlinx.coroutines.CancellableContinuation<String>,
+    cancelledMessage: String,
+    continuation: CancellableContinuation<String>,
 ) {
     when {
         error != null -> {
-            if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                continuation.resume("")
-            } else {
-                continuation.resumeWith(Result.failure(error))
-            }
+            continuation.resumeWith(Result.failure(Exception(cancelledMessage)))
         }
 
         token != null -> continuation.resume(token.accessToken)
-        else -> continuation.resume("")
+        else ->
+            continuation.resumeWith(
+                Result.failure(Exception(cancelledMessage)),
+            )
     }
 }
 
