@@ -37,6 +37,10 @@ import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ApiError
+import com.kakao.sdk.common.model.AuthError
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.launch
@@ -256,6 +260,18 @@ private suspend fun performKakaoLogin(
                 loginWithKakaoAccount(context)
             }
         onSuccess(accessToken)
+    } catch (error: AuthError) {
+        // OAuth 인증 과정 에러
+        onFailure(Exception(context.getString(R.string.login_auth_error)))
+    } catch (error: ApiError) {
+        // API 호출 에러
+        onFailure(Exception(context.getString(R.string.login_api_error)))
+    } catch (error: ClientError) {
+        // SDK 내부 에러
+        onFailure(Exception(context.getString(R.string.login_client_error)))
+    } catch (error: KakaoSdkError) {
+        // 카카오 SDK 에러
+        onFailure(Exception(context.getString(R.string.login_sdk_error)))
     } catch (exception: Exception) {
         onFailure(exception)
     }
