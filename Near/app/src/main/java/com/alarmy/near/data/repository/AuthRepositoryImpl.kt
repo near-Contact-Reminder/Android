@@ -1,6 +1,5 @@
 package com.alarmy.near.data.repository
 
-import com.alarmy.near.data.datasource.SocialLoginProcessor
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.network.auth.TokenManager
 import com.alarmy.near.network.request.SocialLoginRequest
@@ -13,40 +12,15 @@ class AuthRepositoryImpl
     @Inject
     constructor(
         private val authService: AuthService,
-        private val socialLoginProcessor: SocialLoginProcessor,
         private val tokenManager: TokenManager,
     ) : AuthRepository {
-        override suspend fun performSocialLogin(providerType: ProviderType): Result<Unit> =
-            try {
-                val result = socialLoginProcessor.processLogin(providerType)
-
-                if (result.isSuccess) {
-                    val accessToken = result.getOrThrow()
-                    socialLogin(accessToken, providerType)
-                } else {
-                    Result.failure(
-                        createLoginException(
-                            providerType = providerType,
-                            errorMessage = result.exceptionOrNull()?.message,
-                            defaultMessage = "로그인에 실패했습니다",
-                        ),
-                    )
-                }
-            } catch (exception: Exception) {
-                Result.failure(
-                    createLoginException(
-                        providerType = providerType,
-                        errorMessage = exception.message,
-                        defaultMessage = "로그인 중 오류가 발생했습니다",
-                    ),
-                )
-            }
-
-        override suspend fun socialLogin(
+        override suspend fun performSocialLogin(
             accessToken: String,
             providerType: ProviderType,
         ): Result<Unit> =
             try {
+                validateAccessToken(accessToken)
+
                 val request =
                     SocialLoginRequest(
                         accessToken = accessToken,
@@ -72,6 +46,15 @@ class AuthRepositoryImpl
                 Result.failure(Exception(errorMessage))
             }
 
+        private fun validateAccessToken(accessToken: String) {
+            require(accessToken.isNotBlank()) {
+                "액세스 토큰이 비어있습니다"
+            }
+            require(accessToken.length >= MIN_TOKEN_LENGTH) {
+                "액세스 토큰 형식이 올바르지 않습니다"
+            }
+        }
+
         override suspend fun logout() {
             tokenManager.clearAllTokens()
         }
@@ -94,15 +77,6 @@ class AuthRepositoryImpl
 
         override suspend fun refreshToken(): Boolean = tokenManager.refreshToken()
 
-        private fun createLoginException(
-            providerType: ProviderType,
-            errorMessage: String?,
-            defaultMessage: String,
-        ): Exception {
-            val finalMessage = errorMessage ?: "$providerType $defaultMessage"
-            return Exception(finalMessage)
-        }
-
         // TODO 추후 에러 메시지 변경
         private fun getHttpErrorMessage(httpCode: Int): String =
             when (httpCode) {
@@ -112,4 +86,8 @@ class AuthRepositoryImpl
                 500 -> "서버에 문제가 발생했습니다"
                 else -> "로그인 중 오류가 발생했습니다"
             }
+
+        companion object {
+            private const val MIN_TOKEN_LENGTH = 10
+        }
     }

@@ -44,9 +44,9 @@ class LoginViewModel
                     SharingStarted.WhileSubscribed(),
                     TermsAgreementState(),
                 )
-        val showPrivacyBottomSheet: StateFlow<Boolean> =
+        val requiresPrivacyConsent: StateFlow<Boolean> =
             _loginState
-                .map { it.showPrivacyBottomSheet }
+                .map { it.requiresPrivacyConsent }
                 .stateIn(
                     viewModelScope,
                     SharingStarted.WhileSubscribed(),
@@ -56,18 +56,26 @@ class LoginViewModel
         /**
          * 소셜 로그인 수행
          */
-        fun performLogin(providerType: ProviderType) {
+        fun onSocialLoginSuccess(
+            accessToken: String,
+            providerType: ProviderType,
+        ) {
+            updateLoadingState(isLoading = false)
+            _loginState.value =
+                _loginState.value.copy(
+                    socialLoginToken = accessToken,
+                    providerType = providerType,
+                    requiresPrivacyConsent = true,
+                )
+        }
+
+        /**
+         * 소셜 로그인 실패 시 에러 처리
+         */
+        fun onSocialLoginFailure(exception: Throwable) {
             viewModelScope.launch {
-                updateLoadingState(isLoading = true)
-                authRepository
-                    .performSocialLogin(providerType)
-                    .onSuccess {
-                        updateLoadingState(isLoading = false)
-                        _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = true)
-                    }.onFailure { exception ->
-                        updateLoadingState(isLoading = false)
-                        _event.send(LoginEvent.ShowError(exception))
-                    }
+                updateLoadingState(isLoading = false)
+                _event.send(LoginEvent.ShowError(exception))
             }
         }
 
@@ -76,8 +84,31 @@ class LoginViewModel
          */
         fun onPrivacyConsentComplete() {
             viewModelScope.launch {
-                _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
-                _event.send(LoginEvent.NavigateToHome)
+                val currentState = _loginState.value
+                val token = currentState.socialLoginToken
+                val providerType = currentState.providerType
+
+                if (token == null || providerType == null) {
+                    _event.send(LoginEvent.ShowError(Exception("로그인 정보가 없습니다")))
+                    return@launch
+                }
+
+                updateLoadingState(isLoading = true)
+                authRepository
+                    .performSocialLogin(token, providerType)
+                    .onSuccess {
+                        updateLoadingState(isLoading = false)
+                        _loginState.value =
+                            _loginState.value.copy(
+                                requiresPrivacyConsent = false,
+                                socialLoginToken = null,
+                                providerType = null,
+                            )
+                        _event.send(LoginEvent.NavigateToHome)
+                    }.onFailure { exception ->
+                        updateLoadingState(isLoading = false)
+                        _event.send(LoginEvent.ShowError(exception))
+                    }
             }
         }
 
@@ -85,7 +116,12 @@ class LoginViewModel
          * 프라이버시 바텀시트 닫기
          */
         fun dismissPrivacyBottomSheet() {
-            _loginState.value = _loginState.value.copy(showPrivacyBottomSheet = false)
+            _loginState.value =
+                _loginState.value.copy(
+                    requiresPrivacyConsent = false,
+                    socialLoginToken = null,
+                    providerType = null,
+                )
         }
 
         /**
@@ -151,10 +187,10 @@ class LoginViewModel
          */
         fun restoreBottomSheetIfNeeded() {
             val currentState = _loginState.value
-            if (currentState.hasNavigatedToWebView && !currentState.showPrivacyBottomSheet) {
+            if (currentState.hasNavigatedToWebView && !currentState.requiresPrivacyConsent) {
                 _loginState.value =
                     currentState.copy(
-                        showPrivacyBottomSheet = true,
+                        requiresPrivacyConsent = true,
                         hasNavigatedToWebView = false,
                     )
             }
@@ -167,7 +203,9 @@ class LoginViewModel
 data class LoginState(
     val termsAgreementState: TermsAgreementState = TermsAgreementState(),
     val hasNavigatedToWebView: Boolean = false,
-    val showPrivacyBottomSheet: Boolean = false,
+    val requiresPrivacyConsent: Boolean = false,
+    val socialLoginToken: String? = null,
+    val providerType: ProviderType? = null,
 )
 
 /**

@@ -18,11 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -31,8 +32,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ProviderType
+import com.alarmy.near.presentation.feature.login.auth.SocialLoginHandler
 import com.alarmy.near.presentation.feature.login.model.TermType
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun LoginRoute(
@@ -42,9 +45,13 @@ internal fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val showPrivacyBottomSheet by viewModel.showPrivacyBottomSheet.collectAsStateWithLifecycle()
+    val requiresPrivacyConsent by viewModel.requiresPrivacyConsent.collectAsStateWithLifecycle()
     val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val socialLoginHandler = remember { SocialLoginHandler(context) }
 
     // 약관 제목을 미리 가져옴
     val termsTitles =
@@ -83,13 +90,23 @@ internal fun LoginRoute(
     LoginScreen(
         uiState = uiState,
         onLoginClick = { providerType ->
-            viewModel.performLogin(providerType)
+            scope.launch {
+                socialLoginHandler.performSocialLogin(
+                    providerType = providerType,
+                    onSuccess = { accessToken ->
+                        viewModel.onSocialLoginSuccess(accessToken, providerType)
+                    },
+                    onFailure = { exception ->
+                        viewModel.onSocialLoginFailure(exception)
+                    },
+                )
+            }
         },
     )
 
     // 개인정보 동의 바텀시트
     PrivacyConsentBottomSheet(
-        isVisible = showPrivacyBottomSheet,
+        isVisible = requiresPrivacyConsent,
         termsAgreementState = termsAgreementState,
         onDismiss = {
             viewModel.dismissPrivacyBottomSheet()
@@ -210,15 +227,4 @@ private object LoginScreenConstants {
     const val LOGO_SIZE = 160
     const val DESCRIPTION_SPACING = 12
     const val BOTTOM_SPACING = 96
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    NearTheme {
-        LoginScreen(
-            uiState = LoginUiState(),
-            onLoginClick = { },
-        )
-    }
 }
