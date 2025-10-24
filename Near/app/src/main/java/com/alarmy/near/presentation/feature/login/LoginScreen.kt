@@ -1,6 +1,5 @@
 package com.alarmy.near.presentation.feature.login
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -34,18 +32,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.ProviderType
+import com.alarmy.near.presentation.feature.login.auth.SocialLoginHandler
 import com.alarmy.near.presentation.feature.login.model.TermType
 import com.alarmy.near.presentation.ui.theme.NearTheme
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.ApiError
-import com.kakao.sdk.common.model.AuthError
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.KakaoSdkError
-import com.kakao.sdk.user.UserApiClient
-import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 @Composable
 internal fun LoginRoute(
@@ -60,6 +50,8 @@ internal fun LoginRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val socialLoginHandler = remember { SocialLoginHandler(context) }
 
     // 약관 제목을 미리 가져옴
     val termsTitles =
@@ -98,22 +90,16 @@ internal fun LoginRoute(
     LoginScreen(
         uiState = uiState,
         onLoginClick = { providerType ->
-            when (providerType) {
-                ProviderType.KAKAO -> {
-                    scope.launch {
-                        performKakaoLogin(
-                            context = context,
-                            onSuccess = { accessToken ->
-                                viewModel.onSocialLoginSuccess(accessToken, ProviderType.KAKAO)
-                            },
-                            onFailure = { exception ->
-                                viewModel.onSocialLoginFailure(exception)
-                            },
-                        )
-                    }
-                }
-
-                // 다른 로그인 타입이 추가된 경우 ProviderType 수정
+            scope.launch {
+                socialLoginHandler.performSocialLogin(
+                    providerType = providerType,
+                    onSuccess = { accessToken ->
+                        viewModel.onSocialLoginSuccess(accessToken, providerType)
+                    },
+                    onFailure = { exception ->
+                        viewModel.onSocialLoginFailure(exception)
+                    },
+                )
             }
         },
     )
@@ -241,111 +227,4 @@ private object LoginScreenConstants {
     const val LOGO_SIZE = 160
     const val DESCRIPTION_SPACING = 12
     const val BOTTOM_SPACING = 96
-}
-
-/**
- * 카카오 로그인 수행
- */
-private suspend fun performKakaoLogin(
-    context: Context,
-    onSuccess: (String) -> Unit,
-    onFailure: (Throwable) -> Unit,
-) {
-    unlinkKakao()
-    try {
-        val accessToken =
-            if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-                loginWithKakaoTalk(context)
-            } else {
-                loginWithKakaoAccount(context)
-            }
-        onSuccess(accessToken)
-    } catch (error: AuthError) {
-        // OAuth 인증 과정 에러
-        onFailure(Exception(context.getString(R.string.login_auth_error)))
-    } catch (error: ApiError) {
-        // API 호출 에러
-        onFailure(Exception(context.getString(R.string.login_api_error)))
-    } catch (error: ClientError) {
-        // SDK 내부 에러
-        onFailure(Exception(context.getString(R.string.login_client_error)))
-    } catch (error: KakaoSdkError) {
-        // 카카오 SDK 에러
-        onFailure(Exception(context.getString(R.string.login_sdk_error)))
-    } catch (exception: Exception) {
-        onFailure(exception)
-    }
-}
-
-/**
- * 카카오 로그아웃
- */
-private suspend fun unlinkKakao(): Unit =
-    suspendCancellableCoroutine { continuation ->
-        UserApiClient.instance.unlink { error ->
-            continuation.resume(Unit)
-        }
-    }
-
-/**
- * 카카오톡으로 로그인
- */
-private suspend fun loginWithKakaoTalk(context: Context): String =
-    suspendCancellableCoroutine { continuation ->
-        UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-            handleKakaoLoginResult(
-                token,
-                error,
-                context.getString(R.string.login_user_cancelled),
-                continuation,
-            )
-        }
-    }
-
-/**
- * 카카오 계정으로 로그인
- */
-private suspend fun loginWithKakaoAccount(context: Context): String =
-    suspendCancellableCoroutine { continuation ->
-        UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
-            handleKakaoLoginResult(
-                token,
-                error,
-                context.getString(R.string.login_user_cancelled),
-                continuation,
-            )
-        }
-    }
-
-/**
- * 카카오 로그인 결과 처리
- */
-private fun handleKakaoLoginResult(
-    token: OAuthToken?,
-    error: Throwable?,
-    cancelledMessage: String,
-    continuation: CancellableContinuation<String>,
-) {
-    when {
-        error != null -> {
-            continuation.resumeWith(Result.failure(Exception(cancelledMessage)))
-        }
-
-        token != null -> continuation.resume(token.accessToken)
-        else ->
-            continuation.resumeWith(
-                Result.failure(Exception(cancelledMessage)),
-            )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    NearTheme {
-        LoginScreen(
-            uiState = LoginUiState(),
-            onLoginClick = { },
-        )
-    }
 }
