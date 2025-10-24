@@ -45,7 +45,7 @@ internal fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val showPrivacyBottomSheet by viewModel.showPrivacyBottomSheet.collectAsStateWithLifecycle()
+    val requiresPrivacyConsent by viewModel.requiresPrivacyConsent.collectAsStateWithLifecycle()
     val termsAgreementState by viewModel.termsAgreementState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -106,7 +106,7 @@ internal fun LoginRoute(
 
     // 개인정보 동의 바텀시트
     PrivacyConsentBottomSheet(
-        isVisible = showPrivacyBottomSheet,
+        isVisible = requiresPrivacyConsent,
         termsAgreementState = termsAgreementState,
         onDismiss = {
             viewModel.dismissPrivacyBottomSheet()

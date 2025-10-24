@@ -44,9 +44,9 @@ class LoginViewModel
                     SharingStarted.WhileSubscribed(),
                     TermsAgreementState(),
                 )
-        val showPrivacyBottomSheet: StateFlow<Boolean> =
+        val requiresPrivacyConsent: StateFlow<Boolean> =
             _loginState
-                .map { it.showPrivacyBottomSheet }
+                .map { it.requiresPrivacyConsent }
                 .stateIn(
                     viewModelScope,
                     SharingStarted.WhileSubscribed(),
@@ -65,7 +65,7 @@ class LoginViewModel
                 _loginState.value.copy(
                     socialLoginToken = accessToken,
                     providerType = providerType,
-                    showPrivacyBottomSheet = true,
+                    requiresPrivacyConsent = true,
                 )
         }
 
@@ -100,7 +100,7 @@ class LoginViewModel
                         updateLoadingState(isLoading = false)
                         _loginState.value =
                             _loginState.value.copy(
-                                showPrivacyBottomSheet = false,
+                                requiresPrivacyConsent = false,
                                 socialLoginToken = null,
                                 providerType = null,
                             )
@@ -118,7 +118,7 @@ class LoginViewModel
         fun dismissPrivacyBottomSheet() {
             _loginState.value =
                 _loginState.value.copy(
-                    showPrivacyBottomSheet = false,
+                    requiresPrivacyConsent = false,
                     socialLoginToken = null,
                     providerType = null,
                 )
@@ -187,10 +187,10 @@ class LoginViewModel
          */
         fun restoreBottomSheetIfNeeded() {
             val currentState = _loginState.value
-            if (currentState.hasNavigatedToWebView && !currentState.showPrivacyBottomSheet) {
+            if (currentState.hasNavigatedToWebView && !currentState.requiresPrivacyConsent) {
                 _loginState.value =
                     currentState.copy(
-                        showPrivacyBottomSheet = true,
+                        requiresPrivacyConsent = true,
                         hasNavigatedToWebView = false,
                     )
             }
@@ -203,7 +203,7 @@ class LoginViewModel
 data class LoginState(
     val termsAgreementState: TermsAgreementState = TermsAgreementState(),
     val hasNavigatedToWebView: Boolean = false,
-    val showPrivacyBottomSheet: Boolean = false,
+    val requiresPrivacyConsent: Boolean = false,
     val socialLoginToken: String? = null,
     val providerType: ProviderType? = null,
 )
