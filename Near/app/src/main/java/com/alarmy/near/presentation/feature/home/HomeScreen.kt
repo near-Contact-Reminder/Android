@@ -31,9 +31,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -74,6 +76,7 @@ internal fun HomeRoute(
     onAlarmClick: () -> Unit = {},
     onMyPageClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
+    onMonthlyReminderAllClick: () -> Unit = {},
 ) {
     LaunchedEffect(Unit) {
         launch {
@@ -90,6 +93,7 @@ internal fun HomeRoute(
         onAlarmClick = onAlarmClick,
         onMyPageClick = onMyPageClick,
         onAddContactClick = onAddContactClick,
+        onMonthlyReminderAllClick = onMonthlyReminderAllClick,
         contacts = friends.value,
         monthlyFriends = monthlyFriends.value,
         memberInfo = memberInfo.value,
@@ -104,6 +108,7 @@ internal fun HomeScreen(
     onMyPageClick: () -> Unit = {},
     onAlarmClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
+    onMonthlyReminderAllClick: () -> Unit = {},
     memberInfo: MemberInfo?,
     contacts: List<FriendSummary>,
     monthlyFriends: List<MonthlyFriend>,
@@ -130,7 +135,8 @@ internal fun HomeScreen(
                                 R.drawable.img_bg,
                             ),
                         contentScale = ContentScale.FillBounds,
-                    ).fillMaxSize(),
+                    )
+                    .fillMaxSize(),
         ) {
             Spacer(modifier = Modifier.height(statusBarHeightDp))
             Row(
@@ -174,12 +180,23 @@ internal fun HomeScreen(
                 color = NearTheme.colors.WHITE_FFFFFF,
             )
             Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                text = stringResource(R.string.home_this_month_people),
-                modifier = Modifier.padding(horizontal = 24.dp),
-                style = NearTheme.typography.B1_16_BOLD,
-                color = NearTheme.colors.WHITE_FFFFFF,
-            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(R.string.home_this_month_people),
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    style = NearTheme.typography.B1_16_BOLD,
+                    color = NearTheme.colors.WHITE_FFFFFF,
+                )
+
+                MonthlyReminderFriendsViewAll(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    onMonthlyReminderAllClick = onMonthlyReminderAllClick,
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             if (monthlyFriends.isEmpty()) {
                 Surface(
@@ -370,6 +387,36 @@ private fun PagerIndicator(pagerState: PagerState) {
     }
 }
 
+@Composable
+fun MonthlyReminderFriendsViewAll(
+    modifier: Modifier = Modifier,
+    onMonthlyReminderAllClick: () -> Unit = {},
+) {
+    Row(
+        modifier =
+            modifier.onNoRippleClick(
+                onClick = onMonthlyReminderAllClick,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "전체보기",
+            style = NearTheme.typography.B2_14_MEDIUM,
+            color = NearTheme.colors.WHITE_FFFFFF,
+            modifier = Modifier.alpha(0.8f),
+        )
+
+        Spacer(modifier = Modifier.size(6.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_front_8),
+            colorFilter = ColorFilter.tint(NearTheme.colors.WHITE_FFFFFF),
+            alpha = 1f,
+            contentDescription = null,
+        )
+    }
+}
+
 @Preview
 @Composable
 internal fun HomeScreenPreview() {
@@ -406,5 +453,13 @@ internal fun HomeScreenPreview() {
                     providerType = "sumo",
                 ),
         )
+    }
+}
+
+@Preview
+@Composable
+fun MonthlyReminderFriendsViewAllPreview() {
+    NearTheme {
+        MonthlyReminderFriendsViewAll()
     }
 }

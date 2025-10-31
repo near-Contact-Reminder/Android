@@ -5,9 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.alarmy.near.model.Friend
-import com.alarmy.near.presentation.feature.friendprofile.FriendProfileViewModel
-import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.home.HomeRoute
 import com.alarmy.near.presentation.feature.home.HomeViewModel
 import kotlinx.serialization.Serializable
@@ -30,6 +27,7 @@ fun NavGraphBuilder.homeNavGraph(
     onAlarmClick: () -> Unit = {},
     onMyPageClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
+    onMonthlyReminderAllClick: () -> Unit = {},
 ) {
     composable<RouteHome> { backStackEntry ->
         val viewModel: HomeViewModel = hiltViewModel()
@@ -43,6 +41,7 @@ fun NavGraphBuilder.homeNavGraph(
             onAlarmClick = onAlarmClick,
             onMyPageClick = onMyPageClick,
             onAddContactClick = onAddContactClick,
+            onMonthlyReminderAllClick = onMonthlyReminderAllClick,
         )
     }
 }
