@@ -35,8 +35,12 @@ class MonthlyReminderAllViewModel
             MutableStateFlow(MonthlyReminderAllUIState.Loading)
         val uiState: StateFlow<MonthlyReminderAllUIState> = _uiState.asStateFlow()
 
+        private val _monthlyReminders = MutableStateFlow<List<MonthlyReminderUIModel>>(emptyList())
+        private val _completedReminders = MutableStateFlow<List<MonthlyReminderUIModel>>(emptyList())
+
         init {
             fetchMonthlyFriends()
+            fetchMonthlyCompleteFriends()
         }
 
         private fun fetchMonthlyFriends() {
@@ -44,18 +48,43 @@ class MonthlyReminderAllViewModel
                 .fetchMonthlyFriends()
                 .onEach { monthlyFriends ->
                     val uiModels = convertToUIModels(monthlyFriends)
-                    _uiState.update {
-                        if (uiModels.isEmpty()) {
-                            MonthlyReminderAllUIState.Empty
-                        } else {
-                            MonthlyReminderAllUIState.Success(uiModels)
-                        }
-                    }
+                    _monthlyReminders.value = uiModels
+                    updateUIState()
                 }.catch { exception ->
                     viewModelScope.launch {
                         _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
                     }
                 }.launchIn(viewModelScope)
+        }
+
+        private fun fetchMonthlyCompleteFriends() {
+            friendRepository
+                .fetchMonthlyCompleteFriends()
+                .onEach { monthlyFriends ->
+                    val uiModels = convertToUIModels(monthlyFriends)
+                    _completedReminders.value = uiModels
+                    updateUIState()
+                }.catch { exception ->
+                    viewModelScope.launch {
+                        _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
+                    }
+                }.launchIn(viewModelScope)
+        }
+
+        private fun updateUIState() {
+            val monthlyList = _monthlyReminders.value
+            val completedList = _completedReminders.value
+
+            _uiState.update {
+                if (monthlyList.isEmpty() && completedList.isEmpty()) {
+                    MonthlyReminderAllUIState.Empty
+                } else {
+                    MonthlyReminderAllUIState.Success(
+                        monthlyReminders = monthlyList,
+                        completedReminders = completedList,
+                    )
+                }
+            }
         }
 
         private fun convertToUIModels(monthlyFriends: List<MonthlyFriend>): List<MonthlyReminderUIModel> {

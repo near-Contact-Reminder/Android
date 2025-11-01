@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -18,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.mothlyreminderall.components.MonthlyReminderComplete
 import com.alarmy.near.presentation.feature.mothlyreminderall.components.MonthlyReminderEmpty
 import com.alarmy.near.presentation.feature.mothlyreminderall.components.MonthlyReminderFriendCard
 import com.alarmy.near.presentation.feature.mothlyreminderall.model.MonthlyReminderUIModel
@@ -61,7 +65,10 @@ internal fun MonthlyReminderAllScreen(
     onNavigateBack: () -> Unit = {},
 ) {
     NearFrame(
-        modifier = modifier.background(NearTheme.colors.WHITE_FFFFFF),
+        modifier =
+            modifier
+                .background(NearTheme.colors.WHITE_FFFFFF)
+                .padding(horizontal = 20.dp),
     ) {
         NearTopAppbar(
             title = "이번달 챙길 사람",
@@ -104,11 +111,34 @@ internal fun MonthlyReminderAllScreen(
 
                     items(
                         items = uiState.monthlyReminders,
-                        key = { it.friendId },
+                        key = { "monthly_${it.friendId}" },
                     ) { reminder ->
                         MonthlyReminderFriendCard(reminder = reminder)
                     }
+
+                    item {
+                        Spacer(modifier = Modifier.size(16.dp))
+                    }
+
+                    if (uiState.completedReminders.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = "챙김 완료",
+                                style = NearTheme.typography.B2_14_BOLD,
+                                color = NearTheme.colors.BLACK_1A1A1A,
+                            )
+                        }
+
+                        items(
+                            items = uiState.completedReminders,
+                            key = { "completed_${it.friendId}" },
+                        ) { reminder ->
+                            MonthlyReminderComplete(reminder = reminder)
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.size(80.dp))
             }
         }
     }
@@ -139,13 +169,16 @@ private fun MonthlyReminderAllScreenPreview() {
                                 nextContactAt = "2025-11-01",
                                 daysUntilNextContact = "D-DAY",
                             ),
+                        ),
+                    completedReminders =
+                        listOf(
                             MonthlyReminderUIModel(
                                 friendId = "3",
                                 name = "흰둥이",
                                 imageRes = R.drawable.icon_visual_24_heart,
                                 description = "소중한 날 마음을 전해요",
-                                nextContactAt = "2025-11-10",
-                                daysUntilNextContact = "D-9",
+                                nextContactAt = "2025-10-15",
+                                daysUntilNextContact = "D+16",
                             ),
                         ),
                 ),
@@ -172,4 +205,3 @@ private fun MonthlyReminderAllScreenLoadingPreview() {
         )
     }
 }
-
