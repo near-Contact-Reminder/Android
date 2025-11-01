@@ -41,7 +41,7 @@ fun MonthlyReminderFriendCard(reminder: MonthlyReminderUIModel) {
                     offsetX = 0.dp,
                     offsetY = 4.dp,
                     color = Color.Black.copy(0.12f),
-                ).padding(horizontal = 20.dp),
+                ),
         colors =
             CardDefaults.cardColors(
                 containerColor = NearTheme.colors.WHITE_FFFFFF,
