@@ -94,6 +94,7 @@ internal fun NearNavHost(
 
         monthlyReminderAllNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
+            onNavigateBack = { navController.popBackStack() },
         )
 
         myProfileNavGraph(
