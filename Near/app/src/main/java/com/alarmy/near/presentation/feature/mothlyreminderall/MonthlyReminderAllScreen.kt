@@ -107,14 +107,7 @@ internal fun MonthlyReminderAllScreen(
             }
 
             is MonthlyReminderAllUIState.Empty -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    MonthlyReminderEmpty()
-                }
+                MonthlyReminderEmpty()
             }
 
             is MonthlyReminderAllUIState.Success -> {

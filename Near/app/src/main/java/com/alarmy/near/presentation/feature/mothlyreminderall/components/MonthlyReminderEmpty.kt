@@ -1,8 +1,11 @@
 package com.alarmy.near.presentation.feature.mothlyreminderall.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,8 +20,14 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 @Composable
 fun MonthlyReminderEmpty() {
     Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(modifier = Modifier.fillMaxHeight(0.28f))
+
         Image(
             painter = painterResource(R.drawable.img_100_character_empty),
             contentDescription = null,
@@ -34,7 +43,7 @@ fun MonthlyReminderEmpty() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun MonthlyReminderEmptyPreview() {
     NearTheme {
