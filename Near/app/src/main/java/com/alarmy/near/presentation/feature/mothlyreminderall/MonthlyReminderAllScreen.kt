@@ -14,6 +14,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +26,7 @@ import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.mothlyreminderall.components.MonthlyReminderComplete
 import com.alarmy.near.presentation.feature.mothlyreminderall.components.MonthlyReminderEmpty
 import com.alarmy.near.presentation.feature.mothlyreminderall.components.MonthlyReminderFriendCard
+import com.alarmy.near.presentation.feature.mothlyreminderall.components.RecordSuccessDialog
 import com.alarmy.near.presentation.feature.mothlyreminderall.model.MonthlyReminderUIModel
 import com.alarmy.near.presentation.feature.mothlyreminderall.uistate.MonthlyReminderAllUIEvent
 import com.alarmy.near.presentation.feature.mothlyreminderall.uistate.MonthlyReminderAllUIState
@@ -39,6 +42,7 @@ fun MonthlyReminderAllRoute(
     onNavigateBack: () -> Unit = {},
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val recordSuccessDialogState = remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel.uiEvent) {
         launch {
@@ -47,6 +51,10 @@ fun MonthlyReminderAllRoute(
                     is MonthlyReminderAllUIEvent.NetworkError -> {
                         onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
                     }
+
+                    is MonthlyReminderAllUIEvent.RecordFriendShipSuccess -> {
+                        recordSuccessDialogState.value = true
+                    }
                 }
             }
         }
@@ -54,7 +62,12 @@ fun MonthlyReminderAllRoute(
 
     MonthlyReminderAllScreen(
         uiState = uiState.value,
+        recordSuccessDialogState = recordSuccessDialogState.value,
         onNavigateBack = onNavigateBack,
+        onRecordFriendShip = viewModel::onRecordFriendShip,
+        onDismissRecordSuccessDialog = {
+            recordSuccessDialogState.value = false
+        },
     )
 }
 
@@ -62,13 +75,19 @@ fun MonthlyReminderAllRoute(
 internal fun MonthlyReminderAllScreen(
     modifier: Modifier = Modifier,
     uiState: MonthlyReminderAllUIState,
+    recordSuccessDialogState: Boolean = false,
     onNavigateBack: () -> Unit = {},
+    onRecordFriendShip: (String) -> Unit = {},
+    onDismissRecordSuccessDialog: () -> Unit = {},
 ) {
+    if (recordSuccessDialogState) {
+        RecordSuccessDialog(onDismiss = onDismissRecordSuccessDialog)
+    }
+
     NearFrame(
         modifier =
             modifier
-                .background(NearTheme.colors.WHITE_FFFFFF)
-                .padding(horizontal = 20.dp),
+                .background(NearTheme.colors.WHITE_FFFFFF),
     ) {
         NearTopAppbar(
             title = "이번달 챙길 사람",
@@ -102,7 +121,8 @@ internal fun MonthlyReminderAllScreen(
                 LazyColumn(
                     modifier =
                         Modifier
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     item {
@@ -113,7 +133,10 @@ internal fun MonthlyReminderAllScreen(
                         items = uiState.monthlyReminders,
                         key = { "monthly_${it.friendId}" },
                     ) { reminder ->
-                        MonthlyReminderFriendCard(reminder = reminder)
+                        MonthlyReminderFriendCard(
+                            reminder = reminder,
+                            onRecordClick = onRecordFriendShip,
+                        )
                     }
 
                     item {

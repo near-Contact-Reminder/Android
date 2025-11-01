@@ -87,6 +87,22 @@ class MonthlyReminderAllViewModel
             }
         }
 
+        fun onRecordFriendShip(friendId: String) {
+            friendRepository
+                .recordContact(friendId)
+                .onEach { _ ->
+                    viewModelScope.launch {
+                        _uiEvent.send(MonthlyReminderAllUIEvent.RecordFriendShipSuccess)
+                    }
+                    fetchMonthlyFriends()
+                    fetchMonthlyCompleteFriends()
+                }.catch { exception ->
+                    viewModelScope.launch {
+                        _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
+                    }
+                }.launchIn(viewModelScope)
+        }
+
         private fun convertToUIModels(monthlyFriends: List<MonthlyFriend>): List<MonthlyReminderUIModel> {
             val today = LocalDate.now()
             return monthlyFriends.map { friend ->

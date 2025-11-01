@@ -28,7 +28,10 @@ import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun MonthlyReminderFriendCard(reminder: MonthlyReminderUIModel) {
+fun MonthlyReminderFriendCard(
+    reminder: MonthlyReminderUIModel,
+    onRecordClick: (String) -> Unit = {},
+) {
     Card(
         modifier =
             Modifier
@@ -112,7 +115,7 @@ fun MonthlyReminderFriendCard(reminder: MonthlyReminderUIModel) {
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-            onClick = {},
+            onClick = { onRecordClick(reminder.friendId) },
             contentPadding = PaddingValues(12.dp),
         ) {
             Text(
