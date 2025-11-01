@@ -80,33 +80,33 @@ internal fun MonthlyReminderAllScreen(
                 }
             }
 
-            is MonthlyReminderAllUIState.Success -> {
-                if (uiState.monthlyReminders.isEmpty()) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        MonthlyReminderEmpty()
-                    }
-                } else {
-                    LazyColumn(
-                        modifier =
-                            Modifier
-                                .fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
+            is MonthlyReminderAllUIState.Empty -> {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    MonthlyReminderEmpty()
+                }
+            }
 
-                        items(
-                            items = uiState.monthlyReminders,
-                            key = { it.friendId },
-                        ) { reminder ->
-                            MonthlyReminderFriendCard(reminder = reminder)
-                        }
+            is MonthlyReminderAllUIState.Success -> {
+                LazyColumn(
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    items(
+                        items = uiState.monthlyReminders,
+                        key = { it.friendId },
+                    ) { reminder ->
+                        MonthlyReminderFriendCard(reminder = reminder)
                     }
                 }
             }
@@ -158,7 +158,7 @@ private fun MonthlyReminderAllScreenPreview() {
 private fun MonthlyReminderAllScreenEmptyPreview() {
     NearTheme {
         MonthlyReminderAllScreen(
-            uiState = MonthlyReminderAllUIState.Success(monthlyReminders = emptyList()),
+            uiState = MonthlyReminderAllUIState.Empty,
         )
     }
 }
@@ -172,3 +172,4 @@ private fun MonthlyReminderAllScreenLoadingPreview() {
         )
     }
 }
+
