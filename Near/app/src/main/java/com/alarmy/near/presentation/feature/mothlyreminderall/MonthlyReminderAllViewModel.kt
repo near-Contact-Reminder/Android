@@ -74,13 +74,15 @@ class MonthlyReminderAllViewModel
         private fun updateUIState() {
             val monthlyList = _monthlyReminders.value
             val completedList = _completedReminders.value
+            val completedFriendIds = completedList.map { it.friendId }.toSet()
+            val filteredMonthlyList = monthlyList.filter { it.friendId !in completedFriendIds }
 
             _uiState.update {
-                if (monthlyList.isEmpty() && completedList.isEmpty()) {
+                if (filteredMonthlyList.isEmpty() && completedList.isEmpty()) {
                     MonthlyReminderAllUIState.Empty
                 } else {
                     MonthlyReminderAllUIState.Success(
-                        monthlyReminders = monthlyList,
+                        monthlyReminders = filteredMonthlyList,
                         completedReminders = completedList,
                     )
                 }
@@ -94,8 +96,12 @@ class MonthlyReminderAllViewModel
                     viewModelScope.launch {
                         _uiEvent.send(MonthlyReminderAllUIEvent.RecordFriendShipSuccess)
                     }
-                    fetchMonthlyFriends()
-                    fetchMonthlyCompleteFriends()
+                    val recordedFriend = _monthlyReminders.value.find { it.friendId == friendId }
+                    if (recordedFriend != null) {
+                        _monthlyReminders.value = _monthlyReminders.value.filter { it.friendId != friendId }
+                        _completedReminders.value = listOf(recordedFriend) + _completedReminders.value
+                        updateUIState()
+                    }
                 }.catch { exception ->
                     viewModelScope.launch {
                         _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
