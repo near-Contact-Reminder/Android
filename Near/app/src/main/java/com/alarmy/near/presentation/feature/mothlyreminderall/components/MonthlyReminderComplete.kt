@@ -14,13 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.mothlyreminderall.model.MonthlyReminderUIModel
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun MonthlyReminderComplete() {
+fun MonthlyReminderComplete(reminder: MonthlyReminderUIModel) {
+    val formattedDate = formatDate(reminder.nextContactAt)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
@@ -31,28 +37,49 @@ fun MonthlyReminderComplete() {
                 .padding(vertical = 18.dp, horizontal = 20.dp),
     ) {
         Image(
-            painter = painterResource(R.drawable.icon_visual_cake),
+            painter = painterResource(reminder.imageRes),
             contentDescription = null,
         )
         Spacer(modifier = Modifier.size(12.dp))
         Text(
-            text = "신짱구",
+            text = reminder.name,
             style = NearTheme.typography.B2_14_BOLD,
             color = NearTheme.colors.BLACK_1A1A1A,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
         )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(10.dp))
         Text(
-            text = "25.03.20",
+            text = formattedDate,
             style = NearTheme.typography.B2_14_MEDIUM,
             color = NearTheme.colors.GRAY01_888888,
         )
     }
 }
 
+private fun formatDate(dateString: String): String =
+    try {
+        val date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        date.format(DateTimeFormatter.ofPattern("yy.MM.dd"))
+    } catch (e: Exception) {
+        dateString
+    }
+
 @Preview
 @Composable
 fun MonthlyReminderCompletePreview() {
     NearTheme {
-        MonthlyReminderComplete()
+        MonthlyReminderComplete(
+            reminder =
+                MonthlyReminderUIModel(
+                    friendId = "1",
+                    name = "신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구",
+                    imageRes = R.drawable.icon_visual_cake,
+                    description = "생일 축하 전해요",
+                    nextContactAt = "2025-03-20",
+                    daysUntilNextContact = "D-9",
+                ),
+        )
     }
 }
