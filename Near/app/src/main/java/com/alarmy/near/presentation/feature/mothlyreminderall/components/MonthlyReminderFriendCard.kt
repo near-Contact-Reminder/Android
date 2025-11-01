@@ -22,12 +22,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.feature.mothlyreminderall.model.MonthlyReminderUIModel
 import com.alarmy.near.presentation.ui.component.button.NearBasicButton
 import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun MonthlyReminderFriendCard() {
+fun MonthlyReminderFriendCard(reminder: MonthlyReminderUIModel) {
     Card(
         modifier =
             Modifier
@@ -57,7 +58,7 @@ fun MonthlyReminderFriendCard() {
         ) {
             Image(
                 modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.icon_visual_cake),
+                painter = painterResource(id = reminder.imageRes),
                 contentDescription = null,
             )
 
@@ -67,7 +68,7 @@ fun MonthlyReminderFriendCard() {
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = "신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구",
+                    text = reminder.name,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     style = NearTheme.typography.B2_14_BOLD,
@@ -77,7 +78,7 @@ fun MonthlyReminderFriendCard() {
                 Spacer(modifier = Modifier.size(6.dp))
 
                 Text(
-                    text = "생일 축하 전해요",
+                    text = reminder.description,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     style = NearTheme.typography.B2_14_MEDIUM,
@@ -87,13 +88,20 @@ fun MonthlyReminderFriendCard() {
 
             Spacer(modifier = Modifier.size(10.dp))
 
+            val (textStyle, textColor) =
+                if (reminder.daysUntilNextContact == "D-DAY") {
+                    NearTheme.typography.B2_14_BOLD to NearTheme.colors.BLUE01_5AA2E9
+                } else {
+                    NearTheme.typography.B2_14_MEDIUM to NearTheme.colors.GRAY01_888888
+                }
+
             Text(
                 modifier = Modifier.align(Alignment.Top),
-                text = "D-DAY",
+                text = reminder.daysUntilNextContact,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = NearTheme.typography.B2_14_BOLD,
-                color = NearTheme.colors.BLUE01_5AA2E9,
+                style = textStyle,
+                color = textColor,
             )
         }
 
@@ -119,6 +127,16 @@ fun MonthlyReminderFriendCard() {
 @Composable
 fun MonthlyReminderFriendCardPreview() {
     NearTheme {
-        MonthlyReminderFriendCard()
+        MonthlyReminderFriendCard(
+            reminder =
+                MonthlyReminderUIModel(
+                    friendId = "1",
+                    name = "신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구",
+                    imageRes = R.drawable.icon_visual_cake,
+                    description = "생일 축하 전해요",
+                    nextContactAt = "2025-11-05",
+                    daysUntilNextContact = "D-DAY",
+                ),
+        )
     }
 }
