@@ -85,6 +85,16 @@
     <string name="friend_profile_editor_date">날짜</string>
     <string name="friend_profile_editor_memo">메모</string>
 
+    <!--  이번달 챙길 사람 전체 (Monthly Reminder All)  -->
+    <string name="monthly_reminder_all_title">이번달 챙길 사람</string>
+    <string name="monthly_reminder_all_completed_section_title">챙김 완료</string>
+    <string name="monthly_reminder_all_empty_text">이번달은 챙길 사람이 없네요.</string>
+    <string name="monthly_reminder_all_record_button_text">챙김 기록하기</string>
+    <string name="monthly_reminder_all_network_error">네트워크 에러가 발생했습니다.</string>
+    <string name="monthly_reminder_all_type_anniversary_description">소중한 날 마음을 전해요</string>
+    <string name="monthly_reminder_all_type_birthday_description">생일 축하 전해요</string>
+    <string name="monthly_reminder_all_type_message_description">가볍게 안부인사 전해요</string>
+
     <!-- 챙김 주기 설정   -->
     <string name="reminder_interval_daily">매일</string>
     <string name="reminder_interval_weekly">매주</string>

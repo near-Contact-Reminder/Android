@@ -18,6 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +43,7 @@ fun MonthlyReminderAllRoute(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onNavigateBack: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val recordSuccessDialogState = remember { mutableStateOf(false) }
 
@@ -49,7 +52,11 @@ fun MonthlyReminderAllRoute(
             viewModel.uiEvent.collect { event ->
                 when (event) {
                     is MonthlyReminderAllUIEvent.NetworkError -> {
-                        onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
+                        onShowErrorSnackBar(
+                            IllegalStateException(
+                                context.getString(R.string.monthly_reminder_all_network_error)
+                            )
+                        )
                     }
 
                     is MonthlyReminderAllUIEvent.RecordFriendShipSuccess -> {
@@ -90,7 +97,7 @@ internal fun MonthlyReminderAllScreen(
                 .background(NearTheme.colors.WHITE_FFFFFF),
     ) {
         NearTopAppbar(
-            title = "이번달 챙길 사람",
+            title = stringResource(R.string.monthly_reminder_all_title),
             onClickBackButton = onNavigateBack,
         )
 
@@ -139,7 +146,7 @@ internal fun MonthlyReminderAllScreen(
                     if (uiState.completedReminders.isNotEmpty()) {
                         item {
                             Text(
-                                text = "챙김 완료",
+                                text = stringResource(R.string.monthly_reminder_all_completed_section_title),
                                 style = NearTheme.typography.B2_14_BOLD,
                                 color = NearTheme.colors.BLACK_1A1A1A,
                             )
@@ -173,7 +180,7 @@ private fun MonthlyReminderAllScreenPreview() {
                                 friendId = "1",
                                 name = "신짱구",
                                 imageRes = R.drawable.icon_visual_cake,
-                                description = "생일 축하 전해요",
+                                descriptionRes = R.string.monthly_reminder_all_type_birthday_description,
                                 nextContactAt = "2025-11-05",
                                 daysUntilNextContact = "D-4",
                             ),
@@ -181,7 +188,7 @@ private fun MonthlyReminderAllScreenPreview() {
                                 friendId = "2",
                                 name = "김철수",
                                 imageRes = R.drawable.icon_visual_mail,
-                                description = "가볍게 안부인사 전해요",
+                                descriptionRes = R.string.monthly_reminder_all_type_message_description,
                                 nextContactAt = "2025-11-01",
                                 daysUntilNextContact = "D-DAY",
                             ),
@@ -192,7 +199,7 @@ private fun MonthlyReminderAllScreenPreview() {
                                 friendId = "3",
                                 name = "흰둥이",
                                 imageRes = R.drawable.icon_visual_24_heart,
-                                description = "소중한 날 마음을 전해요",
+                                descriptionRes = R.string.monthly_reminder_all_type_anniversary_description,
                                 nextContactAt = "2025-10-15",
                                 daysUntilNextContact = "D+16",
                             ),

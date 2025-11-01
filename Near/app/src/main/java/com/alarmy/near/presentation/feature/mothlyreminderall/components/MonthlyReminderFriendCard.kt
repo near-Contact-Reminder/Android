@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -78,15 +79,15 @@ fun MonthlyReminderFriendCard(
                     color = NearTheme.colors.BLACK_1A1A1A,
                 )
 
-                Spacer(modifier = Modifier.size(6.dp))
+                    Spacer(modifier = Modifier.size(6.dp))
 
-                Text(
-                    text = reminder.description,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    style = NearTheme.typography.B2_14_MEDIUM,
-                    color = NearTheme.colors.GRAY01_888888,
-                )
+                    Text(
+                        text = stringResource(reminder.descriptionRes),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        style = NearTheme.typography.B2_14_MEDIUM,
+                        color = NearTheme.colors.GRAY01_888888,
+                    )
             }
 
             Spacer(modifier = Modifier.size(10.dp))
@@ -119,7 +120,7 @@ fun MonthlyReminderFriendCard(
             contentPadding = PaddingValues(12.dp),
         ) {
             Text(
-                "챙김 기록하기",
+                text = stringResource(R.string.monthly_reminder_all_record_button_text),
             )
         }
         Spacer(modifier = Modifier.size(20.dp))
@@ -136,7 +137,7 @@ fun MonthlyReminderFriendCardPreview() {
                     friendId = "1",
                     name = "신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구",
                     imageRes = R.drawable.icon_visual_cake,
-                    description = "생일 축하 전해요",
+                    descriptionRes = R.string.monthly_reminder_all_type_birthday_description,
                     nextContactAt = "2025-11-05",
                     daysUntilNextContact = "D-DAY",
                 ),

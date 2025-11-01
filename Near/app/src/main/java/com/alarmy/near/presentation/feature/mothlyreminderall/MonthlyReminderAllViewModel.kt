@@ -111,16 +111,20 @@ class MonthlyReminderAllViewModel
 
         private fun convertToUIModels(monthlyFriends: List<MonthlyFriend>): List<MonthlyReminderUIModel> {
             val today = LocalDate.now()
-            return monthlyFriends.map { friend ->
-                val typeInfo = MonthlyReminderTypeInfo.from(friend.type)
-                MonthlyReminderUIModel(
-                    friendId = friend.friendId,
-                    name = friend.name,
-                    imageRes = typeInfo.imageRes,
-                    description = typeInfo.description,
-                    nextContactAt = friend.nextContactAt,
-                    daysUntilNextContact = friend.daysUntilNextContact(today),
-                )
+            return monthlyFriends.mapNotNull { friend ->
+                try {
+                    val typeInfo = MonthlyReminderTypeInfo.from(friend.type)
+                    MonthlyReminderUIModel(
+                        friendId = friend.friendId,
+                        name = friend.name,
+                        imageRes = typeInfo.imageRes,
+                        descriptionRes = typeInfo.descriptionRes,
+                        nextContactAt = friend.nextContactAt,
+                        daysUntilNextContact = friend.daysUntilNextContact(today),
+                    )
+                } catch (e: Exception) {
+                    null
+                }
             }
         }
     }

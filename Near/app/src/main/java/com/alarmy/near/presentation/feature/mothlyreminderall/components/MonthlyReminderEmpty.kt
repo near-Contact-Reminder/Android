@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
@@ -36,7 +37,7 @@ fun MonthlyReminderEmpty() {
         Spacer(modifier = Modifier.size(16.dp))
 
         Text(
-            text = "이번달은 챙길 사람이 없네요.",
+            text = stringResource(R.string.monthly_reminder_all_empty_text),
             style = NearTheme.typography.B2_14_MEDIUM,
             color = NearTheme.colors.GRAY01_888888,
         )

@@ -1,24 +1,25 @@
 package com.alarmy.near.presentation.feature.mothlyreminderall.model
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.alarmy.near.R
 import com.alarmy.near.model.monthly.MonthlyFriendType
 
 enum class MonthlyReminderTypeInfo(
     @param:DrawableRes val imageRes: Int,
-    val description: String,
+    @param:StringRes val descriptionRes: Int,
 ) {
     ANNIVERSARY(
         imageRes = R.drawable.icon_visual_24_heart,
-        description = "소중한 날 마음을 전해요",
+        descriptionRes = R.string.monthly_reminder_all_type_anniversary_description,
     ),
     BIRTHDAY(
         imageRes = R.drawable.icon_visual_cake,
-        description = "생일 축하 전해요",
+        descriptionRes = R.string.monthly_reminder_all_type_birthday_description,
     ),
     MESSAGE(
         imageRes = R.drawable.icon_visual_mail,
-        description = "가볍게 안부인사 전해요",
+        descriptionRes = R.string.monthly_reminder_all_type_message_description,
     ),
     ;
 

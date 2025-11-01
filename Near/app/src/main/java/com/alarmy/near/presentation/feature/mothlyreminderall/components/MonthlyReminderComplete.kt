@@ -76,7 +76,7 @@ fun MonthlyReminderCompletePreview() {
                     friendId = "1",
                     name = "신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구신짱구",
                     imageRes = R.drawable.icon_visual_cake,
-                    description = "생일 축하 전해요",
+                    descriptionRes = R.string.monthly_reminder_all_type_birthday_description,
                     nextContactAt = "2025-03-20",
                     daysUntilNextContact = "D-9",
                 ),
