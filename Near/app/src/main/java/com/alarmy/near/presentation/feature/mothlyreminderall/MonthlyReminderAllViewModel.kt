@@ -77,16 +77,17 @@ class MonthlyReminderAllViewModel
             val completedFriendIds = completedList.map { it.friendId }.toSet()
             val filteredMonthlyList = monthlyList.filter { it.friendId !in completedFriendIds }
 
-            _uiState.update {
-                if (filteredMonthlyList.isEmpty() && completedList.isEmpty()) {
-                    MonthlyReminderAllUIState.Empty
-                } else {
-                    MonthlyReminderAllUIState.Success(
-                        monthlyReminders = filteredMonthlyList,
-                        completedReminders = completedList,
-                    )
-                }
+        _uiState.update {
+            if (filteredMonthlyList.isEmpty() && completedList.isEmpty()) {
+                MonthlyReminderAllUIState.Empty
+            } else {
+                MonthlyReminderAllUIState.Success(
+                    monthlyReminders = filteredMonthlyList,
+                    completedReminders = completedList,
+                    hasCompletedReminders = completedList.isNotEmpty(),
+                )
             }
+        }
         }
 
         fun onRecordFriendShip(friendId: String) {

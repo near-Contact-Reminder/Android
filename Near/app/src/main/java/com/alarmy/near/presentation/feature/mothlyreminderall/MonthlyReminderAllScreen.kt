@@ -134,7 +134,7 @@ internal fun MonthlyReminderAllScreen(
                         )
                     }
 
-                    if (uiState.completedReminders.isNotEmpty()) {
+                    if (uiState.hasCompletedReminders) {
                         item {
                             Spacer(modifier = Modifier.size(16.dp))
 
@@ -197,6 +197,7 @@ private fun MonthlyReminderAllScreenPreview() {
                                 daysUntilNextContact = "D+16",
                             ),
                         ),
+                    hasCompletedReminders = true,
                 ),
         )
     }

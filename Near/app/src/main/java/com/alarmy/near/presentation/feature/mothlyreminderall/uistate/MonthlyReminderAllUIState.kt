@@ -10,5 +10,6 @@ sealed interface MonthlyReminderAllUIState {
     data class Success(
         val monthlyReminders: List<MonthlyReminderUIModel>,
         val completedReminders: List<MonthlyReminderUIModel>,
+        val hasCompletedReminders: Boolean,
     ) : MonthlyReminderAllUIState
 }
