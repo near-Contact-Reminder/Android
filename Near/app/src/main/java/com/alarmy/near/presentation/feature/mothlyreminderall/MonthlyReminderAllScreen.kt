@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -54,8 +53,8 @@ fun MonthlyReminderAllRoute(
                     is MonthlyReminderAllUIEvent.NetworkError -> {
                         onShowErrorSnackBar(
                             IllegalStateException(
-                                context.getString(R.string.monthly_reminder_all_network_error)
-                            )
+                                context.getString(R.string.monthly_reminder_all_network_error),
+                            ),
                         )
                     }
 
@@ -125,10 +124,6 @@ internal fun MonthlyReminderAllScreen(
                             .padding(horizontal = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
                     items(
                         items = uiState.monthlyReminders,
                         key = { "monthly_${it.friendId}" },
@@ -139,12 +134,10 @@ internal fun MonthlyReminderAllScreen(
                         )
                     }
 
-                    item {
-                        Spacer(modifier = Modifier.size(16.dp))
-                    }
-
                     if (uiState.completedReminders.isNotEmpty()) {
                         item {
+                            Spacer(modifier = Modifier.size(16.dp))
+
                             Text(
                                 text = stringResource(R.string.monthly_reminder_all_completed_section_title),
                                 style = NearTheme.typography.B2_14_BOLD,
