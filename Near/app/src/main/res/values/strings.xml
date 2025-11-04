@@ -179,6 +179,7 @@
     <string name="friend_contact_cycle_cycle_setting_text">주기 설정</string>
     <string name="friend_contact_cycle_weekly_format">매주 %1$s</string>
     <string name="friend_contact_cycle_weekly_prefix">매주</string>
+    <string name="friend_contact_cycle_next_cycle_prefix">다음 주기 : </string>
     <string name="friend_contact_cycle_cancel_button">취소</string>
     <string name="friend_contact_cycle_complete_button">완료</string>
     <string name="friend_contact_cycle_later_button">나중에 하기</string>
