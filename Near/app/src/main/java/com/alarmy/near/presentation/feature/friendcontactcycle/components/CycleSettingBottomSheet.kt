@@ -46,8 +46,8 @@ fun CycleSettingBottomSheet(
     modifier: Modifier = Modifier,
 ) {
     // 선택된 주기 상태 관리 (기존 선택값이 있으면 그것을 사용, 없으면 매주를 기본값으로)
-    var selectedInterval by remember(isVisible) { 
-        mutableStateOf<ReminderInterval?>(currentSelectedInterval ?: ReminderInterval.EVERY_WEEK) 
+    var selectedInterval by remember(isVisible) {
+        mutableStateOf<ReminderInterval?>(currentSelectedInterval ?: ReminderInterval.EVERY_WEEK)
     }
 
     if (isVisible) {
@@ -102,7 +102,7 @@ fun CycleSettingBottomSheet(
                                             fontWeight = NearTheme.typography.B2_14_MEDIUM.fontWeight,
                                         ),
                                 ) {
-                                    append(stringResource(R.string.friend_contact_cycle_weekly_prefix))
+                                    append(stringResource(R.string.friend_contact_cycle_weekly_prefix) + " ")
                                 }
                                 withStyle(
                                     style =
@@ -136,7 +136,7 @@ fun CycleSettingBottomSheet(
 
                         Text(
                             text = "다음 주기 : ${
-                                selectedInterval?.let { DateExtension.getNextCycleDate(it) } 
+                                selectedInterval?.let { DateExtension.getNextCycleDate(it) }
                                     ?: DateExtension.getNextWeekSameDay()
                             }",
                             style = NearTheme.typography.B2_14_MEDIUM,
@@ -187,7 +187,7 @@ fun CycleSettingBottomSheet(
 
                 ContactCycleButtons(
                     onLeftButtonClick = onDismiss,
-                    onRightButtonClick = { 
+                    onRightButtonClick = {
                         selectedInterval?.let { interval ->
                             onComplete(interval)
                             onDismiss()
