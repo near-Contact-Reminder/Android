@@ -95,23 +95,39 @@ fun CycleSettingBottomSheet(
                     Text(
                         text =
                             buildAnnotatedString {
-                                withStyle(
-                                    style =
-                                        SpanStyle(
-                                            color = NearTheme.colors.BLACK_1A1A1A,
-                                            fontWeight = NearTheme.typography.B2_14_MEDIUM.fontWeight,
-                                        ),
-                                ) {
-                                    append(stringResource(R.string.friend_contact_cycle_weekly_prefix) + " ")
-                                }
-                                withStyle(
-                                    style =
-                                        SpanStyle(
-                                            color = NearTheme.colors.BLUE01_5AA2E9,
-                                            fontWeight = NearTheme.typography.B2_14_BOLD.fontWeight,
-                                        ),
-                                ) {
-                                    append(DateExtension.getTodayDayOfWeekInKorean())
+                                val interval = selectedInterval ?: ReminderInterval.EVERY_WEEK
+                                val cycleText = DateExtension.getCycleText(interval)
+                                val firstSpaceIndex = cycleText.indexOf(' ')
+
+                                if (firstSpaceIndex != -1) {
+                                    withStyle(
+                                        style =
+                                            SpanStyle(
+                                                color = NearTheme.colors.BLACK_1A1A1A,
+                                                fontWeight = NearTheme.typography.B2_14_MEDIUM.fontWeight,
+                                            ),
+                                    ) {
+                                        append(cycleText.substring(0, firstSpaceIndex + 1))
+                                    }
+                                    withStyle(
+                                        style =
+                                            SpanStyle(
+                                                color = NearTheme.colors.BLUE01_5AA2E9,
+                                                fontWeight = NearTheme.typography.B2_14_BOLD.fontWeight,
+                                            ),
+                                    ) {
+                                        append(cycleText.substring(firstSpaceIndex + 1))
+                                    }
+                                } else {
+                                    withStyle(
+                                        style =
+                                            SpanStyle(
+                                                color = NearTheme.colors.BLACK_1A1A1A,
+                                                fontWeight = NearTheme.typography.B2_14_MEDIUM.fontWeight,
+                                            ),
+                                    ) {
+                                        append(cycleText)
+                                    }
                                 }
                             },
                         style = NearTheme.typography.B2_14_MEDIUM,
