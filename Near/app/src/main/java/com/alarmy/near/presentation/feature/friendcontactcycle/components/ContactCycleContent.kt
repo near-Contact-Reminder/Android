@@ -64,10 +64,10 @@ fun ColumnScope.ContactCycleContent(
         )
     }
 
-    Spacer(modifier = Modifier.size(14.dp))
-
     // 한번에 설정이 활성화되었을 때만 표시
     if (isBulkSettingEnabled) {
+        Spacer(modifier = Modifier.size(12.dp))
+
         Row(
             modifier =
                 Modifier
@@ -85,7 +85,9 @@ fun ColumnScope.ContactCycleContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = selectedCycle?.let { DateExtension.getCycleText(it) } ?: stringResource(R.string.friend_contact_cycle_weekly_format, DateExtension.getTodayDayOfWeekInKorean()),
+                text =
+                    selectedCycle?.let { DateExtension.getCycleText(it) }
+                        ?: stringResource(R.string.friend_contact_cycle_weekly_format, DateExtension.getTodayDayOfWeekInKorean()),
                 style = NearTheme.typography.B2_14_MEDIUM,
                 color = NearTheme.colors.BLACK_1A1A1A,
             )
@@ -101,7 +103,7 @@ fun ColumnScope.ContactCycleContent(
 
     // 리스트가 있을 때만 밑에 리스트 표시
     if (contacts.isNotEmpty()) {
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(24.dp))
 
         LazyColumn(
             modifier = Modifier.weight(1f),
