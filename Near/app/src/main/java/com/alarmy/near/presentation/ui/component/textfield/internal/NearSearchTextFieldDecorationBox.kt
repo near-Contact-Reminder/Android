@@ -66,6 +66,7 @@ internal fun NearSearchTextFieldDecorationBox(
                         painter = painterResource(id = R.drawable.ic_24_search),
                         contentDescription = "검색",
                         modifier = Modifier.size(24.dp),
+                        tint = NearTheme.colors.GRAY01_888888,
                     )
                 }
             }
