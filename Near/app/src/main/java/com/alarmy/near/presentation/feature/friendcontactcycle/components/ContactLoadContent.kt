@@ -117,7 +117,7 @@ fun FriendListItem(
             modifier = Modifier.weight(1f),
         ) {
             Image(
-                painter = painterResource(R.drawable.img_100_character_default),
+                painter = painterResource(R.drawable.img_64_user_gray),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
             )
