@@ -12,12 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
+import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -38,8 +39,12 @@ fun NearListModuleBackground(
         modifier =
             modifier
                 .fillMaxWidth()
-                .shadow(
-                    elevation = 4.dp,
+                .dropShadow(
+                    blur = 16.dp,
+                    offsetX = 0.dp,
+                    offsetY = 4.dp,
+                    spread = 0.dp,
+                    color = Color.Black.copy(alpha = 0.12f),
                     shape = RoundedCornerShape(12.dp),
                 ).background(
                     color = NearTheme.colors.WHITE_FFFFFF,
