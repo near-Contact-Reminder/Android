@@ -1,7 +1,6 @@
 package com.alarmy.near.presentation.feature.mothlyreminderall
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -152,6 +151,8 @@ internal fun MonthlyReminderAllScreen(
                             key = { "completed_${it.friendId}" },
                         ) { reminder ->
                             MonthlyReminderComplete(reminder = reminder)
+
+                            Spacer(modifier = Modifier.size(16.dp))
                         }
                     }
                 }

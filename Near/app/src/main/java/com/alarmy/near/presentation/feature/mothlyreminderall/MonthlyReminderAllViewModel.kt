@@ -47,7 +47,7 @@ class MonthlyReminderAllViewModel
             friendRepository
                 .fetchMonthlyFriends()
                 .onEach { monthlyFriends ->
-                    val uiModels = convertToUIModels(monthlyFriends)
+                    val uiModels = convertToUIModels(monthlyFriends).sortedBy { it.nextContactAt }
                     _monthlyReminders.value = uiModels
                     updateUIState()
                 }.catch { exception ->
@@ -77,17 +77,17 @@ class MonthlyReminderAllViewModel
             val completedFriendIds = completedList.map { it.friendId }.toSet()
             val filteredMonthlyList = monthlyList.filter { it.friendId !in completedFriendIds }
 
-        _uiState.update {
-            if (filteredMonthlyList.isEmpty() && completedList.isEmpty()) {
-                MonthlyReminderAllUIState.Empty
-            } else {
-                MonthlyReminderAllUIState.Success(
-                    monthlyReminders = filteredMonthlyList,
-                    completedReminders = completedList,
-                    hasCompletedReminders = completedList.isNotEmpty(),
-                )
+            _uiState.update {
+                if (filteredMonthlyList.isEmpty() && completedList.isEmpty()) {
+                    MonthlyReminderAllUIState.Empty
+                } else {
+                    MonthlyReminderAllUIState.Success(
+                        monthlyReminders = filteredMonthlyList,
+                        completedReminders = completedList,
+                        hasCompletedReminders = completedList.isNotEmpty(),
+                    )
+                }
             }
-        }
         }
 
         fun onRecordFriendShip(friendId: String) {
@@ -99,7 +99,8 @@ class MonthlyReminderAllViewModel
                     }
                     val recordedFriend = _monthlyReminders.value.find { it.friendId == friendId }
                     if (recordedFriend != null) {
-                        _monthlyReminders.value = _monthlyReminders.value.filter { it.friendId != friendId }
+                        _monthlyReminders.value =
+                            _monthlyReminders.value.filter { it.friendId != friendId }
                         _completedReminders.value = listOf(recordedFriend) + _completedReminders.value
                         updateUIState()
                     }
