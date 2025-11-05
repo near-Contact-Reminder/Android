@@ -1,6 +1,7 @@
 package com.alarmy.near.presentation.ui.extension
 
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -10,13 +11,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -70,32 +76,41 @@ private fun NearShimmerEffect(
     shimmerColors: List<Color> = ShimmerType.PRIMARY.colors,
     cornerRadius: Dp = 12.dp,
 ) {
+    var componentWidth by remember { mutableFloatStateOf(0f) }
+
     val transition = rememberInfiniteTransition(label = "shimmer")
     val translateAnim =
         transition.animateFloat(
             initialValue = 0f,
-            targetValue = 1000f,
+            targetValue = 1f,
             animationSpec =
                 infiniteRepeatable(
-                    animation = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse,
+                    animation = tween(durationMillis = 1000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart,
                 ),
             label = "shimmer_translate",
         )
 
     val brush =
-        remember(translateAnim.value) {
-            Brush.linearGradient(
-                colors = shimmerColors,
-                start = Offset.Zero,
-                end = Offset(translateAnim.value, translateAnim.value),
-            )
+        remember(translateAnim.value, componentWidth, shimmerColors) {
+            if (componentWidth > 0f) {
+                val offset = translateAnim.value * componentWidth * 2 - componentWidth
+                Brush.linearGradient(
+                    colors = shimmerColors,
+                    start = Offset(x = offset, y = 0f),
+                    end = Offset(x = offset + componentWidth, y = 0f),
+                )
+            } else {
+                Brush.linearGradient(colors = shimmerColors)
+            }
         }
 
     Box(
         modifier =
             modifier
-                .clip(RoundedCornerShape(cornerRadius))
+                .onGloballyPositioned { coordinates ->
+                    componentWidth = coordinates.size.width.toFloat()
+                }.clip(RoundedCornerShape(cornerRadius))
                 .background(brush),
     )
 }
