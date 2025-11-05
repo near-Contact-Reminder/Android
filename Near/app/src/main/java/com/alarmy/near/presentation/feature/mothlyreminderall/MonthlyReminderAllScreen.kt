@@ -122,12 +122,13 @@ internal fun MonthlyReminderAllScreen(
                         Modifier
                             .fillMaxSize()
                             .padding(horizontal = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     items(
                         items = uiState.monthlyReminders,
                         key = { "monthly_${it.friendId}" },
                     ) { reminder ->
+                        Spacer(modifier = Modifier.size(16.dp))
+
                         MonthlyReminderFriendCard(
                             reminder = reminder,
                             onRecordClick = onRecordFriendShip,
@@ -136,13 +137,14 @@ internal fun MonthlyReminderAllScreen(
 
                     if (uiState.hasCompletedReminders) {
                         item {
-                            Spacer(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.size(32.dp))
 
                             Text(
                                 text = stringResource(R.string.monthly_reminder_all_completed_section_title),
                                 style = NearTheme.typography.B2_14_BOLD,
                                 color = NearTheme.colors.BLACK_1A1A1A,
                             )
+                            Spacer(modifier = Modifier.size(16.dp))
                         }
 
                         items(
