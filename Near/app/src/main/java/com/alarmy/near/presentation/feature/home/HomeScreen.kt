@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -206,10 +207,10 @@ internal fun HomeScreen(
                 } else {
                     val monthlyFriends = uiState.monthlyFriendUIState.monthlyFriends
                     LazyRow(
+                        contentPadding = PaddingValues(horizontal = 20.dp),
                         modifier =
                             Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
+                                .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         items(
