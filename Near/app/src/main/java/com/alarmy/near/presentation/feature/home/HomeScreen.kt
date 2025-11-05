@@ -53,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
 import com.alarmy.near.model.friendsummary.FriendSummary
+import com.alarmy.near.model.member.MemberInfo
 import com.alarmy.near.model.monthly.MonthlyFriend
 import com.alarmy.near.model.monthly.MonthlyFriendType
 import com.alarmy.near.presentation.feature.home.component.MyContacts
@@ -429,7 +430,18 @@ internal fun HomeScreenPreview() {
             uiState =
                 HomeUiState(
                     myFriendUIState =
-                        MyFriendUIState.Loading,
+                        MyFriendUIState.Success(
+                            List(5) {
+                                FriendSummary(
+                                    id = "2003",
+                                    name = "일이삼사오육칠팔구",
+                                    profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
+                                    lastContactedAt = "2025-07-16",
+                                    isContacted = false,
+                                    contactFrequencyLevel = ContactFrequencyLevel.HIGH,
+                                )
+                            },
+                        ),
                     monthlyFriendUIState =
                         MonthlyFriendUIState.Success(List(4) {
                             MonthlyFriend(
@@ -440,7 +452,14 @@ internal fun HomeScreenPreview() {
                             )
                         },),
                     memberInfo =
-                    null,
+                        MemberInfo(
+                            memberId = "posidonium",
+                            username = "주지스님",
+                            nickname = "Audra Day",
+                            imageUrl = "https://search.yahoo.com/search?p=class",
+                            notificationAgreedAt = "comprehensam",
+                            providerType = "sumo",
+                        ),
                 ),
         )
     }
