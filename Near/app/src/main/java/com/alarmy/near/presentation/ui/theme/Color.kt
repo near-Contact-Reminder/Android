@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 object NearColorPallete {
     val BLACK_1A1A1A = Color(0xFF1A1A1A)
+    val BLACK_222222 = Color(0xFF222222)
     val WHITE_FFFFFF = Color(0xFFFFFFFF)
     val GRAY01_888888 = Color(0xFF888888)
     val GRAY02_B7B7B7 = Color(0xFFB7B7B7)
@@ -25,6 +26,7 @@ object NearColorPallete {
 @Suppress("PropertyName")
 data class NearColor(
     val BLACK_1A1A1A: Color = NearColorPallete.BLACK_1A1A1A,
+    val BLACK_222222: Color = NearColorPallete.BLACK_222222,
     val WHITE_FFFFFF: Color = NearColorPallete.WHITE_FFFFFF,
     val GRAY01_888888: Color = NearColorPallete.GRAY01_888888,
     val GRAY02_B7B7B7: Color = NearColorPallete.GRAY02_B7B7B7,
