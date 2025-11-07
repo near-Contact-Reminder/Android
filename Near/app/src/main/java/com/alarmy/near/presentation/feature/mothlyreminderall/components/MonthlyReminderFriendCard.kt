@@ -93,7 +93,7 @@ fun MonthlyReminderFriendCard(
             Spacer(modifier = Modifier.size(10.dp))
 
             val (textStyle, textColor) =
-                if (reminder.daysUntilNextContact == "D-DAY") {
+                if (reminder.isToday) {
                     NearTheme.typography.B2_14_BOLD to NearTheme.colors.BLUE01_5AA2E9
                 } else {
                     NearTheme.typography.B2_14_MEDIUM to NearTheme.colors.GRAY01_888888
@@ -140,6 +140,7 @@ fun MonthlyReminderFriendCardPreview() {
                     descriptionRes = R.string.monthly_reminder_all_type_birthday_description,
                     nextContactAt = "2025-11-05",
                     daysUntilNextContact = "D-DAY",
+                    isToday = true,
                 ),
         )
     }

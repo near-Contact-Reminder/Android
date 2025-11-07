@@ -44,33 +44,40 @@ class MonthlyReminderAllViewModel
             fetchMonthlyReminders()
         }
 
-    private fun fetchMonthlyReminders() {
-        combine(
-            friendRepository.fetchMonthlyFriends(),
-            friendRepository.fetchMonthlyCompleteFriends(),
-        ) { monthlyFriends, completeFriends ->
-            MonthlyReminderCombinedData(
-                monthlyFriends = monthlyFriends,
-                completeFriends = completeFriends,
-            )
-        }.onEach { data ->
-            val monthlyUIModels =
-                convertToUIModels(data.monthlyFriends).sortedBy { it.nextContactAt }
-            _monthlyReminders.value = monthlyUIModels
-            val completedUIModels = convertToUIModels(data.completeFriends)
-            _completedReminders.value = completedUIModels
-            // 두 데이터가 모두 준비된 후 UI 상태 업데이트
-            updateUIState()
-        }.handleError(viewModelScope, _uiEvent) { exception ->
-            MonthlyReminderAllUIEvent.ShowError(exception)
-        }.launchIn(viewModelScope)
-    }
+        private fun fetchMonthlyReminders() {
+            combine(
+                friendRepository.fetchMonthlyFriends(),
+                friendRepository.fetchMonthlyCompleteFriends(),
+            ) { monthlyFriends, completeFriends ->
+                MonthlyReminderCombinedData(
+                    monthlyFriends = monthlyFriends,
+                    completeFriends = completeFriends,
+                )
+            }.onEach { data ->
+                val monthlyUIModels =
+                    convertToUIModels(data.monthlyFriends)
+                        .distinctBy { it.friendId }
+                        .sortedBy { it.nextContactAt }
+                _monthlyReminders.value = monthlyUIModels
+                val completedUIModels =
+                    convertToUIModels(data.completeFriends)
+                        .distinctBy { it.friendId }
+                _completedReminders.value = completedUIModels
+                // 두 데이터가 모두 준비된 후 UI 상태 업데이트
+                updateUIState()
+            }.handleError(viewModelScope, _uiEvent) { exception ->
+                MonthlyReminderAllUIEvent.ShowError(exception)
+            }.launchIn(viewModelScope)
+        }
 
         private fun updateUIState() {
             val monthlyList = _monthlyReminders.value
             val completedList = _completedReminders.value
             val completedFriendIds = completedList.map { it.friendId }.toSet()
-            val filteredMonthlyList = monthlyList.filter { it.friendId !in completedFriendIds }
+            val filteredMonthlyList =
+                monthlyList
+                    .filter { it.friendId !in completedFriendIds }
+                    .distinctBy { it.friendId }
 
             _uiState.update {
                 if (filteredMonthlyList.isEmpty() && completedList.isEmpty()) {
@@ -78,31 +85,31 @@ class MonthlyReminderAllViewModel
                 } else {
                     MonthlyReminderAllUIState.Success(
                         monthlyReminders = filteredMonthlyList,
-                        completedReminders = completedList,
+                        completedReminders = completedList.distinctBy { it.friendId },
                         hasCompletedReminders = completedList.isNotEmpty(),
                     )
                 }
             }
         }
 
-    fun onRecordFriendShip(friendId: String) {
-        friendRepository
-            .recordContact(friendId)
-            .onEach { _ ->
-                viewModelScope.launch {
-                    _uiEvent.send(MonthlyReminderAllUIEvent.RecordFriendShipSuccess)
-                }
-                val recordedFriend = _monthlyReminders.value.find { it.friendId == friendId }
-                if (recordedFriend != null) {
-                    _monthlyReminders.value =
-                        _monthlyReminders.value.filter { it.friendId != friendId }
-                    _completedReminders.value = listOf(recordedFriend) + _completedReminders.value
-                    updateUIState()
-                }
-            }.handleError(viewModelScope, _uiEvent) { exception ->
-                MonthlyReminderAllUIEvent.ShowError(exception)
-            }.launchIn(viewModelScope)
-    }
+        fun onRecordFriendShip(friendId: String) {
+            friendRepository
+                .recordContact(friendId)
+                .onEach { _ ->
+                    viewModelScope.launch {
+                        _uiEvent.send(MonthlyReminderAllUIEvent.RecordFriendShipSuccess)
+                    }
+                    val recordedFriend = _monthlyReminders.value.find { it.friendId == friendId }
+                    if (recordedFriend != null) {
+                        _monthlyReminders.value =
+                            _monthlyReminders.value.filter { it.friendId != friendId }
+                        _completedReminders.value = listOf(recordedFriend) + _completedReminders.value
+                        updateUIState()
+                    }
+                }.handleError(viewModelScope, _uiEvent) { exception ->
+                    MonthlyReminderAllUIEvent.ShowError(exception)
+                }.launchIn(viewModelScope)
+        }
 
         private fun convertToUIModels(monthlyFriends: List<MonthlyFriend>): List<MonthlyReminderUIModel> {
             val today = LocalDate.now()
@@ -116,6 +123,7 @@ class MonthlyReminderAllViewModel
                         descriptionRes = typeInfo.descriptionRes,
                         nextContactAt = friend.nextContactAt,
                         daysUntilNextContact = friend.daysUntilNextContact(today),
+                        isToday = friend.isNextContactDay(today),
                     )
                 } catch (e: Exception) {
                     null

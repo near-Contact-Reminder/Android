@@ -79,6 +79,7 @@ fun MonthlyReminderCompletePreview() {
                     descriptionRes = R.string.monthly_reminder_all_type_birthday_description,
                     nextContactAt = "2025-03-20",
                     daysUntilNextContact = "D-9",
+                    isToday = false,
                 ),
         )
     }

@@ -173,6 +173,7 @@ private fun MonthlyReminderAllScreenPreview() {
                                 descriptionRes = R.string.monthly_reminder_all_type_birthday_description,
                                 nextContactAt = "2025-11-05",
                                 daysUntilNextContact = "D-4",
+                                isToday = false,
                             ),
                             MonthlyReminderUIModel(
                                 friendId = "2",
@@ -180,7 +181,8 @@ private fun MonthlyReminderAllScreenPreview() {
                                 imageRes = R.drawable.icon_visual_mail,
                                 descriptionRes = R.string.monthly_reminder_all_type_message_description,
                                 nextContactAt = "2025-11-01",
-                                daysUntilNextContact = "D-DAY",
+                                daysUntilNextContact = "D-day",
+                                isToday = true,
                             ),
                         ),
                     completedReminders =
@@ -192,6 +194,7 @@ private fun MonthlyReminderAllScreenPreview() {
                                 descriptionRes = R.string.monthly_reminder_all_type_anniversary_description,
                                 nextContactAt = "2025-10-15",
                                 daysUntilNextContact = "D+16",
+                                isToday = false,
                             ),
                         ),
                     hasCompletedReminders = true,

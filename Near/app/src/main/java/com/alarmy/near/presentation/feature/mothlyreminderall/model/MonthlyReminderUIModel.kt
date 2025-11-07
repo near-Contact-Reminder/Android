@@ -10,5 +10,6 @@ data class MonthlyReminderUIModel(
     @StringRes val descriptionRes: Int,
     val nextContactAt: String,
     val daysUntilNextContact: String,
+    val isToday: Boolean,
 )
 
