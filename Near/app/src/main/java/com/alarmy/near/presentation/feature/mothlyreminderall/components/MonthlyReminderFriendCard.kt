@@ -79,15 +79,15 @@ fun MonthlyReminderFriendCard(
                     color = NearTheme.colors.BLACK_1A1A1A,
                 )
 
-                    Spacer(modifier = Modifier.size(6.dp))
+                Spacer(modifier = Modifier.size(6.dp))
 
-                    Text(
-                        text = stringResource(reminder.descriptionRes),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = NearTheme.typography.B2_14_MEDIUM,
-                        color = NearTheme.colors.GRAY01_888888,
-                    )
+                Text(
+                    text = stringResource(reminder.descriptionRes),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = NearTheme.typography.B2_14_MEDIUM,
+                    color = NearTheme.colors.GRAY01_888888,
+                )
             }
 
             Spacer(modifier = Modifier.size(10.dp))
