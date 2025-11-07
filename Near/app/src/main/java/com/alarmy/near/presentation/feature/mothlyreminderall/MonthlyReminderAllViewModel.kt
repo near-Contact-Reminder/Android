@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.model.monthly.MonthlyFriend
+import com.alarmy.near.presentation.feature.mothlyreminderall.model.MonthlyReminderCombinedData
 import com.alarmy.near.presentation.feature.mothlyreminderall.model.MonthlyReminderTypeInfo
 import com.alarmy.near.presentation.feature.mothlyreminderall.model.MonthlyReminderUIModel
 import com.alarmy.near.presentation.feature.mothlyreminderall.uistate.MonthlyReminderAllUIEvent
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -39,36 +41,31 @@ class MonthlyReminderAllViewModel
         private val _completedReminders = MutableStateFlow<List<MonthlyReminderUIModel>>(emptyList())
 
         init {
-            fetchMonthlyFriends()
-            fetchMonthlyCompleteFriends()
+            fetchMonthlyReminders()
         }
 
-        private fun fetchMonthlyFriends() {
-            friendRepository
-                .fetchMonthlyFriends()
-                .onEach { monthlyFriends ->
-                    val uiModels = convertToUIModels(monthlyFriends).sortedBy { it.nextContactAt }
-                    _monthlyReminders.value = uiModels
-                    updateUIState()
-                }.catch { exception ->
-                    viewModelScope.launch {
-                        _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
-                    }
-                }.launchIn(viewModelScope)
-        }
-
-        private fun fetchMonthlyCompleteFriends() {
-            friendRepository
-                .fetchMonthlyCompleteFriends()
-                .onEach { monthlyFriends ->
-                    val uiModels = convertToUIModels(monthlyFriends)
-                    _completedReminders.value = uiModels
-                    updateUIState()
-                }.catch { exception ->
-                    viewModelScope.launch {
-                        _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
-                    }
-                }.launchIn(viewModelScope)
+        private fun fetchMonthlyReminders() {
+            combine(
+                friendRepository.fetchMonthlyFriends(),
+                friendRepository.fetchMonthlyCompleteFriends(),
+            ) { monthlyFriends, completeFriends ->
+                MonthlyReminderCombinedData(
+                    monthlyFriends = monthlyFriends,
+                    completeFriends = completeFriends,
+                )
+            }.onEach { data ->
+                val monthlyUIModels =
+                    convertToUIModels(data.monthlyFriends).sortedBy { it.nextContactAt }
+                _monthlyReminders.value = monthlyUIModels
+                val completedUIModels = convertToUIModels(data.completeFriends)
+                _completedReminders.value = completedUIModels
+                // 두 데이터가 모두 준비된 후 UI 상태 업데이트
+                updateUIState()
+            }.catch { exception ->
+                viewModelScope.launch {
+                    _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
+                }
+            }.launchIn(viewModelScope)
         }
 
         private fun updateUIState() {
