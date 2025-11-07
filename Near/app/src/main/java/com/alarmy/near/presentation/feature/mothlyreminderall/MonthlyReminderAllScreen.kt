@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,7 +40,6 @@ fun MonthlyReminderAllRoute(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onNavigateBack: () -> Unit = {},
 ) {
-    val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val recordSuccessDialogState = remember { mutableStateOf(false) }
 
@@ -49,12 +47,8 @@ fun MonthlyReminderAllRoute(
         launch {
             viewModel.uiEvent.collect { event ->
                 when (event) {
-                    is MonthlyReminderAllUIEvent.NetworkError -> {
-                        onShowErrorSnackBar(
-                            IllegalStateException(
-                                context.getString(R.string.monthly_reminder_all_network_error),
-                            ),
-                        )
+                    is MonthlyReminderAllUIEvent.ShowError -> {
+                        onShowErrorSnackBar(event.throwable)
                     }
 
                     is MonthlyReminderAllUIEvent.RecordFriendShipSuccess -> {

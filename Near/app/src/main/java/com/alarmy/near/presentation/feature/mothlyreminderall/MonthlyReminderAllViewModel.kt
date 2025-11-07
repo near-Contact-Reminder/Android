@@ -63,7 +63,7 @@ class MonthlyReminderAllViewModel
                 updateUIState()
             }.catch { exception ->
                 viewModelScope.launch {
-                    _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
+                    _uiEvent.send(MonthlyReminderAllUIEvent.ShowError(exception))
                 }
             }.launchIn(viewModelScope)
         }
@@ -102,8 +102,9 @@ class MonthlyReminderAllViewModel
                         updateUIState()
                     }
                 }.catch { exception ->
+                    // 원본 exception을 전달하여 스택 트레이스와 디버깅 정보 유지
                     viewModelScope.launch {
-                        _uiEvent.send(MonthlyReminderAllUIEvent.NetworkError)
+                        _uiEvent.send(MonthlyReminderAllUIEvent.ShowError(exception))
                     }
                 }.launchIn(viewModelScope)
         }
