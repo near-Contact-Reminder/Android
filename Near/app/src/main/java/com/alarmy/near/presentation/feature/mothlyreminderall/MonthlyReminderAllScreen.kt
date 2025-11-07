@@ -2,6 +2,7 @@ package com.alarmy.near.presentation.feature.mothlyreminderall
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -115,6 +116,7 @@ internal fun MonthlyReminderAllScreen(
                         Modifier
                             .fillMaxSize()
                             .padding(horizontal = 20.dp),
+                    contentPadding = PaddingValues(bottom = 80.dp),
                 ) {
                     items(
                         items = uiState.monthlyReminders,
@@ -150,8 +152,6 @@ internal fun MonthlyReminderAllScreen(
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.size(80.dp))
             }
         }
     }
