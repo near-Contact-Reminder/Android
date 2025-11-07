@@ -41,6 +41,7 @@
     <string name="home_add_contact_description">가까워 지고 싶은 사람을\n추가해보세요.</string>
     <string name="home_add_people_text">사람 추가</string>
     <string name="home_menu_text_add_friend">사람 추가</string>
+    <string name="home_monthly_friends_all">전체 보기</string>
 
     <!--  상대 프로필(Friend Profile)  -->
     <string name="friend_profile_call">전화걸기</string>
@@ -107,7 +108,7 @@
     <string name="editor_exit_content">화면을 나가면 \n수정 내용은 저장되지 않아요.</string>
     <string name="editor_exit_confirm">확인</string>
     <string name="editor_exit_dismiss">취소</string>
-    
+
     <!-- editor save confirm dialog   -->
     <string name="editor_save_confirm_content">수정을 완료하시겠습니까?</string>
     <string name="editor_save_confirm_save">저장</string>
@@ -143,7 +144,7 @@
     <string name="withdraw_other_reason_placeholder">편하게 의견을 남겨주세요.</string>
     <string name="withdraw_cancel_button">그만두기</string>
     <string name="withdraw_confirm_button">탈퇴하기</string>
-    
+
     <!-- withdraw confirm dialog   -->
     <string name="withdraw_confirm_content">탈퇴 시 계정 및 이용 내역이\n모두 삭제되며, 복구가 불가능합니다.\n정말 탈퇴하시겠습니까?</string>
     <string name="withdraw_confirm_cancel">취소</string>
@@ -156,7 +157,7 @@
     <string name="terms_service_agreed">서비스 이용약관</string>
     <string name="terms_personal_info">개인정보 수집 및 이용동의</string>
     <string name="terms_privacy_policy">개인정보 처리방침</string>
-    
+
     <!-- 개인정보 동의 바텀시트 (Privacy Consent BottomSheet) -->
     <string name="privacy_consent_title">서비스 약관 동의</string>
     <string name="privacy_consent_all_agreement">약관 전체 동의</string>

@@ -400,7 +400,7 @@ fun MonthlyReminderFriendsViewAll(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "전체보기",
+            text = stringResource(R.string.home_monthly_friends_all),
             style = NearTheme.typography.B2_14_MEDIUM,
             color = NearTheme.colors.WHITE_FFFFFF,
             modifier = Modifier.alpha(0.8f),
