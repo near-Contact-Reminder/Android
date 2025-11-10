@@ -64,13 +64,13 @@ class MonthlyReminderAllViewModel
                         .distinctBy { it.friendId }
                 completedReminders.value = completedUIModels
                 // 두 데이터가 모두 준비된 후 UI 상태 업데이트
-                updateUIState()
+                combineRemindersToUIState()
             }.handleError(viewModelScope, _uiEvent) { exception ->
                 MonthlyReminderAllUIEvent.ShowError(exception)
             }.launchIn(viewModelScope)
         }
 
-        private fun updateUIState() {
+        private fun combineRemindersToUIState() {
             val monthlyList = monthlyReminders.value
             val completedList = completedReminders.value
             val completedFriendIds = completedList.map { it.friendId }.toSet()
@@ -104,7 +104,7 @@ class MonthlyReminderAllViewModel
                         monthlyReminders.value =
                             monthlyReminders.value.filter { it.friendId != friendId }
                         completedReminders.value = listOf(recordedFriend) + completedReminders.value
-                        updateUIState()
+                        combineRemindersToUIState()
                     }
                 }.handleError(viewModelScope, _uiEvent) { exception ->
                     MonthlyReminderAllUIEvent.ShowError(exception)
