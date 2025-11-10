@@ -33,34 +33,37 @@ internal fun NearSearchTextFieldDecorationBox(
     colors: TextFieldColors,
     placeHolderText: String,
     onSearchClick: () -> Unit,
-    contentPadding: PaddingValues = PaddingValues(
-        start = 16.dp,
-        top = 16.dp,
-        bottom = 16.dp,
-        end = 8.dp
-    ),
+    contentPadding: PaddingValues =
+        PaddingValues(
+            start = 16.dp,
+            top = 16.dp,
+            bottom = 16.dp,
+            end = 8.dp,
+        ),
 ) {
     OutlinedTextFieldDefaults.DecorationBox(
         contentPadding = contentPadding,
         value = value,
         innerTextField = {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 40.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(end = 40.dp),
                 ) {
                     innerTextField()
                 }
 
                 IconButton(
                     onClick = onSearchClick,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .size(32.dp),
-                    enabled = enabled
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterEnd)
+                            .size(32.dp),
+                    enabled = enabled,
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_24_search),
