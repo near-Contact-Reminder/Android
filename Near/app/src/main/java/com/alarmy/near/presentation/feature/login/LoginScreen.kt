@@ -21,15 +21,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import coil.size.Scale
 import com.alarmy.near.R
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.auth.SocialLoginHandler
@@ -164,8 +168,9 @@ private fun LoginIntroductionSection(modifier: Modifier = Modifier) {
     )
 
     Image(
-        modifier = modifier.wrapContentSize(Alignment.Center),
+        modifier = modifier.height(48.dp),
         alignment = Alignment.Center,
+        contentScale = ContentScale.None,
         painter = painterResource(R.drawable.ic_near_logo_title_primary),
         contentDescription = stringResource(R.string.near_logo_title),
     )
@@ -173,7 +178,8 @@ private fun LoginIntroductionSection(modifier: Modifier = Modifier) {
     Spacer(modifier = Modifier.size(LoginScreenConstants.DESCRIPTION_SPACING.dp))
 
     Text(
-        modifier = modifier.wrapContentSize(Alignment.Center),
+        modifier = modifier,
+        textAlign = TextAlign.Center,
         text = stringResource(R.string.login_near_description),
         style = NearTheme.typography.B1_16_MEDIUM,
         color = NearTheme.colors.GRAY01_888888,
@@ -227,4 +233,13 @@ private object LoginScreenConstants {
     const val LOGO_SIZE = 160
     const val DESCRIPTION_SPACING = 12
     const val BOTTOM_SPACING = 96
+}
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(
+        onLoginClick = {},
+        uiState = LoginUiState(),
+    )
 }
