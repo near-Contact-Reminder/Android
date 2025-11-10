@@ -33,7 +33,6 @@ import com.alarmy.near.presentation.feature.mothlyreminderall.uistate.MonthlyRem
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.theme.NearTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun MonthlyReminderAllRoute(
@@ -44,17 +43,15 @@ fun MonthlyReminderAllRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val recordSuccessDialogState = remember { mutableStateOf(false) }
 
-    LaunchedEffect(viewModel.uiEvent) {
-        launch {
-            viewModel.uiEvent.collect { event ->
-                when (event) {
-                    is MonthlyReminderAllUIEvent.ShowError -> {
-                        onShowErrorSnackBar(event.throwable)
-                    }
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is MonthlyReminderAllUIEvent.ShowError -> {
+                    onShowErrorSnackBar(event.throwable)
+                }
 
-                    is MonthlyReminderAllUIEvent.RecordFriendShipSuccess -> {
-                        recordSuccessDialogState.value = true
-                    }
+                is MonthlyReminderAllUIEvent.RecordFriendShipSuccess -> {
+                    recordSuccessDialogState.value = true
                 }
             }
         }
