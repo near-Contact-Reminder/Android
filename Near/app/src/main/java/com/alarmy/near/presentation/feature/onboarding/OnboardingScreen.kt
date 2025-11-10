@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,8 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +42,7 @@ import com.alarmy.near.presentation.feature.onboarding.components.BackgroundArea
 import com.alarmy.near.presentation.feature.onboarding.components.OnboardingButton
 import com.alarmy.near.presentation.feature.onboarding.components.PageIndicator
 import com.alarmy.near.presentation.feature.onboarding.model.OnboardingPage
+import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.launch
 
@@ -67,30 +70,31 @@ fun OnboardingScreen(
     }
 
     // 온보딩 페이지 데이터 - remember로 성능 최적화
-    val pages = remember {
-        listOf(
-            OnboardingPage(
-                titleResId = R.string.first_onboarding_title,
-                image = R.drawable.img_onboarding_page_first,
-            ),
-            OnboardingPage(
-                titleResId = R.string.second_onboarding_title,
-                image = R.drawable.img_onboarding_page_second,
-            ),
-            OnboardingPage(
-                titleResId = R.string.third_onboarding_title,
-                image = R.drawable.img_onboarding_page_third,
-            ),
-            OnboardingPage(
-                titleResId = R.string.fourth_onboarding_title,
-                image = R.drawable.img_onboarding_page_forth,
-            ),
-            OnboardingPage(
-                titleResId = R.string.fifth_onboarding_title,
-                image = R.drawable.img_onboarding_page_fifth,
-            ),
-        )
-    }
+    val pages =
+        remember {
+            listOf(
+                OnboardingPage(
+                    titleResId = R.string.first_onboarding_title,
+                    image = R.drawable.img_onboarding_page_first,
+                ),
+                OnboardingPage(
+                    titleResId = R.string.second_onboarding_title,
+                    image = R.drawable.img_onboarding_page_second,
+                ),
+                OnboardingPage(
+                    titleResId = R.string.third_onboarding_title,
+                    image = R.drawable.img_onboarding_page_third,
+                ),
+                OnboardingPage(
+                    titleResId = R.string.fourth_onboarding_title,
+                    image = R.drawable.img_onboarding_page_forth,
+                ),
+                OnboardingPage(
+                    titleResId = R.string.fifth_onboarding_title,
+                    image = R.drawable.img_onboarding_page_fifth,
+                ),
+            )
+        }
 
     // 상태바와 네비게이션 바 높이 계산
     val density = LocalDensity.current
@@ -101,53 +105,56 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        BackgroundArea()
-        Column(
-            modifier = Modifier
-                .padding(top = statusBarHeightDp, bottom = navigationBarHeightDp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    NearFrame {
+        Box(
+            modifier = Modifier.fillMaxSize(),
         ) {
-        // 뷰페이저
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.weight(1f),
-        ) { page ->
-            OnboardingPageContent(
-                page = pages[page],
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-
-        Spacer(modifier = Modifier.size(25.dp))
-
-        // 페이지 인디케이터
-        PageIndicator(
-            pageCount = pages.size,
-            currentPage = pagerState.currentPage,
-        )
-
-        Spacer(modifier = Modifier.size(32.dp))
-
-        // 다음/완료 버튼
-        OnboardingButton(
-            currentPage = pagerState.currentPage,
-            totalPages = pages.size,
-            isLoading = uiState.isLoading,
-            onNextClick = {
-                if (pagerState.currentPage < pages.size - 1) {
-                    scope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                    }
-                } else {
-                    // 온보딩 완료 시 DataStore에 저장
-                    viewModel.completeOnboarding()
+            BackgroundArea()
+            Column(
+                modifier =
+                    Modifier
+                        .padding(top = statusBarHeightDp, bottom = navigationBarHeightDp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                // 뷰페이저
+                HorizontalPager(
+                    state = pagerState,
+                ) { page ->
+                    OnboardingPageContent(
+                        page = pages[page],
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
-            },
-        )
-        Spacer(modifier = Modifier.size(24.dp))
+
+                Spacer(modifier = Modifier.size(24.dp))
+
+                // 페이지 인디케이터
+                PageIndicator(
+                    pageCount = pages.size,
+                    currentPage = pagerState.currentPage,
+                )
+
+                Spacer(modifier = Modifier.size(14.dp))
+            }
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                // 다음/완료 버튼
+                OnboardingButton(
+                    currentPage = pagerState.currentPage,
+                    totalPages = pages.size,
+                    isLoading = uiState.isLoading,
+                    onNextClick = {
+                        if (pagerState.currentPage < pages.size - 1) {
+                            scope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        } else {
+                            // 온보딩 완료 시 DataStore에 저장
+                            viewModel.completeOnboarding()
+                        }
+                    },
+                )
+                Spacer(modifier = Modifier.size(24.dp))
+            }
         }
     }
 }
@@ -165,7 +172,7 @@ private fun OnboardingPageContent(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.size(45.dp))
+        Spacer(modifier = Modifier.size(22.dp))
 
         // 각 온보딩 페이지 타이틀
         Text(
@@ -178,15 +185,15 @@ private fun OnboardingPageContent(
                 ),
         )
 
-        Spacer(modifier = Modifier.size(24.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
         Image(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .clip(RoundedCornerShape(12.dp)),
             painter = painterResource(page.image),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
         )
-
     }
 }
 
@@ -217,7 +224,10 @@ private fun createAnnotatedText(
 /**
  * 지정된 색상으로 텍스트를 추가하는 함수
  */
-private fun AnnotatedString.Builder.appendStyledText(text: String, color: Color) {
+private fun AnnotatedString.Builder.appendStyledText(
+    text: String,
+    color: Color,
+) {
     withStyle(style = SpanStyle(color = color)) {
         append(text)
     }
