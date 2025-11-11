@@ -202,6 +202,6 @@ class FriendProfileEditorViewModel
 
         companion object {
             private const val MAX_NAME_LENGTH = 20
-            private const val MAX_MEMO_LENGTH = 200
+            private const val MAX_MEMO_LENGTH = 100
         }
     }
