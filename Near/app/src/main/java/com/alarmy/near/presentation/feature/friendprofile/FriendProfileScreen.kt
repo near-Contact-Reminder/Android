@@ -489,7 +489,7 @@ private fun ProfileTab(
             category = stringResource(R.string.friend_profile_info_category_anniversary),
             content =
                 friend.anniversaryList.joinToString(" ") {
-                    "${it.title} (${it.date})"
+                    "${it.title} (${it.date?.replace("-",".")})"
                 },
         )
         Spacer(modifier = Modifier.height(16.dp))
