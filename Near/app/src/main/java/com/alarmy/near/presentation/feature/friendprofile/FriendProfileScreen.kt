@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -138,54 +140,55 @@ fun FriendProfileScreen(
 ) {
     val currentTabPosition = remember { mutableIntStateOf(0) }
     val dropdownState = remember { mutableStateOf(false) }
-//    val scrollState = rememberScrollState()
 
     NearFrame(modifier = modifier) {
+        if (recordSuccessDialogState) {
+            LaunchedEffect(true) {
+                if (recordSuccessDialogState) {
+                    delay(2000L)
+                    onDismissRecordSuccessDialog()
+                }
+            }
+            Dialog(onDismissRequest = onDismissRecordSuccessDialog) {
+                Column(
+                    modifier =
+                        Modifier
+                            .width(255.dp)
+                            .height(186.dp)
+                            .background(
+                                color = NearTheme.colors.WHITE_FFFFFF,
+                                shape = RoundedCornerShape(16.dp),
+                            ),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Image(
+                        painterResource(R.drawable.img_100_character_success),
+                        contentDescription = "",
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.friend_profile_info_contact_success_text),
+                        style = NearTheme.typography.B1_16_BOLD,
+                        color = Color(0xff222222),
+                    )
+                }
+            }
+        }
         Box {
             when (friendState) {
                 is FriendState.Success -> {
                     val friend = friendState.friend
+
+                    // 전체를 세로로, 앱바는 고정, 나머지는 weight(1f) 로 영역 제한
                     Column(
                         modifier =
                             Modifier
                                 .align(Alignment.TopStart)
                                 .fillMaxSize()
-//                                .verticalScroll(scrollState)
                                 .background(NearTheme.colors.WHITE_FFFFFF),
                     ) {
-                        if (recordSuccessDialogState) {
-                            LaunchedEffect(true) {
-                                if (recordSuccessDialogState) {
-                                    delay(2000L)
-                                    onDismissRecordSuccessDialog()
-                                }
-                            }
-                            Dialog(onDismissRequest = onDismissRecordSuccessDialog) {
-                                Column(
-                                    modifier =
-                                        Modifier
-                                            .width(255.dp)
-                                            .height(186.dp)
-                                            .background(
-                                                color = NearTheme.colors.WHITE_FFFFFF,
-                                                shape = RoundedCornerShape(16.dp),
-                                            ),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.img_100_character_success),
-                                        contentDescription = "",
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        stringResource(R.string.friend_profile_info_contact_success_text),
-                                        style = NearTheme.typography.B1_16_BOLD,
-                                        color = Color(0xff222222),
-                                    )
-                                }
-                            }
-                        }
+                        // (1) 상단 AppBar — 고정
                         NearTopAppbar(
                             title = stringResource(R.string.friend_profile_title),
                             onClickBackButton = onClickBackButton,
@@ -193,10 +196,9 @@ fun FriendProfileScreen(
                                 Column(modifier = Modifier.padding(end = 20.dp)) {
                                     Image(
                                         modifier =
-                                            Modifier
-                                                .onNoRippleClick(onClick = {
-                                                    dropdownState.value = true
-                                                }),
+                                            Modifier.onNoRippleClick(onClick = {
+                                                dropdownState.value = true
+                                            }),
                                         painter = painterResource(R.drawable.ic_32_menu),
                                         contentDescription = stringResource(R.string.common_menu_button_description),
                                     )
@@ -223,174 +225,209 @@ fun FriendProfileScreen(
                             },
                         )
 
-                        Spacer(modifier = Modifier.height(18.dp))
-                        Row(
+                        // (2) 나머지 영역을 제한된 높이로 만들기 -> 이 안에서 스크롤 가능
+                        Column(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 32.dp),
-                            verticalAlignment = Alignment.CenterVertically,
+                                    .weight(1f), // <--- 요게 중요: 여기서 높이가 제한되어 내부 스크롤이 가능해짐
                         ) {
-                            Box(
-                                modifier =
-                                Modifier,
+                            // 컨텐츠는 스크롤 가능하거나 Lazy로 구성
+                            // 여기서는 상단의 프로필 요약(이미지/이름/버튼 등)을 스크롤 헤더로 포함시키고
+                            // 탭에 따라 ProfileTab(스크롤 필요 없음) 또는 RecordTab(LazyVerticalGrid)를 표시
+                            // 상단 요약을 포함한 전체를 LazyColumn으로 만들면 header + list 형태로 자연스럽게 동작
+
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
                             ) {
-                                Image(
-                                    modifier = Modifier.align(Alignment.Center),
-                                    painter = painterResource(R.drawable.img_80_user1),
-                                    contentDescription = null,
-                                )
-                                Image(
-                                    modifier =
-                                        Modifier
-                                            .align(Alignment.TopEnd)
-                                            .offset(x = 2.dp, y = (-2).dp),
-                                    painter = painterResource(R.drawable.ic_visual_24_emoji_0),
-                                    contentDescription = null,
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(24.dp))
-                            Column {
-                                Text(
-                                    modifier = Modifier.widthIn(max = 145.dp),
-                                    text = friend.name,
-                                    style = NearTheme.typography.B1_16_BOLD,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                                if (friend.lastContactAt != null) {
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text =
-                                            stringResource(
-                                                R.string.friend_profile_last_contact_date_format,
-                                                friend.lastContactFormat ?: "",
-                                            ),
-                                        style = NearTheme.typography.B2_14_MEDIUM,
-                                        color = NearTheme.colors.BLUE01_5AA2E9,
+                                item {
+                                    Spacer(modifier = Modifier.height(18.dp))
+                                    Row(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 32.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Box {
+                                            // 이미지 + 이모지
+                                            Image(
+                                                modifier = Modifier.align(Alignment.Center),
+                                                painter = painterResource(R.drawable.img_80_user1),
+                                                contentDescription = null,
+                                            )
+                                            Image(
+                                                modifier =
+                                                    Modifier
+                                                        .align(Alignment.TopEnd)
+                                                        .offset(x = 2.dp, y = (-2).dp),
+                                                painter = painterResource(R.drawable.ic_visual_24_emoji_0),
+                                                contentDescription = null,
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(24.dp))
+                                        Column {
+                                            Text(
+                                                modifier = Modifier.widthIn(max = 145.dp),
+                                                text = friend.name,
+                                                style = NearTheme.typography.B1_16_BOLD,
+                                                maxLines = 2,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                            if (friend.lastContactAt != null) {
+                                                Spacer(modifier = Modifier.height(8.dp))
+                                                Text(
+                                                    text =
+                                                        stringResource(
+                                                            R.string.friend_profile_last_contact_date_format,
+                                                            friend.lastContactFormat ?: "",
+                                                        ),
+                                                    style = NearTheme.typography.B2_14_MEDIUM,
+                                                    color = NearTheme.colors.BLUE01_5AA2E9,
+                                                )
+                                            }
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(24.dp))
+                                    Row(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 20.dp),
+                                    ) {
+                                        CallButton(
+                                            modifier = Modifier.weight(1f),
+                                            enabled = !friend.phone.isNullOrBlank(),
+                                            onClick = {
+                                                friend.phone?.let {
+                                                    onClickCallButton(friend.phone)
+                                                }
+                                            },
+                                        )
+                                        Spacer(modifier = Modifier.width(7.dp))
+                                        MessageButton(
+                                            Modifier.weight(1f),
+                                            enabled = !friend.phone.isNullOrBlank(),
+                                            onClick = {
+                                                friend.phone?.let {
+                                                    onClickMessageButton(friend.phone)
+                                                }
+                                            },
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(24.dp))
+                                    // TabRow
+                                    TabRow(
+                                        modifier =
+                                            Modifier
+                                                .padding(horizontal = 25.dp)
+                                                .width(170.dp),
+                                        containerColor = NearTheme.colors.WHITE_FFFFFF,
+                                        selectedTabIndex = currentTabPosition.intValue,
+                                        divider = {},
+                                        indicator = {
+                                            TabRowDefaults.SecondaryIndicator(
+                                                modifier =
+                                                    Modifier.customTabIndicatorOffset(
+                                                        it[currentTabPosition.intValue],
+                                                        80.dp,
+                                                    ),
+                                                height = 3.dp,
+                                                color = NearTheme.colors.BLUE01_5AA2E9,
+                                            )
+                                        },
+                                    ) {
+                                        Tab(
+                                            modifier =
+                                                Modifier
+                                                    .width(85.dp)
+                                                    .height(50.dp),
+                                            selected = currentTabPosition.intValue == 0,
+                                            onClick = { currentTabPosition.intValue = 0 },
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.friend_profile_tab_text_profile),
+                                                style =
+                                                    if (currentTabPosition.intValue ==
+                                                        0
+                                                    ) {
+                                                        NearTheme.typography.B2_14_BOLD
+                                                    } else {
+                                                        NearTheme.typography.B2_14_MEDIUM
+                                                    },
+                                                color =
+                                                    if (currentTabPosition.intValue ==
+                                                        0
+                                                    ) {
+                                                        NearTheme.colors.BLACK_1A1A1A
+                                                    } else {
+                                                        NearTheme.colors.GRAY02_B7B7B7
+                                                    },
+                                            )
+                                        }
+                                        Tab(
+                                            modifier =
+                                                Modifier
+                                                    .width(85.dp)
+                                                    .height(50.dp),
+                                            selected = currentTabPosition.intValue == 1,
+                                            onClick = { currentTabPosition.intValue = 1 },
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.friend_profile_tab_text_record),
+                                                style =
+                                                    if (currentTabPosition.intValue ==
+                                                        1
+                                                    ) {
+                                                        NearTheme.typography.B2_14_BOLD
+                                                    } else {
+                                                        NearTheme.typography.B2_14_MEDIUM
+                                                    },
+                                                color =
+                                                    if (currentTabPosition.intValue ==
+                                                        1
+                                                    ) {
+                                                        NearTheme.colors.BLACK_1A1A1A
+                                                    } else {
+                                                        NearTheme.colors.GRAY02_B7B7B7
+                                                    },
+                                            )
+                                        }
+                                    }
+                                    HorizontalDivider(
+                                        thickness = 1.dp,
+                                        color = NearTheme.colors.GRAY03_EBEBEB,
                                     )
+                                } // end header item
+
+                                // 탭별 본문을 lazy column의 item으로 넣음 — 이렇게 하면 중첩 스크롤 문제 회피
+                                item {
+                                    if (currentTabPosition.intValue == 0) {
+                                        // ProfileTab : 내부에 스크롤을 또 만들 필요 없음. LazyColumn이 전체를 스크롤함.
+                                        ProfileTab(friend = friend)
+                                    } else {
+                                        RecordTab(
+                                            friendShipRecordState = friendShipRecordState,
+                                        )
+                                    }
                                 }
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Row(
+                                item { Spacer(modifier = Modifier.height(80.dp)) } // 하단 여유
+                            } // end LazyColumn
+                        } // end weighted Column
+
+                        // (3) 하단 고정 버튼
+                        NearSolidTypeButton(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 20.dp),
-                        ) {
-                            CallButton(
-                                modifier = Modifier.weight(1f),
-                                enabled = !friend.phone.isNullOrBlank(),
-                                onClick = {
-                                    friend.phone?.let {
-                                        onClickCallButton(friend.phone)
-                                    }
-                                },
-                            )
-                            Spacer(modifier = Modifier.width(7.dp))
-                            MessageButton(
-                                Modifier.weight(1f),
-                                enabled = !friend.phone.isNullOrBlank(),
-                                onClick = {
-                                    friend.phone?.let {
-                                        onClickMessageButton(friend.phone)
-                                    }
-                                },
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                        TabRow(
-                            modifier =
-                                Modifier
-                                    .padding(horizontal = 25.dp)
-                                    .width(170.dp),
-                            containerColor = NearTheme.colors.WHITE_FFFFFF,
-                            selectedTabIndex = 0,
-                            divider = {},
-                            indicator = {
-                                TabRowDefaults.SecondaryIndicator(
-                                    modifier =
-                                        Modifier
-                                            .customTabIndicatorOffset(
-                                                it[currentTabPosition.intValue],
-                                                80.dp,
-                                            ), // 넓이, 애니메이션 지정
-                                    // 모양 지정
-                                    height = 3.dp,
-                                    color = NearTheme.colors.BLUE01_5AA2E9,
-                                )
-                            },
-                        ) {
-                            Tab(
-                                modifier =
-                                    Modifier
-                                        .width(85.dp)
-                                        .height(50.dp),
-                                selected = true,
-                                onClick = {
-                                    currentTabPosition.intValue = 0
-                                },
-                            ) {
-                                if (currentTabPosition.intValue == 0) {
-                                    Text(
-                                        text = stringResource(R.string.friend_profile_tab_text_profile),
-                                        style = NearTheme.typography.B2_14_BOLD,
-                                        color = NearTheme.colors.BLACK_1A1A1A,
-                                    )
-                                } else {
-                                    Text(
-                                        text = stringResource(R.string.friend_profile_tab_text_profile),
-                                        style = NearTheme.typography.B2_14_MEDIUM,
-                                        color = NearTheme.colors.GRAY02_B7B7B7,
-                                    )
-                                }
-                            }
-                            Tab(
-                                modifier =
-                                    Modifier
-                                        .width(85.dp)
-                                        .height(50.dp),
-                                selected = true,
-                                onClick = {
-                                    currentTabPosition.intValue = 1
-                                },
-                            ) {
-                                if (currentTabPosition.intValue == 1) {
-                                    Text(
-                                        text = stringResource(R.string.friend_profile_tab_text_record),
-                                        style = NearTheme.typography.B2_14_BOLD,
-                                        color = NearTheme.colors.BLACK_1A1A1A,
-                                    )
-                                } else {
-                                    Text(
-                                        text = stringResource(R.string.friend_profile_tab_text_record),
-                                        style = NearTheme.typography.B2_14_MEDIUM,
-                                        color = NearTheme.colors.GRAY02_B7B7B7,
-                                    )
-                                }
-                            }
-                        }
-                        HorizontalDivider(thickness = 1.dp, color = NearTheme.colors.GRAY03_EBEBEB)
-                        if (currentTabPosition.intValue == 0) {
-                            ProfileTab(friend = friend)
-                        } else {
-                            RecordTab(friendShipRecordState = friendShipRecordState)
-                        }
-                        Spacer(modifier = Modifier.height(60.dp))
-                    }
-                    NearSolidTypeButton(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp)
-                                .padding(bottom = 24.dp)
-                                .align(Alignment.BottomCenter),
-                        contentPadding = PaddingValues(vertical = 17.dp),
-                        enabled = friend.isContactToday?.not() ?: false,
-                        onClick = { onRecordFriendShip(friend.friendId) },
-                        text = stringResource(R.string.friend_profile_record_button_text),
-                    )
+                                    .padding(horizontal = 20.dp)
+                                    .padding(bottom = 24.dp),
+                            contentPadding = PaddingValues(vertical = 17.dp),
+                            enabled = friend.isContactToday?.not() ?: false,
+                            onClick = { onRecordFriendShip(friend.friendId) },
+                            text = stringResource(R.string.friend_profile_record_button_text),
+                        )
+                    } // end parent Column
                 }
 
                 is FriendState.Loading -> {
@@ -407,9 +444,9 @@ fun FriendProfileScreen(
                         )
                     }
                 }
-            }
-        }
-    }
+            } // end when
+        } // end Box
+    } // end NearFrame
 }
 
 @Composable
@@ -454,16 +491,28 @@ private fun RecordTab(
     modifier: Modifier = Modifier,
     friendShipRecordState: FriendShipRecordState,
 ) {
-    Column(modifier = modifier.padding(horizontal = 24.dp)) {
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth() // 부모 스크롤(LazyColumn)에 의존하도록 fillMaxWidth만 사용
+                .padding(horizontal = 24.dp),
+    ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             stringResource(R.string.friend_profile_info_record_title_text),
             style = NearTheme.typography.B2_14_BOLD,
             color = NearTheme.colors.BLACK_1A1A1A,
         )
+
         if (friendShipRecordState.isEmpty) {
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(modifier = Modifier.height(60.dp))
+            // 빈 상태는 중앙 정렬이지만 높이를 무한으로 잡지 않도록 fillMaxWidth 사용
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 60.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Image(painterResource(R.drawable.img_100_character_empty), contentDescription = null)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
@@ -474,19 +523,44 @@ private fun RecordTab(
             }
         } else {
             Spacer(modifier = Modifier.height(13.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                contentPadding = PaddingValues(bottom = 60.dp),
-            ) {
-                items(friendShipRecordState.records.size) {
-                    RecordItem(
-                        friendRecord = friendShipRecordState.records[friendShipRecordState.records.size - 1 - it],
-                        index =
-                            friendShipRecordState.records.size - it,
-                    )
+
+            // records를 3개씩 묶어서 행(Row)으로 렌더 — 자체 스크롤 없음
+            val rows = friendShipRecordState.records.chunked(3)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                rows.forEach { rowItems ->
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
+                        // 아이템 간 세로 간격
+                        horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        // 각 row의 아이템을 동일한 폭으로 나눔
+                        rowItems.forEachIndexed { index, item ->
+                            // 인덱스나 번호 표시 로직은 기존과 동일하게 계산
+                            val globalIndex =
+                                friendShipRecordState.records.size - (rows.indexOf(rowItems) * 3 + index)
+                            Box(modifier = Modifier.weight(1f)) {
+                                RecordItem(
+                                    modifier = Modifier.wrapContentSize(),
+                                    index = globalIndex,
+                                    friendRecord = item,
+                                )
+                            }
+                        }
+
+                        // 만약 마지막 행에 3 미만의 아이템이 있으면 빈 공간을 채워 균형 맞춤
+                        if (rowItems.size < 3) {
+                            repeat(3 - rowItems.size) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
