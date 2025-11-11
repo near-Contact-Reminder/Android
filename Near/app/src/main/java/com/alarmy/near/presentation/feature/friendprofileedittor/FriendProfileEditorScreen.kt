@@ -576,7 +576,7 @@ fun FriendProfileEditorScreen(
                         style = NearTheme.typography.B2_14_MEDIUM,
                         color = NearTheme.colors.GRAY01_888888,
                     )
-                    Spacer(modifier = Modifier.width(23.dp))
+                    Spacer(modifier = Modifier.width(62.dp))
                     NearLimitedTextField(
                         modifier =
                             Modifier
