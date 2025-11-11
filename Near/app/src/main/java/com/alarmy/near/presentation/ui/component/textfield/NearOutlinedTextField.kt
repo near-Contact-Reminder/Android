@@ -151,7 +151,7 @@ fun NearOutlinedTextField(
                         container = {
                             OutlinedTextFieldDefaults.Container(
                                 enabled = enabled,
-                                isError = isError,
+                                isError = false,
                                 interactionSource = interactionSource,
                                 colors = colors,
                                 shape = shape,
