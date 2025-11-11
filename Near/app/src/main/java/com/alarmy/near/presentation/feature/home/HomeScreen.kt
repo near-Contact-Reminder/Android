@@ -217,7 +217,7 @@ internal fun HomeScreen(
                         items(
                             count = monthlyFriends.size,
                             key = {
-                                monthlyFriends[it].friendId
+                                "monthly_friend_${monthlyFriends[it].friendId}"
                             },
                         ) {
                             val monthlyContact = monthlyFriends[it]
