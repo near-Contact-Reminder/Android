@@ -41,6 +41,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.res.painterResource
@@ -416,17 +418,29 @@ fun FriendProfileScreen(
                         } // end weighted Column
 
                         // (3) 하단 고정 버튼
-                        NearSolidTypeButton(
+                        Box(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 20.dp)
-                                    .padding(bottom = 24.dp),
-                            contentPadding = PaddingValues(vertical = 17.dp),
-                            enabled = friend.isContactToday?.not() ?: false,
-                            onClick = { onRecordFriendShip(friend.friendId) },
-                            text = stringResource(R.string.friend_profile_record_button_text),
-                        )
+                                Modifier.fillMaxWidth().background(
+                                    brush =
+                                        Brush.linearGradient(
+                                            colors = listOf(Color(0x00FFFFFF), Color(0xFFFFFFFF)), // 파랑 → 밝은 하늘색
+                                            start = Offset(0f, 0f),              // 위쪽 시작
+                                            end = Offset(0f, Float.POSITIVE_INFINITY)
+                                        ),
+                                ),
+                        ) {
+                            NearSolidTypeButton(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp)
+                                        .padding(bottom = 24.dp, top = 16.dp),
+                                contentPadding = PaddingValues(vertical = 17.dp),
+                                enabled = friend.isContactToday?.not() ?: false,
+                                onClick = { onRecordFriendShip(friend.friendId) },
+                                text = stringResource(R.string.friend_profile_record_button_text),
+                            )
+                        }
                     } // end parent Column
                 }
 
