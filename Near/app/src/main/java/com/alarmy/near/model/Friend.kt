@@ -22,17 +22,9 @@ data class Friend(
     val memo: String?,
     val phone: String?,
     val lastContactAt: String?, // "2025-07-16"
-) : Parcelable {
-    val isContactedToday: Boolean
-        get() = lastContactAt?.isToday() ?: false
-
-    private fun String.isToday(): Boolean {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREA)
-        val targetDate = LocalDate.parse(this, formatter)
-        val today = LocalDate.now()
-        return targetDate == today
-    }
-}
+    val lastContactFormat: String? = null, // 친구 상세에 쓰이는 포맷 TODO 추후 UI 모델 분리
+    val isContactToday: Boolean? = null, // 친구 상세에 쓰이는 포맷 TODO 추후 UI 모델 분리
+) : Parcelable
 
 @Serializable
 @Parcelize
