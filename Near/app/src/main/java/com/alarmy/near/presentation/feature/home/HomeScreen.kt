@@ -163,7 +163,7 @@ internal fun HomeScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = stringResource(R.string.home_this_month_people),
                 modifier = Modifier.padding(horizontal = 24.dp),
@@ -314,7 +314,7 @@ private fun MyFriends(
     Box(
         modifier =
             Modifier
-                .fillMaxSize()
+                .fillMaxWidth().height(490.dp)
                 .background(
                     color = NearTheme.colors.WHITE_FFFFFF,
                     shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
@@ -431,7 +431,7 @@ internal fun HomeScreenPreview() {
                 HomeUiState(
                     myFriendUIState =
                         MyFriendUIState.Success(
-                            List(5) {
+                            List(7) {
                                 FriendSummary(
                                     id = "2003",
                                     name = "일이삼사오육칠팔구",
