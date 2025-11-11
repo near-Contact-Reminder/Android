@@ -22,9 +22,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
@@ -75,8 +73,6 @@ import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun FriendProfileRoute(
@@ -268,7 +264,7 @@ fun FriendProfileScreen(
                                         text =
                                             stringResource(
                                                 R.string.friend_profile_last_contact_date_format,
-                                                friend.lastContactAt.lastContactFormat(),
+                                                friend.lastContactFormat ?: "",
                                             ),
                                         style = NearTheme.typography.B2_14_MEDIUM,
                                         color = NearTheme.colors.BLUE01_5AA2E9,
@@ -391,7 +387,7 @@ fun FriendProfileScreen(
                                 .padding(bottom = 24.dp)
                                 .align(Alignment.BottomCenter),
                         contentPadding = PaddingValues(vertical = 17.dp),
-                        enabled = friend.isContactedToday.not(),
+                        enabled = friend.isContactToday?.not() ?: false,
                         onClick = { onRecordFriendShip(friend.friendId) },
                         text = stringResource(R.string.friend_profile_record_button_text),
                     )
@@ -664,14 +660,6 @@ fun Modifier.customTabIndicatorOffset(
             .offset(x = indicatorOffset)
             .width(currentTabWidth)
     }
-
-private fun String.lastContactFormat(): String {
-    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val outputFormatter = DateTimeFormatter.ofPattern("M월 d일")
-
-    val date = LocalDate.parse(this, inputFormatter)
-    return date.format(outputFormatter)
-}
 
 @Preview(showBackground = true)
 @Composable
