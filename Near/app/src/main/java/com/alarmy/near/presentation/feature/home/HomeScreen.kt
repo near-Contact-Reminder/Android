@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -127,48 +128,47 @@ internal fun HomeScreen(
                     .fillMaxSize(),
         ) {
             Spacer(modifier = Modifier.height(statusBarHeightDp))
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .padding(end = 20.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier.onNoRippleClick(onClick = onMyPageClick),
-                    text = stringResource(R.string.home_my_profile_button_text),
-                    style = NearTheme.typography.H2_18_BOLD.copy(letterSpacing = 0.sp),
-                    color = NearTheme.colors.WHITE_FFFFFF,
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Image(
-                    modifier = Modifier.onNoRippleClick(onClick = onAlarmClick),
-                    painter = painterResource(R.drawable.ic_32_bell),
-                    contentDescription = "",
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Box(modifier = Modifier.padding(horizontal = 24.dp)) {
-                NearConditionalShimmer(enabled = uiState.memberInfo == null) {
+            Box(modifier = Modifier.weight(1f)) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .padding(end = 20.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        text =
-                            buildAnnotatedString {
-                                append("${uiState.memberInfo?.nickname}님,\n")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append("누구를 챙길지")
-                                }
-                                append(" 정해볼까요?")
-                            },
-                        style = NearTheme.typography.H1_24_REGULAR,
+                        modifier = Modifier.onNoRippleClick(onClick = onMyPageClick),
+                        text = stringResource(R.string.home_my_profile_button_text),
+                        style = NearTheme.typography.H2_18_BOLD.copy(letterSpacing = 0.sp),
                         color = NearTheme.colors.WHITE_FFFFFF,
                     )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Image(
+                        modifier = Modifier.onNoRippleClick(onClick = onAlarmClick),
+                        painter = painterResource(R.drawable.ic_32_bell),
+                        contentDescription = "",
+                    )
+                }
+
+                Box(modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterStart)) {
+                    NearConditionalShimmer(enabled = uiState.memberInfo == null) {
+                        Text(
+                            text =
+                                buildAnnotatedString {
+                                    append("${uiState.memberInfo?.nickname}님,\n")
+                                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("누구를 챙길지")
+                                    }
+                                    append(" 정해볼까요?")
+                                },
+                            style = NearTheme.typography.H1_24_REGULAR,
+                            color = NearTheme.colors.WHITE_FFFFFF,
+                        )
+                    }
                 }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -329,7 +329,8 @@ private fun MyFriends(
     Box(
         modifier =
             Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .height(490.dp)
                 .background(
                     color = NearTheme.colors.WHITE_FFFFFF,
                     shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
@@ -339,7 +340,8 @@ private fun MyFriends(
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Spacer(modifier = Modifier.height(166.dp))
                 NearConditionalShimmer(
                     shimmerColors = ShimmerType.WHITE.colors,
@@ -476,7 +478,7 @@ internal fun HomeScreenPreview() {
                 HomeUiState(
                     myFriendUIState =
                         MyFriendUIState.Success(
-                            List(5) {
+                            List(7) {
                                 FriendSummary(
                                     id = "2003",
                                     name = "일이삼사오육칠팔구",
@@ -488,14 +490,16 @@ internal fun HomeScreenPreview() {
                             },
                         ),
                     monthlyFriendUIState =
-                        MonthlyFriendUIState.Success(List(4) {
-                            MonthlyFriend(
-                                friendId = "intellegat$it",
-                                name = "Stacey Stewart",
-                                type = MonthlyFriendType.ANNIVERSARY,
-                                nextContactAt = "2025-09-30",
-                            )
-                        },),
+                        MonthlyFriendUIState.Success(
+                            List(4) {
+                                MonthlyFriend(
+                                    friendId = "intellegat$it",
+                                    name = "Stacey Stewart",
+                                    type = MonthlyFriendType.ANNIVERSARY,
+                                    nextContactAt = "2025-09-30",
+                                )
+                            },
+                        ),
                     memberInfo =
                         MemberInfo(
                             memberId = "posidonium",
