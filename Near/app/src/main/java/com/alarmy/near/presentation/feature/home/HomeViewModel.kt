@@ -9,7 +9,6 @@ import com.alarmy.near.presentation.feature.home.model.MonthlyFriendUIState
 import com.alarmy.near.presentation.feature.home.model.MyFriendUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -68,10 +67,14 @@ class HomeViewModel
                     }
                 }
                 launch {
-                    friendRepository
-                        .fetchMonthlyFriends()
-                        .catch {
-                            _errorEvent.send(it)
+                    combine(
+                        friendRepository
+                            .fetchMonthlyFriends(),
+                        deletedFriendIdsFlow,
+                    ) { monthlyFriends, deletedIds ->
+                        monthlyFriends.filter { it.friendId !in deletedIds }
+                    }.catch {
+                        _errorEvent.send(it)
                         }.collect {
                             _uiState.update { state ->
                                 state.copy(
