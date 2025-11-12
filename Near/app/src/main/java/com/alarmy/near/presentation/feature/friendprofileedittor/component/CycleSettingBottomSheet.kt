@@ -130,7 +130,7 @@ fun CycleSettingBottomSheet(
 
                 Text(
                     text =
-                        stringResource(R.string.friend_contact_cycle_next_cycle_prefix) +
+                        stringResource(R.string.friend_contact_cycle_next_cycle_prefix) + " " +
                             (
                                 selectedInterval?.let { DateExtension.getNextCycleDate(it) }
                                     ?: DateExtension.getNextWeekSameDay()
