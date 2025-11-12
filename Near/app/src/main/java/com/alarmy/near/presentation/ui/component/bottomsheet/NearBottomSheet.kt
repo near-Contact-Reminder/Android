@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -50,7 +49,7 @@ fun NearBottomSheet(
                             Modifier
                                 .width(36.dp)
                                 .height(5.dp)
-                                .clip(RoundedCornerShape(100.dp))
+                                .clip(RoundedCornerShape(2.5.dp))
                                 .background(NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.1f)),
                     )
                 }
@@ -76,9 +75,8 @@ fun NearBottomSheetPreview() {
     NearTheme {
         NearBottomSheet(
             isVisible = true,
-            onDismiss = {  },
+            onDismiss = { },
             content = {},
         )
     }
 }
-
