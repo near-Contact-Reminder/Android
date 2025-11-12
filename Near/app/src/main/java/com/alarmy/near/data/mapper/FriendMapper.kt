@@ -30,7 +30,7 @@ fun FriendEntity.toModel(): Friend =
         phone = phone,
         isContactToday = lastContactAt?.isToday() ?: false,
         lastContactAt = lastContactAt,
-        lastContactFormat = lastContactAt?.contactFormat()
+        lastContactFormat = lastContactAt?.contactFormat(),
     )
 
 fun String.contactFormat(): String {
@@ -66,7 +66,7 @@ fun Friend.toRequest(): FriendRequest =
         name = name,
         relation = relation.toString(),
         contactFrequency = contactFrequency.toRequest(),
-        birthday = birthday,
+        birthday = birthday?.replace(".", "-"),
         anniversaryList = anniversaryList.map { it.toRequest() },
         memo = memo,
         phone = phone,
