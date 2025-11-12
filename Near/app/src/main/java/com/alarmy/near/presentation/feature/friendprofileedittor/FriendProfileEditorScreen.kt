@@ -44,8 +44,8 @@ import com.alarmy.near.model.DayOfWeek
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
-import com.alarmy.near.presentation.feature.friendcontactcycle.components.CycleSettingBottomSheet
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
+import com.alarmy.near.presentation.ui.component.bottomsheet.CycleSettingBottomSheet
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState

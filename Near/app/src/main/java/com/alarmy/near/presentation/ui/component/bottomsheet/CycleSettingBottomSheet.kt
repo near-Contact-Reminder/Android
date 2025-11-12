@@ -1,4 +1,4 @@
-package com.alarmy.near.presentation.feature.friendcontactcycle.components
+package com.alarmy.near.presentation.ui.component.bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.model.ReminderInterval
-import com.alarmy.near.presentation.ui.component.bottomsheet.NearBottomSheet
+import com.alarmy.near.presentation.feature.friendcontactcycle.components.ContactCycleButtons
 import com.alarmy.near.presentation.ui.component.checkbox.NearCheckbox
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
@@ -40,7 +40,6 @@ fun CycleSettingBottomSheet(
     currentSelectedInterval: ReminderInterval? = null,
     modifier: Modifier = Modifier,
 ) {
-    // 선택된 주기 상태 관리
     var selectedInterval by remember(isVisible) {
         mutableStateOf<ReminderInterval?>(currentSelectedInterval ?: ReminderInterval.EVERY_WEEK)
     }
@@ -50,7 +49,6 @@ fun CycleSettingBottomSheet(
         onDismiss = onDismiss,
         modifier = modifier,
     ) {
-        // 제목
         Text(
             text = stringResource(R.string.friend_contact_cycle_cycle_setting_text),
             style = NearTheme.typography.B1_16_BOLD,
@@ -58,7 +56,6 @@ fun CycleSettingBottomSheet(
 
         Spacer(modifier = Modifier.size(24.dp))
 
-        // 선택된 주기 미리보기
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -129,7 +126,7 @@ fun CycleSettingBottomSheet(
 
                 Text(
                     text =
-                        stringResource(R.string.friend_contact_cycle_next_cycle_prefix) + " " +
+                        stringResource(R.string.friend_contact_cycle_next_cycle_prefix) +
                             (
                                 selectedInterval?.let { DateExtension.getNextCycleDate(it) }
                                     ?: DateExtension.getNextWeekSameDay()
@@ -142,7 +139,6 @@ fun CycleSettingBottomSheet(
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        // 주기 선택 옵션들
         ReminderInterval.entries.forEach { interval ->
             val isSelected = selectedInterval == interval
 
@@ -171,17 +167,13 @@ fun CycleSettingBottomSheet(
                 if (isSelected) {
                     NearCheckbox(
                         checked = true,
-                        onCheckedChange = { checked ->
-                            // 체크박스 클릭 시 해제되지 않도록 수정
-                            // 체크된 상태를 유지
-                        },
+                        onCheckedChange = {},
                     )
                 }
             }
         }
         Spacer(modifier = Modifier.size(24.dp))
 
-        // 버튼들
         ContactCycleButtons(
             onLeftButtonClick = onDismiss,
             onRightButtonClick = {
@@ -207,3 +199,4 @@ fun CycleSettingBottomSheetPreview() {
         )
     }
 }
+
