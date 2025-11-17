@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -118,6 +117,10 @@ class FriendProfileViewModel
                                 friend =
                                     it.friend.copy(
                                         lastContactAt = getTodayDashFormat(),
+                                        lastContactFormat = it.friend.lastContactAt?.contactFormat(),
+                                        isContactToday =
+                                            it.friend.lastContactAt?.isToday()
+                                                ?: false,
                                     ),
                             )
                         }
@@ -146,4 +149,19 @@ class FriendProfileViewModel
                 _friendFlow.update { (it as FriendState.Success).copy(friend = friend) }
             }
         }
+
+        fun String.contactFormat(): String {
+            val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val outputFormatter = DateTimeFormatter.ofPattern("M월 d일")
+
+            val date = LocalDate.parse(this, inputFormatter)
+            return date.format(outputFormatter)
+        }
+
+        private fun String.isToday(): Boolean {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREA)
+            val targetDate = LocalDate.parse(this, formatter)
+            val today = LocalDate.now()
+            return targetDate == today
     }
+}

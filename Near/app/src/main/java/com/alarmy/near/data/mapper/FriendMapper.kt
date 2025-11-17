@@ -28,8 +28,8 @@ fun FriendEntity.toModel(): Friend =
         anniversaryList = anniversaryList.map { it.toModel() },
         memo = memo,
         phone = phone,
-        isContactToday = lastContactAt?.isToday() ?: false,
         lastContactAt = lastContactAt,
+        isContactToday = lastContactAt?.isToday() ?: false,
         lastContactFormat = lastContactAt?.contactFormat(),
     )
 
