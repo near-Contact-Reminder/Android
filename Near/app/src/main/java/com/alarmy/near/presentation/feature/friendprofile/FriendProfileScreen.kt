@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -52,7 +50,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -344,7 +341,11 @@ fun FriendProfileScreen(
                                                 Modifier
                                                     .width(85.dp)
                                                     .height(50.dp),
-                                            selected = currentTabPosition.intValue == 0,
+                                            selectedContentColor =
+                                                NearTheme.colors.GRAY01_888888.copy(
+                                                    alpha = 0.3f,
+                                                ),
+                                                selected = currentTabPosition.intValue == 0,
                                             onClick = { currentTabPosition.intValue = 0 },
                                         ) {
                                             Text(
@@ -374,6 +375,9 @@ fun FriendProfileScreen(
                                                     .height(50.dp),
                                             selected = currentTabPosition.intValue == 1,
                                             onClick = { currentTabPosition.intValue = 1 },
+                                            selectedContentColor = NearTheme.colors.GRAY01_888888.copy(
+                                                alpha = 0.3f
+                                            ),
                                         ) {
                                             Text(
                                                 text = stringResource(R.string.friend_profile_tab_text_record),
@@ -424,8 +428,8 @@ fun FriendProfileScreen(
                                     brush =
                                         Brush.linearGradient(
                                             colors = listOf(Color(0x00FFFFFF), Color(0xFFFFFFFF)), // 파랑 → 밝은 하늘색
-                                            start = Offset(0f, 0f),              // 위쪽 시작
-                                            end = Offset(0f, Float.POSITIVE_INFINITY)
+                                            start = Offset(0f, 0f), // 위쪽 시작
+                                            end = Offset(0f, Float.POSITIVE_INFINITY),
                                         ),
                                 ),
                         ) {
@@ -614,7 +618,8 @@ private fun RecordItem(
                     contentDescription = null,
                 )
                 Text(
-                    stringResource(R.string.friend_profile_info_contact_record_text, index),
+                    text = stringResource(R.string.friend_profile_info_contact_record_text, index),
+                    textAlign = TextAlign.Center,
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.BLUE01_5AA2E9,
                 )
