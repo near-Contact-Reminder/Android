@@ -215,9 +215,9 @@ internal fun HomeScreen(
                     ) {
                         items(
                             count = monthlyFriends.size,
-                            key = {
-                                "monthly_friend_${monthlyFriends[it].friendId}"
-                            },
+//                            key = {
+//                                "monthly_friend_${monthlyFriends[it].friendId}"
+//                            },
                         ) {
                             val monthlyContact = monthlyFriends[it]
                             val now = LocalDate.now()
