@@ -1,22 +1,20 @@
 package com.alarmy.near.presentation.feature.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.FriendRepository
 import com.alarmy.near.data.repository.MemberRepository
-import com.alarmy.near.model.friendsummary.FriendSummary
-import com.alarmy.near.model.member.MemberInfo
-import com.alarmy.near.model.monthly.MonthlyFriend
+import com.alarmy.near.presentation.feature.home.model.HomeUiState
+import com.alarmy.near.presentation.feature.home.model.MonthlyFriendUIState
+import com.alarmy.near.presentation.feature.home.model.MyFriendUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,48 +25,66 @@ class HomeViewModel
         friendRepository: FriendRepository,
         memberRepository: MemberRepository,
     ) : ViewModel() {
+        private val _uiState = MutableStateFlow(HomeUiState())
+        val uiState = _uiState.asStateFlow()
+
         private val _errorEvent = Channel<Throwable?>()
 
         private val deletedFriendIdsFlow = MutableStateFlow<Set<String>>(setOf())
 
         val errorEvent = _errorEvent.receiveAsFlow()
-        val memberInfoFlow: StateFlow<MemberInfo?> =
-            memberRepository
-                .getMyInfo()
-                .catch {
-                    _errorEvent.send(it)
-                }.stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(5_000),
-                    null,
-                )
 
-        val friendsFlow: StateFlow<List<FriendSummary>> =
-            combine(
-                friendRepository
-                    .fetchFriends(),
-                deletedFriendIdsFlow,
-            ) { friends, deletedIds ->
-                friends.filter { it.id !in deletedIds }
-            }.catch {
-                _errorEvent.send(it)
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = emptyList(),
-            )
-
-        val monthlyFriendFlow:
-            StateFlow<List<MonthlyFriend>> =
-            friendRepository
-                .fetchMonthlyFriends()
-                .catch {
-                    _errorEvent.send(it)
-                }.stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = emptyList(),
-                )
+        init {
+            viewModelScope.launch {
+                launch {
+                    memberRepository
+                        .getMyInfo()
+                        .catch {
+                            _errorEvent.send(it)
+                        }.collect {
+                            _uiState.update { state ->
+                                state.copy(
+                                    memberInfo = it,
+                                )
+                            }
+                        }
+                }
+                launch {
+                    combine(
+                        friendRepository
+                            .fetchFriends(),
+                        deletedFriendIdsFlow,
+                    ) { friends, deletedIds ->
+                        friends.filter { it.id !in deletedIds }
+                    }.catch {
+                        _errorEvent.send(it)
+                    }.collect {
+                        _uiState.update { state ->
+                            state.copy(
+                                myFriendUIState = MyFriendUIState.Success(it),
+                            )
+                        }
+                    }
+                }
+                launch {
+                    combine(
+                        friendRepository
+                            .fetchMonthlyFriends(),
+                        deletedFriendIdsFlow,
+                    ) { monthlyFriends, deletedIds ->
+                        monthlyFriends.filter { it.friendId !in deletedIds }
+                    }.catch {
+                        _errorEvent.send(it)
+                        }.collect {
+                            _uiState.update { state ->
+                                state.copy(
+                                    monthlyFriendUIState = MonthlyFriendUIState.Success(it),
+                                )
+                            }
+                        }
+                }
+            }
+        }
 
         fun deleteFriend(friendId: String) {
             viewModelScope.launch {

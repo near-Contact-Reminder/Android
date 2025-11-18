@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -129,6 +132,7 @@ fun MyProfileScreen(
     onWithdraw: () -> Unit = {},
     onTermsClick: (TermsType) -> Unit = {},
 ) {
+    val scrollState = rememberScrollState()
     NearFrame {
         // 앱바
         NearTopAppbar(
@@ -137,17 +141,21 @@ fun MyProfileScreen(
             onClickBackButton = onNavigateBack,
         )
 
-        MyProfileInfoSection(uiState)
-
-        // 일반 정보 섹션
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+            modifier = Modifier.verticalScroll(scrollState),
         ) {
-            MyProfileGeneralSection(uiState)
-            MyProfileServiceInfoSection(onLogout, onWithdraw, onTermsClick)
+            MyProfileInfoSection(uiState)
+
+            // 일반 정보 섹션
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+            ) {
+                MyProfileGeneralSection(uiState)
+                MyProfileServiceInfoSection(onLogout, onWithdraw, onTermsClick)
+            }
         }
     }
 }
@@ -255,7 +263,7 @@ private fun ColumnScope.MyProfileServiceInfoSection(
         )
     }
 
-    Spacer(modifier = Modifier.weight(1f))
+    Spacer(modifier = Modifier.height(63.dp))
 
     NearLogoutButton(
         modifier = Modifier.fillMaxWidth(),

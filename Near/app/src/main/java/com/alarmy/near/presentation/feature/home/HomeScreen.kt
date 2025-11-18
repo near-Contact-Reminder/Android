@@ -5,9 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,12 +60,16 @@ import com.alarmy.near.model.member.MemberInfo
 import com.alarmy.near.model.monthly.MonthlyFriend
 import com.alarmy.near.model.monthly.MonthlyFriendType
 import com.alarmy.near.presentation.feature.home.component.MyContacts
+import com.alarmy.near.presentation.feature.home.model.HomeUiState
+import com.alarmy.near.presentation.feature.home.model.MonthlyFriendUIState
+import com.alarmy.near.presentation.feature.home.model.MyFriendUIState
 import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenu
 import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenuItem
+import com.alarmy.near.presentation.ui.extension.NearConditionalShimmer
+import com.alarmy.near.presentation.ui.extension.ShimmerType
 import com.alarmy.near.presentation.ui.extension.dropShadow
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 private const val MINIMUM_PAGE_COUNT_TO_SHOW_UI = 2
@@ -79,24 +85,18 @@ internal fun HomeRoute(
     onMonthlyReminderAllClick: () -> Unit = {},
 ) {
     LaunchedEffect(Unit) {
-        launch {
-            viewModel.errorEvent.collect {
-                onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
-            }
+        viewModel.errorEvent.collect {
+            onShowErrorSnackBar(IllegalStateException("네트워크 에러가 발생했습니다."))
         }
     }
-    val memberInfo = viewModel.memberInfoFlow.collectAsStateWithLifecycle()
-    val friends = viewModel.friendsFlow.collectAsStateWithLifecycle()
-    val monthlyFriends = viewModel.monthlyFriendFlow.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     HomeScreen(
+        uiState = uiState.value,
         onContactClick = onContactClick,
         onAlarmClick = onAlarmClick,
         onMyPageClick = onMyPageClick,
         onAddContactClick = onAddContactClick,
         onMonthlyReminderAllClick = onMonthlyReminderAllClick,
-        contacts = friends.value,
-        monthlyFriends = monthlyFriends.value,
-        memberInfo = memberInfo.value,
     )
 }
 
@@ -109,21 +109,10 @@ internal fun HomeScreen(
     onAlarmClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
     onMonthlyReminderAllClick: () -> Unit = {},
-    memberInfo: MemberInfo?,
-    contacts: List<FriendSummary>,
-    monthlyFriends: List<MonthlyFriend>,
+    uiState: HomeUiState,
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val contactsWithPage = contacts.chunked(5)
-    val pagerState: PagerState =
-        rememberPagerState(
-            initialPage = 0,
-            pageCount = {
-                contactsWithPage.count() + if (contactsWithPage.lastOrNull()?.count() == 5) 1 else 0
-            },
-        )
-    val dropdownState = remember { mutableStateOf(false) }
 
     Surface(modifier = modifier) {
         Column(
@@ -135,52 +124,50 @@ internal fun HomeScreen(
                                 R.drawable.img_bg,
                             ),
                         contentScale = ContentScale.FillBounds,
-                    )
-                    .fillMaxSize(),
+                    ).fillMaxSize(),
         ) {
             Spacer(modifier = Modifier.height(statusBarHeightDp))
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .padding(end = 20.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier.onNoRippleClick(onClick = onMyPageClick),
-                    text = stringResource(R.string.home_my_profile_button_text),
-                    style = NearTheme.typography.H2_18_BOLD.copy(letterSpacing = 0.sp),
-                    color = NearTheme.colors.WHITE_FFFFFF,
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Image(
-                    modifier = Modifier.onNoRippleClick(onClick = onAlarmClick),
-                    painter = painterResource(R.drawable.ic_32_bell),
-                    contentDescription = "",
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text =
-                    buildAnnotatedString {
-                        append("${memberInfo?.nickname}님,\n")
-                        withStyle(
-                            SpanStyle(
-                                fontWeight = FontWeight.Bold,
-                            ),
-                        ) {
-                            append("누구를 챙길지")
-                        }
-                        append(" 정해볼까요?")
-                    },
-                modifier = Modifier.padding(horizontal = 24.dp),
-                style = NearTheme.typography.H1_24_REGULAR,
-                color = NearTheme.colors.WHITE_FFFFFF,
-            )
-            Spacer(modifier = Modifier.height(32.dp))
+            Box(modifier = Modifier.weight(1f)) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .padding(end = 20.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier.onNoRippleClick(onClick = onMyPageClick),
+                        text = stringResource(R.string.home_my_profile_button_text),
+                        style = NearTheme.typography.H2_18_BOLD.copy(letterSpacing = 0.sp),
+                        color = NearTheme.colors.WHITE_FFFFFF,
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Image(
+                        modifier = Modifier.onNoRippleClick(onClick = onAlarmClick),
+                        painter = painterResource(R.drawable.ic_32_bell),
+                        contentDescription = "",
+                    )
+                }
 
+                Box(modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterStart)) {
+                    NearConditionalShimmer(enabled = uiState.memberInfo == null) {
+                        Text(
+                            text =
+                                buildAnnotatedString {
+                                    append("${uiState.memberInfo?.nickname}님,\n")
+                                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("누구를 챙길지")
+                                    }
+                                    append(" 정해볼까요?")
+                                },
+                            style = NearTheme.typography.H1_24_REGULAR,
+                            color = NearTheme.colors.WHITE_FFFFFF,
+                        )
+                    }
+                }
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -198,90 +185,103 @@ internal fun HomeScreen(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            if (monthlyFriends.isEmpty()) {
-                Surface(
+
+            if (uiState.monthlyFriendUIState is MonthlyFriendUIState.Loading) {
+                NearConditionalShimmer(
+                    enabled = true,
                     modifier =
                         Modifier
-                            .fillMaxWidth()
                             .padding(horizontal = 20.dp)
-                            .clip(RoundedCornerShape(12.dp)),
-                    color = NearTheme.colors.WHITE_FFFFFF.copy(alpha = 0.2f),
-                ) {
-                    Text(
-                        text = stringResource(R.string.home_no_people_this_month),
+                            .fillMaxWidth()
+                            .height(48.dp),
+                ) {}
+            } else if (uiState.monthlyFriendUIState is MonthlyFriendUIState.Success) {
+                if (uiState.monthlyFriendUIState.monthlyFriends.isEmpty()) {
+                    Surface(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 14.dp),
-                        textAlign = TextAlign.Center,
-                        style =
-                            NearTheme.typography.B2_14_MEDIUM.copy(
-                                fontWeight = FontWeight.Normal,
-                            ),
-                        color = NearTheme.colors.WHITE_FFFFFF,
-                    )
-                }
-            } else {
-                LazyRow(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    items(
-                        count = monthlyFriends.size,
-                        key = {
-                            monthlyFriends[it].friendId
-                        },
+                                .padding(horizontal = 20.dp)
+                                .clip(RoundedCornerShape(12.dp)),
+                        color = NearTheme.colors.WHITE_FFFFFF.copy(alpha = 0.2f),
                     ) {
-                        val monthlyContact = monthlyFriends[it]
-                        val now = LocalDate.now()
-                        Surface(
-                            modifier.dropShadow(
-                                shape = RoundedCornerShape(12.dp),
-                                color = Color.Black.copy(alpha = 0.07f),
-                                blur = 4.dp,
-                                offsetY = 4.dp,
-                            ),
+                        Text(
+                            text = stringResource(R.string.home_no_people_this_month),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 14.dp),
+                            textAlign = TextAlign.Center,
+                            style =
+                                NearTheme.typography.B2_14_MEDIUM.copy(
+                                    fontWeight = FontWeight.Normal,
+                                ),
                             color = NearTheme.colors.WHITE_FFFFFF,
-                            shape = RoundedCornerShape(12.dp),
+                        )
+                    }
+                } else {
+                    val monthlyFriends = uiState.monthlyFriendUIState.monthlyFriends
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 20.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(
+                            count = monthlyFriends.size,
+//                            key = {
+//                                "monthly_friend_${monthlyFriends[it].friendId}"
+//                            },
                         ) {
-                            Row(
-                                modifier =
-                                    Modifier
-                                        .padding(start = 12.dp, end = 16.dp)
-                                        .padding(vertical = 12.dp),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically,
+                            val monthlyContact = monthlyFriends[it]
+                            val now = LocalDate.now()
+                            Surface(
+                                modifier.dropShadow(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = Color.Black.copy(alpha = 0.07f),
+                                    blur = 4.dp,
+                                    offsetY = 4.dp,
+                                ),
+                                color = NearTheme.colors.WHITE_FFFFFF,
+                                shape = RoundedCornerShape(12.dp),
                             ) {
-                                Image(
-                                    painterResource(monthlyContact.type.imageSrc),
-                                    contentDescription = "",
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    modifier = Modifier.widthIn(max = 97.dp),
-                                    text = monthlyContact.name,
-                                    style = NearTheme.typography.B2_14_BOLD,
-                                    textAlign = TextAlign.Center,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                    color = NearTheme.colors.BLACK_1A1A1A,
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                if (monthlyContact.isNextContactDay(now)) {
+                                Row(
+                                    modifier =
+                                        Modifier
+                                            .padding(start = 12.dp, end = 16.dp)
+                                            .padding(vertical = 12.dp),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Image(
+                                        painterResource(monthlyContact.type.imageSrc),
+                                        contentDescription = "",
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = monthlyContact.daysUntilNextContact(LocalDate.now()),
+                                        modifier = Modifier.widthIn(max = 97.dp),
+                                        text = monthlyContact.name,
                                         style = NearTheme.typography.B2_14_BOLD,
-                                        color = NearTheme.colors.BLUE01_5AA2E9,
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1,
+                                        color = NearTheme.colors.BLACK_1A1A1A,
                                     )
-                                } else {
-                                    Text(
-                                        text = monthlyContact.daysUntilNextContact(now),
-                                        style = NearTheme.typography.B2_14_MEDIUM,
-                                        color = NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.5f),
-                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    if (monthlyContact.isNextContactDay(now)) {
+                                        Text(
+                                            text = monthlyContact.daysUntilNextContact(LocalDate.now()),
+                                            style = NearTheme.typography.B2_14_BOLD,
+                                            color = NearTheme.colors.BLUE01_5AA2E9,
+                                        )
+                                    } else {
+                                        Text(
+                                            text = monthlyContact.daysUntilNextContact(now),
+                                            style = NearTheme.typography.B2_14_MEDIUM,
+                                            color = NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.5f),
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -291,68 +291,118 @@ internal fun HomeScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = NearTheme.colors.WHITE_FFFFFF,
-                            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-                        ),
-            ) {
-                MyContacts(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    contactsWithPage = contactsWithPage,
-                    pagerState = pagerState,
-                    onContactClick = onContactClick,
-                    onAddContactClick = {
-                        onAddContactClick()
-                    },
-                )
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.TopStart)
-                            .padding(top = 20.dp, start = 24.dp, end = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        stringResource(R.string.home_my_people),
-                        style = NearTheme.typography.H2_18_BOLD,
-                        color = NearTheme.colors.BLACK_1A1A1A,
-                    )
-                    Column {
-                        Image(
-                            modifier =
-                                Modifier.onNoRippleClick(onClick = {
-                                    dropdownState.value = true
-                                }),
-                            painter = painterResource(R.drawable.ic_32_menu),
-                            contentDescription = stringResource(R.string.home_my_people_setting),
-                        )
-                        NearDropdownMenu(
-                            expanded = dropdownState.value,
-                            onDismissRequest = { dropdownState.value = false },
-                        ) {
-                            NearDropdownMenuItem(
-                                onClick = {
-                                    onAddContactClick()
-                                    dropdownState.value = false
-                                },
-                                text = stringResource(R.string.home_menu_text_add_friend),
-                            )
-                        }
-                    }
-                }
+            MyFriends(
+                onContactClick = onContactClick,
+                onAddContactClick = onAddContactClick,
+                myFriendUIState = uiState.myFriendUIState,
+            )
+        }
+    }
+}
 
-                if (contactsWithPage.size >= MINIMUM_PAGE_COUNT_TO_SHOW_UI) {
-                    Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                        PagerIndicator(pagerState)
-                        Spacer(modifier = Modifier.height(104.dp))
+@Composable
+private fun MyFriends(
+    myFriendUIState: MyFriendUIState,
+    onContactClick: (String) -> Unit,
+    onAddContactClick: () -> Unit,
+) {
+    val contactsWithPage =
+        if (myFriendUIState is MyFriendUIState.Success) myFriendUIState.myFriends.chunked(5) else listOf()
+    val pagerState: PagerState =
+        rememberPagerState(
+            initialPage = 0,
+            pageCount = {
+                contactsWithPage.count() +
+                    if (contactsWithPage
+                            .lastOrNull()
+                            ?.count() == 5
+                    ) {
+                        1
+                    } else {
+                        0
                     }
+            },
+        )
+    val dropdownState = remember { mutableStateOf(false) }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(490.dp)
+                .background(
+                    color = NearTheme.colors.WHITE_FFFFFF,
+                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                ),
+    ) {
+        if (myFriendUIState is MyFriendUIState.Loading) {
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(166.dp))
+                NearConditionalShimmer(
+                    shimmerColors = ShimmerType.WHITE.colors,
+                    modifier = Modifier.size(width = 151.dp, height = 125.dp),
+                    enabled = true,
+                ) {
                 }
+            }
+        } else {
+            MyContacts(
+                modifier = Modifier.align(Alignment.TopCenter),
+                contactsWithPage = contactsWithPage,
+                pagerState = pagerState,
+                onContactClick = onContactClick,
+                onAddContactClick = {
+                    onAddContactClick()
+                },
+            )
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopStart)
+                    .padding(top = 20.dp, start = 24.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                stringResource(R.string.home_my_people),
+                style = NearTheme.typography.H2_18_BOLD,
+                color = NearTheme.colors.BLACK_1A1A1A,
+            )
+            Column {
+                Image(
+                    modifier =
+                        Modifier.onNoRippleClick(onClick = {
+                            dropdownState.value = true
+                        }),
+                    painter = painterResource(R.drawable.ic_32_menu),
+                    contentDescription = stringResource(R.string.home_my_people_setting),
+                )
+                NearDropdownMenu(
+                    expanded = dropdownState.value,
+                    onDismissRequest = { dropdownState.value = false },
+                ) {
+                    NearDropdownMenuItem(
+                        onClick = {
+                            onAddContactClick()
+                            dropdownState.value = false
+                        },
+                        text = stringResource(R.string.home_menu_text_add_friend),
+                    )
+                }
+            }
+        }
+
+        if (contactsWithPage.size >= MINIMUM_PAGE_COUNT_TO_SHOW_UI) {
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                PagerIndicator(pagerState)
+                Spacer(modifier = Modifier.height(104.dp))
             }
         }
     }
@@ -423,43 +473,42 @@ internal fun HomeScreenPreview() {
     NearTheme {
         HomeScreen(
             onContactClick = {},
-            contacts =
-                List(6) {
-                    FriendSummary(
-                        id = "2003",
-                        name = "일이삼사오육칠팔구",
-                        profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
-                        lastContactedAt = "2025-07-16",
-                        isContacted = false,
-                        contactFrequencyLevel = ContactFrequencyLevel.HIGH,
-                    )
-                },
-            monthlyFriends =
-                List(4) {
-                    MonthlyFriend(
-                        friendId = "intellegat$it",
-                        name = "Stacey Stewart",
-                        type = MonthlyFriendType.ANNIVERSARY,
-                        nextContactAt = "2025-09-30",
-                    )
-                },
-            memberInfo =
-                MemberInfo(
-                    memberId = "posidonium",
-                    username = "주지스님",
-                    nickname = "Audra Day",
-                    imageUrl = "https://search.yahoo.com/search?p=class",
-                    notificationAgreedAt = "comprehensam",
-                    providerType = "sumo",
+            uiState =
+                HomeUiState(
+                    myFriendUIState =
+                        MyFriendUIState.Success(
+                            List(7) {
+                                FriendSummary(
+                                    id = "2003",
+                                    name = "일이삼사오육칠팔구",
+                                    profileImageUrl = "https://search.yahoo.com/search?p=partiendo",
+                                    lastContactedAt = "2025-07-16",
+                                    isContacted = false,
+                                    contactFrequencyLevel = ContactFrequencyLevel.HIGH,
+                                )
+                            },
+                        ),
+                    monthlyFriendUIState =
+                        MonthlyFriendUIState.Success(
+                            List(4) {
+                                MonthlyFriend(
+                                    friendId = "intellegat$it",
+                                    name = "Stacey Stewart",
+                                    type = MonthlyFriendType.ANNIVERSARY,
+                                    nextContactAt = "2025-09-30",
+                                )
+                            },
+                        ),
+                    memberInfo =
+                        MemberInfo(
+                            memberId = "posidonium",
+                            username = "주지스님",
+                            nickname = "Audra Day",
+                            imageUrl = "https://search.yahoo.com/search?p=class",
+                            notificationAgreedAt = "comprehensam",
+                            providerType = "sumo",
+                        ),
                 ),
         )
-    }
-}
-
-@Preview
-@Composable
-fun MonthlyReminderFriendsViewAllPreview() {
-    NearTheme {
-        MonthlyReminderFriendsViewAll()
     }
 }

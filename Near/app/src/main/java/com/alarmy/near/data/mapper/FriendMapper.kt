@@ -13,6 +13,9 @@ import com.alarmy.near.network.response.AnniversaryEntity
 import com.alarmy.near.network.response.ContactFrequencyEntity
 import com.alarmy.near.network.response.FriendEntity
 import com.alarmy.near.utils.logger.NearLog
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 fun FriendEntity.toModel(): Friend =
     Friend(
@@ -26,7 +29,24 @@ fun FriendEntity.toModel(): Friend =
         memo = memo,
         phone = phone,
         lastContactAt = lastContactAt,
+        isContactToday = lastContactAt?.isToday() ?: false,
+        lastContactFormat = lastContactAt?.contactFormat(),
     )
+
+fun String.contactFormat(): String {
+    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val outputFormatter = DateTimeFormatter.ofPattern("M월 d일")
+
+    val date = LocalDate.parse(this, inputFormatter)
+    return date.format(outputFormatter)
+}
+
+private fun String.isToday(): Boolean {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREA)
+    val targetDate = LocalDate.parse(this, formatter)
+    val today = LocalDate.now()
+    return targetDate == today
+}
 
 fun ContactFrequencyEntity.toModel(): ContactFrequency =
     ContactFrequency(
@@ -46,7 +66,7 @@ fun Friend.toRequest(): FriendRequest =
         name = name,
         relation = relation.toString(),
         contactFrequency = contactFrequency.toRequest(),
-        birthday = birthday,
+        birthday = birthday?.replace(".", "-"),
         anniversaryList = anniversaryList.map { it.toRequest() },
         memo = memo,
         phone = phone,

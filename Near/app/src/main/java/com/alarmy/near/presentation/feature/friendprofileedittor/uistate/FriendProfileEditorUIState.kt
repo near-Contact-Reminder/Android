@@ -52,7 +52,7 @@ fun FriendProfileEditorUIState.toModel(
         relation = relation,
         contactFrequency =
         contactFrequency,
-        birthday = birthday.value?.replace(".", "-"),
+        birthday = birthday.value?.replace("-", "."),
         anniversaryList =
             anniversaries.map {
                 Anniversary(
