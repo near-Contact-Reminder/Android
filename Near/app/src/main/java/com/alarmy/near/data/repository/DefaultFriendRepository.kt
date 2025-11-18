@@ -39,6 +39,11 @@ class DefaultFriendRepository
                 )
             }
 
+        override fun fetchMonthlyCompleteFriends(): Flow<List<MonthlyFriend>> =
+            apiCallFlow {
+                friendService.fetchMonthlyCompleteFriends().map { it.toModel() }
+            }
+
         override fun fetchFriendById(friendId: String): Flow<Friend> =
             flow {
                 emit(friendService.fetchFriendById(friendId).toModel())

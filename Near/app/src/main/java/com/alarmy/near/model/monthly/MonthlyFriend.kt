@@ -13,7 +13,7 @@ data class MonthlyFriend(
     fun daysUntilNextContact(today: LocalDate): String {
         val daysBetween = getDaysBetween(today)
         return when {
-            daysBetween == 0L -> "D-day"
+            daysBetween == 0L -> "D-DAY"
             daysBetween > 0L -> "D-$daysBetween"
             else -> "D+${-daysBetween}" // 과거 날짜
         }

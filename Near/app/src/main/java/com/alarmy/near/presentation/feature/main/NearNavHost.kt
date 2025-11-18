@@ -23,6 +23,8 @@ import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
 import com.alarmy.near.presentation.feature.login.navigation.navigateToLogin
+import com.alarmy.near.presentation.feature.mothlyreminderall.navigation.monthlyReminderAllNavGraph
+import com.alarmy.near.presentation.feature.mothlyreminderall.navigation.navigateToMonthlyReminderAll
 import com.alarmy.near.presentation.feature.myprofile.navigation.myProfileNavGraph
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToMyProfile
 import com.alarmy.near.presentation.feature.myprofile.navigation.navigateToWebView
@@ -87,6 +89,12 @@ internal fun NearNavHost(
             onMyPageClick = { navController.navigateToMyProfile() },
             onAlarmClick = {},
             onAddContactClick = { navController.navigateToFriendContactCycle() },
+            onMonthlyReminderAllClick = { navController.navigateToMonthlyReminderAll() },
+        )
+
+        monthlyReminderAllNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onNavigateBack = { navController.popBackStack() },
         )
 
         myProfileNavGraph(

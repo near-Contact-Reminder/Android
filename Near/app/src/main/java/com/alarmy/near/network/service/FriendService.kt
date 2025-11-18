@@ -22,6 +22,9 @@ interface FriendService {
     @GET("/friend/monthly")
     suspend fun fetchMonthlyFriends(): List<MonthlyFriendEntity>
 
+    @GET("/friend/monthly/complete")
+    suspend fun fetchMonthlyCompleteFriends(): List<MonthlyFriendEntity>
+
     @GET("/friend/{friendId}")
     suspend fun fetchFriendById(
         @Path("friendId") friendId: String,
