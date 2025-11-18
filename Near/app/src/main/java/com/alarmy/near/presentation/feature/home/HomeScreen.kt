@@ -124,8 +124,7 @@ internal fun HomeScreen(
                                 R.drawable.img_bg,
                             ),
                         contentScale = ContentScale.FillBounds,
-                    )
-                    .fillMaxSize(),
+                    ).fillMaxSize(),
         ) {
             Spacer(modifier = Modifier.height(statusBarHeightDp))
             Box(modifier = Modifier.weight(1f)) {
