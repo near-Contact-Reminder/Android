@@ -45,7 +45,7 @@ import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
-import com.alarmy.near.presentation.feature.friendprofileedittor.component.ReminderIntervalBottomSheet
+import com.alarmy.near.presentation.ui.component.bottomsheet.CycleSettingBottomSheet
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
@@ -140,14 +140,16 @@ fun FriendProfileEditorScreen(
     onCloseDialog: () -> Unit = {},
 ) {
     val showBottomSheet = remember { mutableStateOf(false) }
-    if (showBottomSheet.value) {
-        ReminderIntervalBottomSheet(onDismissRequest = {
+    CycleSettingBottomSheet(
+        isVisible = showBottomSheet.value,
+        onDismiss = {
             showBottomSheet.value = false
-        }, onSelectReminderInterval = {
-            onReminderIntervalChanged(it)
-            showBottomSheet.value = false
-        })
-    }
+        },
+        onComplete = { selectedInterval ->
+            onReminderIntervalChanged(selectedInterval)
+        },
+        currentSelectedInterval = friendProfileEditorUIState.contactFrequency.reminderInterval,
+    )
     if (dialogState) {
         EditorExitDialog(
             onDismissRequest = {
