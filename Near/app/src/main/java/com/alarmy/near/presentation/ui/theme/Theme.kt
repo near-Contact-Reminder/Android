@@ -6,7 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
 
 val LocalCustomColors =
@@ -29,7 +31,14 @@ fun NearTheme(
             darkTheme -> lightColor // TODO DarkTheme 추가시 수정
             else -> lightColor
         }
+    val currentDensity = LocalDensity.current
+    val themeDensity =
+        Density(
+            density = currentDensity.density,
+            fontScale = 1f,
+        )
     CompositionLocalProvider(
+        LocalDensity provides themeDensity,
         LocalCustomColors provides colorScheme,
         LocalCustomTypography provides Typography,
         content = content,
