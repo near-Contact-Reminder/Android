@@ -18,18 +18,25 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 fun NearFrame(
     modifier: Modifier = Modifier,
     backgroundColor: Color = NearTheme.colors.WHITE_FFFFFF,
+    applySystemBarsPadding: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+    val navigationBarHeightDp =
+        with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+    val columnModifier =
+        modifier
+            .fillMaxSize()
+            .background(color = backgroundColor)
+            .run {
+                when (applySystemBarsPadding) {
+                    true -> padding(top = statusBarHeightDp, bottom = navigationBarHeightDp)
+                    false -> this
+                }
+            }
     Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .background(
-                    color = backgroundColor,
-                ).padding(top = statusBarHeightDp, bottom = navigationBarHeightDp),
+        modifier = columnModifier,
         content = content,
     )
 }

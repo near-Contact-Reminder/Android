@@ -17,14 +17,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,17 +33,42 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
-import com.alarmy.near.presentation.feature.onboarding.components.BackgroundArea
 import com.alarmy.near.presentation.feature.onboarding.components.OnboardingButton
 import com.alarmy.near.presentation.feature.onboarding.components.PageIndicator
 import com.alarmy.near.presentation.feature.onboarding.model.OnboardingPage
+import com.alarmy.near.presentation.preview.DevicePreviewParameterProvider
+import com.alarmy.near.presentation.preview.component.DevicePreviewFrame
+import com.alarmy.near.presentation.preview.model.DevicePreviewSpec
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.launch
+
+@Composable
+fun OnboardingRoute(
+    onNavigateToLogin: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is OnboardingEffect.NavigateToLogin -> onNavigateToLogin()
+            }
+        }
+    }
+
+    OnboardingScreen(
+        state = uiState.value,
+        onCompleteOnboarding = { viewModel.completeOnboarding() },
+    )
+}
 
 /**
  * 온보딩 화면 메인 컴포넌트
@@ -52,23 +76,9 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun OnboardingScreen(
-    onNavigateToLogin: () -> Unit,
-    viewModel: OnboardingViewModel = hiltViewModel(),
+    state: OnboardingUiState,
+    onCompleteOnboarding: () -> Unit = {},
 ) {
-    // UI 상태 관찰
-    val uiState by viewModel.uiState.collectAsState()
-
-    // 사이드 이펙트 처리
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is OnboardingEffect.NavigateToLogin -> {
-                    onNavigateToLogin()
-                }
-            }
-        }
-    }
-
     // 온보딩 페이지 데이터 - remember로 성능 최적화
     val pages =
         remember {
@@ -99,61 +109,63 @@ fun OnboardingScreen(
     // 상태바와 네비게이션 바 높이 계산
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+    val navigationBarHeightDp =
+        with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
 
     // 페이저 상태 관리
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
-    NearFrame {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            BackgroundArea()
+    NearFrame(applySystemBarsPadding = false) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(R.drawable.onboarding_bg_img),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+            )
             Column(
                 modifier =
                     Modifier
+                        .fillMaxSize()
                         .padding(top = statusBarHeightDp, bottom = navigationBarHeightDp),
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // 뷰페이저
-                HorizontalPager(
-                    state = pagerState,
-                ) { page ->
-                    OnboardingPageContent(
-                        page = pages[page],
-                        modifier = Modifier.fillMaxWidth(),
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    HorizontalPager(
+                        modifier = Modifier.weight(1f),
+                        state = pagerState,
+                    ) { page ->
+                        OnboardingPageContent(
+                            page = pages[page],
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                    PageIndicator(
+                        pageCount = pages.size,
+                        currentPage = pagerState.currentPage,
                     )
                 }
-
                 Spacer(modifier = Modifier.size(24.dp))
-
-                // 페이지 인디케이터
-                PageIndicator(
-                    pageCount = pages.size,
-                    currentPage = pagerState.currentPage,
-                )
-
-                Spacer(modifier = Modifier.size(14.dp))
-            }
-            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                // 다음/완료 버튼
-                OnboardingButton(
-                    currentPage = pagerState.currentPage,
-                    totalPages = pages.size,
-                    isLoading = uiState.isLoading,
-                    onNextClick = {
-                        if (pagerState.currentPage < pages.size - 1) {
-                            scope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    OnboardingButton(
+                        currentPage = pagerState.currentPage,
+                        totalPages = pages.size,
+                        isLoading = state.isLoading,
+                        onNextClick = {
+                            if (pagerState.currentPage < pages.size - 1) {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
+                            } else {
+                                onCompleteOnboarding()
                             }
-                        } else {
-                            // 온보딩 완료 시 DataStore에 저장
-                            viewModel.completeOnboarding()
-                        }
-                    },
-                )
-                Spacer(modifier = Modifier.size(24.dp))
+                        },
+                    )
+                    Spacer(modifier = Modifier.size(24.dp))
+                }
             }
         }
     }
@@ -172,7 +184,7 @@ private fun OnboardingPageContent(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.size(22.dp))
+        Spacer(modifier = Modifier.size(44.dp))
 
         // 각 온보딩 페이지 타이틀
         Text(
@@ -184,16 +196,17 @@ private fun OnboardingPageContent(
                     lineHeight = 30.sp,
                 ),
         )
-
         Spacer(modifier = Modifier.size(16.dp))
-
         Image(
             modifier =
                 Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp)),
             painter = painterResource(page.image),
             contentDescription = null,
         )
+        Spacer(modifier = Modifier.size(16.dp))
     }
 }
 
@@ -235,10 +248,12 @@ private fun AnnotatedString.Builder.appendStyledText(
 
 @Preview(showBackground = true)
 @Composable
-fun OnboardingScreenPreview() {
-    NearTheme {
+fun OnboardingScreenPreview(
+    @PreviewParameter(DevicePreviewParameterProvider::class) spec: DevicePreviewSpec,
+) {
+    DevicePreviewFrame(spec = spec) {
         OnboardingScreen(
-            onNavigateToLogin = {},
+            state = OnboardingUiState(),
         )
     }
 }

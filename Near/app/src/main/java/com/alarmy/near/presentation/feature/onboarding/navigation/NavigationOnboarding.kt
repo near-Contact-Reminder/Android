@@ -3,7 +3,7 @@ package com.alarmy.near.presentation.feature.onboarding.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.alarmy.near.presentation.feature.onboarding.OnboardingScreen
+import com.alarmy.near.presentation.feature.onboarding.OnboardingRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,7 +19,7 @@ fun NavController.navigateToOnboarding() {
 // 온보딩 네비게이션 그래프
 fun NavGraphBuilder.onboardingNavGraph(onNavigateToLogin: () -> Unit) {
     composable<RouteOnboarding> {
-        OnboardingScreen(
+        OnboardingRoute(
             onNavigateToLogin = onNavigateToLogin,
         )
     }
