@@ -12,8 +12,9 @@ import javax.inject.Singleton
 @Singleton
 class ImageUploader
     @Inject
-    constructor() {
-        private val okHttpClient = OkHttpClient()
+    constructor(
+        private val okHttpClient: OkHttpClient,
+    ) {
 
         suspend fun upload(
             url: String,
