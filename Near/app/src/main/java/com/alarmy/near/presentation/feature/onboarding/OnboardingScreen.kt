@@ -1,7 +1,6 @@
 package com.alarmy.near.presentation.feature.onboarding
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -134,18 +133,16 @@ fun OnboardingScreen(
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     HorizontalPager(
-                        modifier = Modifier.weight(1f, fill = false),
+                        modifier = Modifier.weight(1f),
                         state = pagerState,
                     ) { page ->
                         OnboardingPageContent(
                             page = pages[page],
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxSize(),
                         )
                     }
-                    Spacer(modifier = Modifier.size(24.dp))
                     PageIndicator(
                         pageCount = pages.size,
                         currentPage = pagerState.currentPage,
@@ -199,16 +196,17 @@ private fun OnboardingPageContent(
                     lineHeight = 30.sp,
                 ),
         )
-
         Spacer(modifier = Modifier.size(16.dp))
-
         Image(
             modifier =
                 Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp)),
             painter = painterResource(page.image),
             contentDescription = null,
         )
+        Spacer(modifier = Modifier.size(16.dp))
     }
 }
 
