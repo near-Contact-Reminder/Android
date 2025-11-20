@@ -1,15 +1,20 @@
 package com.alarmy.near.data.repository
 
 import com.alarmy.near.data.mapper.toFriendInitItemRequest
+import com.alarmy.near.data.mapper.toImageUploadRequest
 import com.alarmy.near.data.mapper.toModel
 import com.alarmy.near.data.mapper.toRequest
+import com.alarmy.near.local.contact.ContactImageData
+import com.alarmy.near.local.contact.ContactImageReader
 import com.alarmy.near.model.Friend
 import com.alarmy.near.model.FriendRecord
 import com.alarmy.near.model.friendsummary.FriendSummary
 import com.alarmy.near.model.monthly.MonthlyFriend
+import com.alarmy.near.network.request.FriendInitItemRequest
 import com.alarmy.near.network.request.FriendInitRequest
 import com.alarmy.near.network.response.FriendInitItemEntity
 import com.alarmy.near.network.service.FriendService
+import com.alarmy.near.network.uploader.ImageUploader
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.utils.extensions.apiCallFlow
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +25,8 @@ class DefaultFriendRepository
     @Inject
     constructor(
         private val friendService: FriendService,
+        private val contactImageReader: ContactImageReader,
+        private val imageUploader: ImageUploader,
     ) : FriendRepository {
         override fun fetchFriends(): Flow<List<FriendSummary>> =
             flow {
@@ -79,16 +86,43 @@ class DefaultFriendRepository
             providerType: String,
         ): Flow<List<FriendInitItemEntity>> =
             apiCallFlow {
-                // UI 모델을 Data 모델로 변환
-                val friendInitRequest =
-                    FriendInitRequest(
-                        friendList =
-                            contacts
-                                .filter { it.reminderInterval != null }
-                                .map { it.toFriendInitItemRequest(providerType) },
-                    )
-
-                // 서버 요청 및 응답 반환
-                friendService.initFriends(friendInitRequest).friendList
+                val payloads =
+                    contacts
+                        .filter { it.reminderInterval != null }
+                        .map { contact ->
+                            val imageData = contact.photoUri?.let { uri -> contactImageReader.read(uri) }
+                            val request =
+                                contact.toFriendInitItemRequest(
+                                    providerType = providerType,
+                                    imageUploadRequest = imageData?.toImageUploadRequest(PROFILE_IMAGE_CATEGORY),
+                                )
+                            FriendInitRequestPayload(
+                                request = request,
+                                imageData = imageData,
+                            )
+                        }
+                val friendInitRequest = FriendInitRequest(friendList = payloads.map { it.request })
+                val response = friendService.initFriends(friendInitRequest)
+                response.friendList.forEachIndexed { index, entity ->
+                    val uploadUrl = entity.preSignedImageUrl
+                    val imageData = payloads.getOrNull(index)?.imageData
+                    if (uploadUrl != null && imageData != null) {
+                        imageUploader.upload(
+                            url = uploadUrl,
+                            contentType = imageData.contentType,
+                            data = imageData.data,
+                        )
+                    }
+                }
+                response.friendList
             }
+
+        private data class FriendInitRequestPayload(
+            val request: FriendInitItemRequest,
+            val imageData: ContactImageData?,
+        )
+
+        companion object {
+            private const val PROFILE_IMAGE_CATEGORY = "PROFILE"
+        }
     }
