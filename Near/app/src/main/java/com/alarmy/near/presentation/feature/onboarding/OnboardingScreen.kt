@@ -17,10 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alarmy.near.R
-import com.alarmy.near.presentation.feature.onboarding.components.BackgroundArea
 import com.alarmy.near.presentation.feature.onboarding.components.OnboardingButton
 import com.alarmy.near.presentation.feature.onboarding.components.PageIndicator
 import com.alarmy.near.presentation.feature.onboarding.model.OnboardingPage
@@ -46,29 +44,36 @@ import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.launch
 
+@Composable
+fun OnboardingRoute(
+    onNavigateToLogin: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is OnboardingEffect.NavigateToLogin -> onNavigateToLogin()
+            }
+        }
+    }
+
+    OnboardingScreen(
+        state = uiState.value,
+        onCompleteOnboarding = { viewModel.completeOnboarding() },
+    )
+}
+
 /**
  * 온보딩 화면 메인 컴포넌트
  * 5페이지로 구성된 뷰페이저 형태의 온보딩 화면
  */
 @Composable
 fun OnboardingScreen(
-    onNavigateToLogin: () -> Unit,
-    viewModel: OnboardingViewModel = hiltViewModel(),
+    state: OnboardingUiState,
+    onCompleteOnboarding: () -> Unit,
 ) {
-    // UI 상태 관찰
-    val uiState by viewModel.uiState.collectAsState()
-
-    // 사이드 이펙트 처리
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is OnboardingEffect.NavigateToLogin -> {
-                    onNavigateToLogin()
-                }
-            }
-        }
-    }
-
     // 온보딩 페이지 데이터 - remember로 성능 최적화
     val pages =
         remember {
@@ -109,7 +114,6 @@ fun OnboardingScreen(
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
-            BackgroundArea()
             Column(
                 modifier =
                     Modifier
@@ -141,7 +145,7 @@ fun OnboardingScreen(
                 OnboardingButton(
                     currentPage = pagerState.currentPage,
                     totalPages = pages.size,
-                    isLoading = uiState.isLoading,
+                    isLoading = state.isLoading,
                     onNextClick = {
                         if (pagerState.currentPage < pages.size - 1) {
                             scope.launch {
@@ -149,7 +153,7 @@ fun OnboardingScreen(
                             }
                         } else {
                             // 온보딩 완료 시 DataStore에 저장
-                            viewModel.completeOnboarding()
+                            onCompleteOnboarding()
                         }
                     },
                 )
@@ -238,7 +242,8 @@ private fun AnnotatedString.Builder.appendStyledText(
 fun OnboardingScreenPreview() {
     NearTheme {
         OnboardingScreen(
-            onNavigateToLogin = {},
+            state = OnboardingUiState(),
+            onCompleteOnboarding = {},
         )
     }
 }
