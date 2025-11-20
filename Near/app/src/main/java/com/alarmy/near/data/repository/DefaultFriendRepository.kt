@@ -17,8 +17,10 @@ import com.alarmy.near.network.service.FriendService
 import com.alarmy.near.network.uploader.ImageUploader
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
 import com.alarmy.near.utils.extensions.apiCallFlow
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DefaultFriendRepository
@@ -103,15 +105,19 @@ class DefaultFriendRepository
                         }
                 val friendInitRequest = FriendInitRequest(friendList = payloads.map { it.request })
                 val response = friendService.initFriends(friendInitRequest)
-                response.friendList.forEachIndexed { index, entity ->
-                    val uploadUrl = entity.preSignedImageUrl
-                    val imageData = payloads.getOrNull(index)?.imageData
-                    if (uploadUrl != null && imageData != null) {
-                        imageUploader.upload(
-                            url = uploadUrl,
-                            contentType = imageData.contentType,
-                            data = imageData.data,
-                        )
+                coroutineScope {
+                    response.friendList.forEachIndexed { index, entity ->
+                        val uploadUrl = entity.preSignedImageUrl
+                        val imageData = payloads.getOrNull(index)?.imageData
+                        if (uploadUrl != null && imageData != null) {
+                            launch {
+                                imageUploader.upload(
+                                    url = uploadUrl,
+                                    contentType = imageData.contentType,
+                                    data = imageData.data,
+                                )
+                            }
+                        }
                     }
                 }
                 response.friendList
