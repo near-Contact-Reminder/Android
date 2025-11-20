@@ -137,6 +137,12 @@ object DateExtension {
     // ReminderInterval을 contactWeek 문자열로 변환
     fun toContactWeekString(reminderInterval: ReminderInterval): String = reminderInterval.name
 
+    // 오늘 날짜의 일(day)을 반환해서 반복 주기 표기에 사용한다.
+    fun getTodayDayOfMonth(): Int {
+        val calendar = Calendar.getInstance()
+        return calendar.get(Calendar.DAY_OF_MONTH)
+    }
+
     // 오늘 요일을 DayOfWeek enum으로 반환
     fun getTodayDayOfWeek(): DayOfWeek {
         val calendar = Calendar.getInstance()

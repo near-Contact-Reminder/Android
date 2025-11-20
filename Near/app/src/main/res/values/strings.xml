@@ -73,6 +73,7 @@
     <string name="friend_profile_editor_anniversary_add">추가하기</string>
     <string name="friend_profile_editor_anniversary">기념일</string>
     <string name="friend_profile_editor_contact_period_format">(%1$s 마다)</string>
+    <string name="friend_profile_editor_contact_period_day_of_month">%1$d일</string>
     <string name="friend_profile_info_contact_success_text">더 가까워졌어요!</string>
     <string name="friend_profile_info_edit">수정</string>
     <string name="friend_profile_info_delete">삭제</string>
