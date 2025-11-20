@@ -23,17 +23,18 @@ fun NearFrame(
 ) {
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
-    val baseModifier =
+    val navigationBarHeightDp =
+        with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+    val columnModifier =
         modifier
             .fillMaxSize()
             .background(color = backgroundColor)
-    val columnModifier =
-        if (applySystemBarsPadding) {
-            baseModifier.padding(top = statusBarHeightDp, bottom = navigationBarHeightDp)
-        } else {
-            baseModifier.padding(bottom = navigationBarHeightDp)
-        }
+            .run {
+                when (applySystemBarsPadding) {
+                    true -> padding(top = statusBarHeightDp, bottom = navigationBarHeightDp)
+                    false -> this
+                }
+            }
     Column(
         modifier = columnModifier,
         content = content,
