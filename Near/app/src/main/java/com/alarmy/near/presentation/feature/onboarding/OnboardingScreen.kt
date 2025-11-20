@@ -140,7 +140,7 @@ fun OnboardingScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.size(24.dp))
+                Spacer(modifier = Modifier.size(25.dp))
 
                 // 페이지 인디케이터
                 PageIndicator(
@@ -148,7 +148,8 @@ fun OnboardingScreen(
                     currentPage = pagerState.currentPage,
                 )
 
-                Spacer(modifier = Modifier.size(14.dp))
+                Spacer(modifier = Modifier.size(32.dp))
+                Spacer(modifier = Modifier.weight(1f))
             }
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                 // 다음/완료 버튼
@@ -186,7 +187,7 @@ private fun OnboardingPageContent(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.size(22.dp))
+        Spacer(modifier = Modifier.size(44.dp))
 
         // 각 온보딩 페이지 타이틀
         Text(
