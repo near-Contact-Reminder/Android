@@ -71,7 +71,7 @@ fun ContactItem(
         Spacer(modifier = Modifier.height(1.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                friendSummary.lastContactedAt ?: "",
+                friendSummary.lastContactedAt?.replace("-", ".") ?: "",
                 style = NearTheme.typography.FC_12_MEDIUM,
                 textAlign = TextAlign.Center,
                 color = NearTheme.colors.GRAY02_B7B7B7,
