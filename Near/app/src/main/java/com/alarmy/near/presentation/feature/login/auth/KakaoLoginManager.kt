@@ -6,6 +6,7 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ApiError
 import com.kakao.sdk.common.model.AuthError
 import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.CancellableContinuation
@@ -28,22 +29,20 @@ class KakaoLoginManager(
     ) {
         unlinkKakao()
         try {
-            val accessToken =
-                if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-                    loginWithKakaoTalk()
-                } else {
-                    loginWithKakaoAccount()
-                }
+            val accessToken = fetchAccessToken()
             onSuccess(accessToken)
+        } catch (error: ClientError) {
+            if (error.reason == ClientErrorCause.Cancelled) {
+                onFailure(Exception(context.getString(R.string.login_user_cancelled)))
+            } else {
+                onFailure(Exception(context.getString(R.string.login_client_error)))
+            }
         } catch (error: AuthError) {
             // OAuth 인증 과정 에러
             onFailure(Exception(context.getString(R.string.login_auth_error)))
         } catch (error: ApiError) {
             // API 호출 에러
             onFailure(Exception(context.getString(R.string.login_api_error)))
-        } catch (error: ClientError) {
-            // SDK 내부 에러
-            onFailure(Exception(context.getString(R.string.login_client_error)))
         } catch (error: KakaoSdkError) {
             // 카카오 SDK 에러
             onFailure(Exception(context.getString(R.string.login_sdk_error)))
@@ -84,6 +83,17 @@ class KakaoLoginManager(
             }
         }
 
+    private suspend fun fetchAccessToken(): String {
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context).not()) {
+            return loginWithKakaoAccount()
+        }
+        return runCatching { loginWithKakaoTalk() }
+            .getOrElse {
+                // 카카오톡 로그인 단계에서 실패하면 즉시 웹 계정 로그인으로 폴백
+                loginWithKakaoAccount()
+            }
+    }
+
     // 카카오 로그인 결과 처리
     private fun handleLoginResult(
         token: OAuthToken?,
@@ -91,21 +101,17 @@ class KakaoLoginManager(
         continuation: CancellableContinuation<String>,
     ) {
         when {
-            error != null -> {
-                continuation.resumeWith(
-                    Result.failure(
-                        Exception(context.getString(R.string.login_user_cancelled)),
-                    ),
-                )
-            }
             token != null -> continuation.resume(token.accessToken)
-            else -> {
+            error != null ->
+                continuation.resumeWith(
+                    Result.failure(error),
+                )
+            else ->
                 continuation.resumeWith(
                     Result.failure(
                         Exception(context.getString(R.string.login_user_cancelled)),
                     ),
                 )
-            }
         }
     }
 }
