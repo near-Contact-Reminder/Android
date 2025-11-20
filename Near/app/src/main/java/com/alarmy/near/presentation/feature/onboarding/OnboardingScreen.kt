@@ -19,11 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.onboarding.components.OnboardingButton
 import com.alarmy.near.presentation.feature.onboarding.components.PageIndicator
@@ -104,7 +105,8 @@ fun OnboardingScreen(
     // 상태바와 네비게이션 바 높이 계산
     val density = LocalDensity.current
     val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val navigationBarHeightDp = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+    val navigationBarHeightDp =
+        with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
 
     // 페이저 상태 관리
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -114,6 +116,12 @@ fun OnboardingScreen(
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(R.drawable.onboarding_bg_img),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+            )
             Column(
                 modifier =
                     Modifier
