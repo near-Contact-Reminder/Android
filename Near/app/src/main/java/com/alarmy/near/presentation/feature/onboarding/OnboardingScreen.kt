@@ -112,7 +112,9 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
-    NearFrame {
+    NearFrame(
+        applySystemBarsPadding = false,
+    ) {
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
