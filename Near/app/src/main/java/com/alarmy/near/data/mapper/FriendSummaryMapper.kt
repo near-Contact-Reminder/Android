@@ -13,7 +13,7 @@ fun FriendSummaryEntity.toModel(): FriendSummary =
         id = friendId,
         name = name,
         profileImageUrl = imageUrl,
-        lastContactedAt = lastContactAt,
+        lastContactedAt = lastContactAt?.replace("-", "."),
         isContacted = true,
         contactFrequencyLevel =
             when (checkRate) {
