@@ -1,8 +1,8 @@
 package com.alarmy.near.local.contact
 
 import android.content.ContentResolver
-import android.net.Uri
 import android.webkit.MimeTypeMap
+import androidx.core.net.toUri
 import javax.inject.Inject
 
 data class ContactImageData(
@@ -10,7 +10,26 @@ data class ContactImageData(
     val contentType: String,
     val fileSize: Int,
     val data: ByteArray,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as ContactImageData
+        if (fileName != other.fileName) return false
+        if (contentType != other.contentType) return false
+        if (fileSize != other.fileSize) return false
+        if (!data.contentEquals(other.data)) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = fileName.hashCode()
+        result = 31 * result + contentType.hashCode()
+        result = 31 * result + fileSize
+        result = 31 * result + data.contentHashCode()
+        return result
+    }
+}
 
 class ContactImageReader
     @Inject
@@ -18,7 +37,7 @@ class ContactImageReader
         private val contentResolver: ContentResolver,
     ) {
         fun read(uriString: String): ContactImageData? {
-            val uri = runCatching { Uri.parse(uriString) }.getOrNull() ?: return null
+            val uri = runCatching { uriString.toUri() }.getOrNull() ?: return null
             val bytes = contentResolver.openInputStream(uri)?.use { inputStream -> inputStream.readBytes() } ?: return null
             val resolvedMimeType = contentResolver.getType(uri) ?: guessMimeType(uriString) ?: DEFAULT_MIME_TYPE
             val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(resolvedMimeType) ?: DEFAULT_EXTENSION
@@ -46,4 +65,3 @@ class ContactImageReader
             private const val DEFAULT_EXTENSION = "jpg"
         }
     }
-
