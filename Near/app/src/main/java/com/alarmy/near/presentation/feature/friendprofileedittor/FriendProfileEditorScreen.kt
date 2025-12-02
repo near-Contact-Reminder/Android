@@ -45,12 +45,12 @@ import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
-import com.alarmy.near.presentation.ui.component.bottomsheet.CycleSettingBottomSheet
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
+import com.alarmy.near.presentation.ui.component.bottomsheet.CycleSettingBottomSheet
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
 import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
 import com.alarmy.near.presentation.ui.component.textfield.NearTextField
@@ -616,9 +616,11 @@ private fun buildContactFrequencyText(contactFrequency: ContactFrequency): Strin
     val suffix =
         when (contactFrequency.reminderInterval) {
             ReminderInterval.EVERY_WEEK,
-            ReminderInterval.EVERY_TWO_WEEK -> DateExtension.getTodayDayOfWeekInKorean()
+            ReminderInterval.EVERY_TWO_WEEK,
+            -> DateExtension.getTodayDayOfWeekInKorean()
             ReminderInterval.EVERY_MONTH,
-            ReminderInterval.EVERY_SIX_MONTH ->
+            ReminderInterval.EVERY_SIX_MONTH,
+            ->
                 stringResource(
                     R.string.friend_profile_editor_contact_period_day_of_month,
                     DateExtension.getTodayDayOfMonth(),
@@ -628,10 +630,8 @@ private fun buildContactFrequencyText(contactFrequency: ContactFrequency): Strin
     if (suffix == null) {
         return intervalText
     }
-    return intervalText +
-        " " +
-        stringResource(
-            R.string.friend_profile_editor_contact_period_format,
-            suffix,
-        )
+    return "$intervalText ${stringResource(
+        R.string.friend_profile_editor_contact_period_format,
+        suffix,
+    )}"
 }
