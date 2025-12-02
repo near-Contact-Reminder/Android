@@ -37,7 +37,10 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun ChatbotRoute() {
+fun ChatbotRoute(
+    onShowErrorSnackBar: (Throwable?) -> Unit,
+    onNavigateBack: () -> Boolean,
+) {
     ChatbotScreen()
 }
 

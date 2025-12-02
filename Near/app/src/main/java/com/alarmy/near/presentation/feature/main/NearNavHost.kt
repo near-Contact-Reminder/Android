@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.alarmy.near.presentation.feature.chatbot.navigation.chatbotNavGraph
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.contact.navigation.navigateToContact
@@ -195,6 +196,12 @@ internal fun NearNavHost(
                 )
                 navController.popBackStack()
             },
+        )
+
+        // 챗봇 화면 NavGrapg
+        chatbotNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onNavigateBack = { navController.popBackStack() },
         )
     }
 }
