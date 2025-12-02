@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="101dp"
+    android:viewportWidth="100"
+    android:viewportHeight="101">
+  <path
+      android:pathData="M49.67,12.34C65.72,12.34 79.31,22.83 83.96,37.33L85.02,37.05C89.82,35.76 94.75,38.61 96.04,43.41C97.32,48.21 94.47,53.15 89.67,54.44L84.92,55.71C81.51,72.06 67.03,84.34 49.67,84.34C38.86,84.34 29.16,79.57 22.56,72.01C21.82,72.47 21.01,72.83 20.13,73.07L14.33,74.62C9.53,75.91 4.6,73.06 3.31,68.26C2.02,63.46 4.87,58.52 9.67,57.24L14.48,55.95C13.96,53.49 13.67,50.95 13.67,48.34C13.67,28.45 29.79,12.34 49.67,12.34ZM90.18,18.02C91.12,18.02 91.94,18.8 91.96,19.75C91.94,20.75 91.12,21.53 90.18,21.53C89.2,21.53 88.4,20.75 88.42,19.75C88.4,18.8 89.2,18.02 90.18,18.02ZM90.43,7C93.26,7 95.32,8.37 95.32,10.85C95.32,12.49 94.44,13.5 93.13,14.29C92.07,14.91 91.57,15.5 91.57,16.75V17.02H88.69V16.75C88.69,14.38 89.3,13.66 90.41,12.96C91.27,12.41 91.94,11.86 91.94,11C91.94,10.14 91.25,9.6 90.41,9.6C89.59,9.6 88.83,10.18 88.81,11.16H85.71C85.75,8.29 87.87,7 90.43,7Z">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:centerX="59.37"
+          android:centerY="53.32"
+          android:gradientRadius="56.7"
+          android:type="radial">
+        <item android:offset="0.17" android:color="#FF8ACCFF"/>
+        <item android:offset="1" android:color="#FFD9EEFF"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="M51.75,55.09m-2.25,0a2.25,2.25 0,1 1,4.5 0a2.25,2.25 0,1 1,-4.5 0"
+      android:fillColor="#1A1A1A"/>
+  <path
+      android:pathData="M65.25,55.09m-2.25,0a2.25,2.25 0,1 1,4.5 0a2.25,2.25 0,1 1,-4.5 0"
+      android:fillColor="#1A1A1A"/>
+  <path
+      android:pathData="M57,61.34a2,3 0,1 0,4 0a2,3 0,1 0,-4 0z"
+      android:fillColor="#1A1A1A"/>
+  <path
+      android:pathData="M33,92a16,3 0,1 0,32 0a16,3 0,1 0,-32 0z"
+      android:fillColor="#8ACCFF"
+      android:fillAlpha="0.17"/>
+</vector>
