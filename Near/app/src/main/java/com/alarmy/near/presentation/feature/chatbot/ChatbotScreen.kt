@@ -59,6 +59,7 @@ fun ChatbotScreen(
     // 키보드 상태 감지
     val imeHeightDp = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
     val imeVisible = imeHeightDp > 0.dp
+    val bottomPadding = if (imeVisible) 16.dp else 32.dp
 
     // 키보드가 내려가면 포커스 해제
     LaunchedEffect(imeVisible) {
@@ -110,7 +111,7 @@ fun ChatbotScreen(
                     .fillMaxWidth()
                     .background(NearTheme.colors.WHITE_FFFFFF)
                     .padding(horizontal = 20.dp)
-                    .padding(top = 16.dp, bottom = 32.dp),
+                    .padding(top = 16.dp, bottom = bottomPadding),
         )
     }
 }
