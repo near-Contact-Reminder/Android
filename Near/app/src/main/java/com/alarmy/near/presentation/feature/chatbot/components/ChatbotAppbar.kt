@@ -23,7 +23,7 @@ import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun ChatbotAppbar() {
+fun ChatbotAppbar(onNavigateBack: () -> Unit = {}) {
     Row(
         modifier =
             Modifier
@@ -53,7 +53,7 @@ fun ChatbotAppbar() {
         Spacer(modifier = Modifier.size(12.dp))
 
         IconButton(
-            onClick = { },
+            onClick = { onNavigateBack() },
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_32_cancel),
