@@ -28,6 +28,7 @@ fun NavGraphBuilder.homeNavGraph(
     onMyPageClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
     onMonthlyReminderAllClick: () -> Unit = {},
+    onChatbotClick: () -> Unit = {},
 ) {
     composable<RouteHome> { backStackEntry ->
         val viewModel: HomeViewModel = hiltViewModel()
@@ -42,6 +43,7 @@ fun NavGraphBuilder.homeNavGraph(
             onMyPageClick = onMyPageClick,
             onAddContactClick = onAddContactClick,
             onMonthlyReminderAllClick = onMonthlyReminderAllClick,
+            onChatbotClick = onChatbotClick,
         )
     }
 }

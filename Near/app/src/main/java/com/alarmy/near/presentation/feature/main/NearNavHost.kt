@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.alarmy.near.presentation.feature.chatbot.navigation.chatbotNavGraph
+import com.alarmy.near.presentation.feature.chatbot.navigation.navigateToChatbot
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.contact.navigation.navigateToContact
@@ -91,6 +92,7 @@ internal fun NearNavHost(
             onAlarmClick = {},
             onAddContactClick = { navController.navigateToFriendContactCycle() },
             onMonthlyReminderAllClick = { navController.navigateToMonthlyReminderAll() },
+            onChatbotClick = { navController.navigateToChatbot() },
         )
 
         monthlyReminderAllNavGraph(

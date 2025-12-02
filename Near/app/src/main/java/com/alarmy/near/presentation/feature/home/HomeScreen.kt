@@ -1,7 +1,10 @@
 package com.alarmy.near.presentation.feature.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +28,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,6 +68,9 @@ import com.alarmy.near.presentation.feature.home.component.MyContacts
 import com.alarmy.near.presentation.feature.home.model.HomeUiState
 import com.alarmy.near.presentation.feature.home.model.MonthlyFriendUIState
 import com.alarmy.near.presentation.feature.home.model.MyFriendUIState
+import com.alarmy.near.presentation.preview.DevicePreviewParameterProvider
+import com.alarmy.near.presentation.preview.component.DevicePreviewFrame
+import com.alarmy.near.presentation.preview.model.DevicePreviewSpec
 import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenu
 import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenuItem
 import com.alarmy.near.presentation.ui.extension.NearConditionalShimmer
@@ -83,6 +91,7 @@ internal fun HomeRoute(
     onMyPageClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
     onMonthlyReminderAllClick: () -> Unit = {},
+    onChatbotClick: () -> Unit = {},
 ) {
     LaunchedEffect(Unit) {
         viewModel.errorEvent.collect {
@@ -97,6 +106,7 @@ internal fun HomeRoute(
         onMyPageClick = onMyPageClick,
         onAddContactClick = onAddContactClick,
         onMonthlyReminderAllClick = onMonthlyReminderAllClick,
+        onChatbotClick = onChatbotClick,
     )
 }
 
@@ -109,6 +119,7 @@ internal fun HomeScreen(
     onAlarmClick: () -> Unit = {},
     onAddContactClick: () -> Unit = {},
     onMonthlyReminderAllClick: () -> Unit = {},
+    onChatbotClick: () -> Unit = {},
     uiState: HomeUiState,
 ) {
     val density = LocalDensity.current
@@ -151,7 +162,12 @@ internal fun HomeScreen(
                     )
                 }
 
-                Box(modifier = Modifier.padding(horizontal = 24.dp).align(Alignment.CenterStart)) {
+                Box(
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 24.dp)
+                            .align(Alignment.CenterStart),
+                ) {
                     NearConditionalShimmer(enabled = uiState.memberInfo == null) {
                         Text(
                             text =
@@ -294,6 +310,7 @@ internal fun HomeScreen(
             MyFriends(
                 onContactClick = onContactClick,
                 onAddContactClick = onAddContactClick,
+                onChatbotClick = onChatbotClick,
                 myFriendUIState = uiState.myFriendUIState,
             )
         }
@@ -305,6 +322,7 @@ private fun MyFriends(
     myFriendUIState: MyFriendUIState,
     onContactClick: (String) -> Unit,
     onAddContactClick: () -> Unit,
+    onChatbotClick: () -> Unit,
 ) {
     val contactsWithPage =
         if (myFriendUIState is MyFriendUIState.Success) myFriendUIState.myFriends.chunked(5) else listOf()
@@ -336,7 +354,6 @@ private fun MyFriends(
                 ),
     ) {
         if (myFriendUIState is MyFriendUIState.Loading) {
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -404,6 +421,42 @@ private fun MyFriends(
                 PagerIndicator(pagerState)
                 Spacer(modifier = Modifier.height(104.dp))
             }
+        }
+
+        // 챗봇
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp)
+                    .padding(horizontal = 20.dp)
+                    .align(Alignment.BottomCenter)
+                    .border(
+                        border =
+                            BorderStroke(
+                                1.dp,
+                                NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.1f),
+                            ),
+                        shape = RoundedCornerShape(12.dp),
+                    ).padding(vertical = 14.dp)
+                    .padding(start = 16.dp, end = 12.dp)
+                    .onNoRippleClick { onChatbotClick() },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = "뭐라고 연락해야할지 막연하다면?",
+                style = NearTheme.typography.B2_14_MEDIUM,
+                color =
+                    NearTheme.colors.BLACK_1A1A1A.copy(
+                        alpha = 0.5f,
+                    ),
+            )
+
+            Icon(
+                painter = painterResource(R.drawable.icon_24_arrow_chat_gray),
+                contentDescription = null,
+            )
         }
     }
 }
