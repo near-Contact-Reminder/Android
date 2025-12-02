@@ -31,6 +31,13 @@ fun NearTheme(
             darkTheme -> lightColor // TODO DarkTheme 추가시 수정
             else -> lightColor
         }
+
+    /*
+     * TODO
+     *  하단 부분으로 Typography의 크기를 고정합니다.
+     * 시스템에서 텍스트 크기를 조정해도 앱 내부에서는 변경되지 않기에 접근성을 해칠 수 있습니다.
+     * 추후 다른 방법으로 텍스트 크기를 조정하도록 합니다.
+     * */
     val currentDensity = LocalDensity.current
     val themeDensity =
         Density(
