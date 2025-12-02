@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.chatbot.components.ChatbotAppbar
 import com.alarmy.near.presentation.feature.chatbot.components.ChatbotTextField
+import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.launch
 
@@ -47,14 +45,13 @@ fun ChatbotRoute(
 @Composable
 fun ChatbotScreen() {
     var inputText by remember { mutableStateOf("") }
-    val density = LocalDensity.current
-    val statusBarHeightDp = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
     // 키보드 상태 감지
-    val imeVisible = WindowInsets.ime.asPaddingValues().calculateBottomPadding() > 0.dp
+    val imeHeightDp = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    val imeVisible = imeHeightDp > 0.dp
 
     // 키보드가 내려가면 포커스 해제
     LaunchedEffect(imeVisible) {
@@ -67,14 +64,13 @@ fun ChatbotScreen() {
         }
     }
 
-    Column(
+    NearFrame(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .background(NearTheme.colors.WHITE_FFFFFF)
-                .padding(top = statusBarHeightDp)
-                .navigationBarsPadding()
-                .imePadding(),
+            if (imeVisible) {
+                Modifier.imePadding()
+            } else {
+                Modifier
+            },
     ) {
         // 앱바
         ChatbotAppbar()
