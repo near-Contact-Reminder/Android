@@ -18,11 +18,13 @@ fun NavController.navigateToChatbot(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.chatbotNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onNavigateBack: () -> Unit,
+    onChatbotRecordClick: () -> Unit = {},
 ) {
     composable<RouteChatbot> {
         ChatbotRoute(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onNavigateBack = { onNavigateBack() },
+            onChatbotRecordClick = { onChatbotRecordClick() },
         )
     }
 }

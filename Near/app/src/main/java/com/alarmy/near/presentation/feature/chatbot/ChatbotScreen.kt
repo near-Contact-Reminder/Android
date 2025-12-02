@@ -38,14 +38,19 @@ import kotlinx.coroutines.launch
 fun ChatbotRoute(
     onShowErrorSnackBar: (Throwable?) -> Unit,
     onNavigateBack: () -> Unit,
+    onChatbotRecordClick: () -> Unit = {},
 ) {
     ChatbotScreen(
         onNavigateBack = { onNavigateBack() },
+        onChatbotRecordClick = { onChatbotRecordClick() },
     )
 }
 
 @Composable
-fun ChatbotScreen(onNavigateBack: () -> Unit = {}) {
+fun ChatbotScreen(
+    onNavigateBack: () -> Unit = {},
+    onChatbotRecordClick: () -> Unit = {},
+) {
     var inputText by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
@@ -77,6 +82,7 @@ fun ChatbotScreen(onNavigateBack: () -> Unit = {}) {
         // 앱바
         ChatbotAppbar(
             onNavigateBack = { onNavigateBack() },
+            onChatbotRecordClick = { onChatbotRecordClick() },
         )
 
         // 스크롤 가능한 컨텐츠 영역

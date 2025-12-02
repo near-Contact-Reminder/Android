@@ -206,6 +206,7 @@ internal fun NearNavHost(
         chatbotNavGraph(
             onShowErrorSnackBar = onShowSnackbar,
             onNavigateBack = { navController.popBackStack() },
+            onChatbotRecordClick = { navController.navigateToChatbotRecord() },
         )
 
         // 챗봇 추천 메시지 기록 Navgraph

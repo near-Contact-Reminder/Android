@@ -23,7 +23,10 @@ import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
 @Composable
-fun ChatbotAppbar(onNavigateBack: () -> Unit = {}) {
+fun ChatbotAppbar(
+    onNavigateBack: () -> Unit = {},
+    onChatbotRecordClick: () -> Unit = {},
+) {
     Row(
         modifier =
             Modifier
@@ -43,7 +46,7 @@ fun ChatbotAppbar(onNavigateBack: () -> Unit = {}) {
                                 1.dp,
                                 NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.1f),
                             ),
-                    ).onNoRippleClick {}
+                    ).onNoRippleClick { onChatbotRecordClick() }
                     .padding(horizontal = 12.dp)
                     .padding(top = 8.dp, bottom = 7.dp),
             text = "추천 메시지 기록",
