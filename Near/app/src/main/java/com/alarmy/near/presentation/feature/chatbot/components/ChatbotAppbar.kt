@@ -26,6 +26,7 @@ import com.alarmy.near.presentation.ui.theme.NearTheme
 fun ChatbotAppbar(
     onNavigateBack: () -> Unit = {},
     onChatbotRecordClick: () -> Unit = {},
+    isRecordEmpty: Boolean = true,
 ) {
     Row(
         modifier =
@@ -35,25 +36,26 @@ fun ChatbotAppbar(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            modifier =
-                Modifier
-                    .align(Alignment.CenterVertically)
-                    .border(
-                        shape = RoundedCornerShape(8.dp),
-                        border =
-                            BorderStroke(
-                                1.dp,
-                                NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.1f),
-                            ),
-                    ).onNoRippleClick { onChatbotRecordClick() }
-                    .padding(horizontal = 12.dp)
-                    .padding(top = 8.dp, bottom = 7.dp),
-            text = "추천 메시지 기록",
-            style = NearTheme.typography.B2_14_MEDIUM,
-        )
-
-        Spacer(modifier = Modifier.size(12.dp))
+        if (isRecordEmpty.not()) {
+            Text(
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterVertically)
+                        .border(
+                            shape = RoundedCornerShape(8.dp),
+                            border =
+                                BorderStroke(
+                                    1.dp,
+                                    NearTheme.colors.BLACK_1A1A1A.copy(alpha = 0.1f),
+                                ),
+                        ).onNoRippleClick { onChatbotRecordClick() }
+                        .padding(horizontal = 12.dp)
+                        .padding(top = 8.dp, bottom = 7.dp),
+                text = "추천 메시지 기록",
+                style = NearTheme.typography.B2_14_MEDIUM,
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+        }
 
         IconButton(
             onClick = { onNavigateBack() },

@@ -29,6 +29,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.chatbot.components.ChatbotAppbar
 import com.alarmy.near.presentation.feature.chatbot.components.ChatbotTextField
+import com.alarmy.near.presentation.feature.chatbot.state.ChatbotScreenState
+import com.alarmy.near.presentation.feature.chatbot.state.ChatbotUiState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.launch
@@ -40,10 +42,10 @@ fun ChatbotRoute(
     onNavigateBack: () -> Unit,
     onChatbotRecordClick: () -> Unit = {},
 ) {
-    val inputText by viewModel.inputText.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ChatbotScreen(
-        inputText = inputText,
+        uiState = uiState,
         onInputTextChanged = viewModel::updateInputText,
         onSendClick = viewModel::sendMessage,
         onNavigateBack = onNavigateBack,
@@ -53,7 +55,7 @@ fun ChatbotRoute(
 
 @Composable
 fun ChatbotScreen(
-    inputText: String,
+    uiState: ChatbotUiState,
     onInputTextChanged: (String) -> Unit = {},
     onSendClick: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
@@ -91,6 +93,7 @@ fun ChatbotScreen(
         ChatbotAppbar(
             onNavigateBack = { onNavigateBack() },
             onChatbotRecordClick = { onChatbotRecordClick() },
+            isRecordEmpty = uiState.screenState is ChatbotScreenState.Empty,
         )
 
         // 스크롤 가능한 컨텐츠 영역
@@ -100,12 +103,28 @@ fun ChatbotScreen(
                     .weight(1f)
                     .fillMaxWidth(),
         ) {
-            ChatbotBodyInit()
+            when (val screenState = uiState.screenState) {
+                is ChatbotScreenState.Loading -> {
+                    // TODO: 로딩 UI
+                }
+
+                is ChatbotScreenState.Empty -> {
+                    ChatbotBodyInit()
+                }
+
+                is ChatbotScreenState.Success -> {
+                    // TODO: 채팅 메시지 리스트 UI
+                }
+
+                is ChatbotScreenState.Error -> {
+                    // TODO: 에러 UI
+                }
+            }
         }
 
         // 텍스트필드를 하단에 배치
         ChatbotTextField(
-            value = inputText,
+            value = uiState.inputText,
             onValueChange = onInputTextChanged,
             onSendClick = onSendClick,
             modifier =
@@ -150,6 +169,6 @@ private fun ChatbotBodyInit() {
 @Composable
 fun ChatbotScreenPreview() {
     NearTheme {
-        ChatbotScreen(inputText = "")
+        ChatbotScreen(uiState = ChatbotUiState())
     }
 }

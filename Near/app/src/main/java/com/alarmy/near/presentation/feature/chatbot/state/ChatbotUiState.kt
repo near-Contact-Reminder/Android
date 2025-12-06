@@ -2,14 +2,22 @@ package com.alarmy.near.presentation.feature.chatbot.state
 
 import com.alarmy.near.presentation.feature.chatbotrecord.model.ChatbotRecordUIModel
 
-sealed class ChatbotUiState {
-    object Loading : ChatbotUiState()
+sealed class ChatbotScreenState {
+    data object Loading : ChatbotScreenState()
+
+    data object Empty : ChatbotScreenState()
 
     data class Success(
         val records: List<ChatbotRecordUIModel>,
-    ) : ChatbotUiState()
+    ) : ChatbotScreenState()
 
     data class Error(
         val throwable: Throwable,
-    ) : ChatbotUiState()
+    ) : ChatbotScreenState()
 }
+
+data class ChatbotUiState(
+    val screenState: ChatbotScreenState = ChatbotScreenState.Loading,
+    val inputText: String = "",
+    val isSending: Boolean = false,
+)
