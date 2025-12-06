@@ -1,8 +1,6 @@
 package com.alarmy.near.presentation.feature.chatbot.components
 
-import android.content.Intent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,10 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
@@ -27,8 +22,6 @@ fun ChatbotReceivedBubble(
     text: String,
     onCopyComplete: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-
     Column {
         Image(
             painter = painterResource(R.drawable.img_100_character_default),
@@ -49,7 +42,11 @@ fun ChatbotReceivedBubble(
                 painter = painterResource(R.drawable.icon_24_copy),
                 tint = NearTheme.colors.GRAY01_888888,
                 contentDescription = "복사",
-                modifier = Modifier.clipboardCopy(text),
+                modifier =
+                    Modifier.clipboardCopy(
+                        text = text,
+                        onCopyComplete = onCopyComplete,
+                    ),
             )
             Spacer(modifier = Modifier.size(12.dp))
             Icon(
