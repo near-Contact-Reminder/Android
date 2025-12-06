@@ -18,15 +18,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.chatbot.components.ChatbotAppbar
 import com.alarmy.near.presentation.feature.chatbot.components.ChatbotTextField
@@ -36,22 +35,30 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ChatbotRoute(
+    viewModel: ChatbotViewModel = hiltViewModel(),
     onShowErrorSnackBar: (Throwable?) -> Unit,
     onNavigateBack: () -> Unit,
     onChatbotRecordClick: () -> Unit = {},
 ) {
+    val inputText by viewModel.inputText.collectAsStateWithLifecycle()
+
     ChatbotScreen(
-        onNavigateBack = { onNavigateBack() },
-        onChatbotRecordClick = { onChatbotRecordClick() },
+        inputText = inputText,
+        onInputTextChanged = viewModel::updateInputText,
+        onSendClick = viewModel::sendMessage,
+        onNavigateBack = onNavigateBack,
+        onChatbotRecordClick = onChatbotRecordClick,
     )
 }
 
 @Composable
 fun ChatbotScreen(
+    inputText: String,
+    onInputTextChanged: (String) -> Unit = {},
+    onSendClick: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
     onChatbotRecordClick: () -> Unit = {},
 ) {
-    var inputText by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -99,13 +106,8 @@ fun ChatbotScreen(
         // 텍스트필드를 하단에 배치
         ChatbotTextField(
             value = inputText,
-            onValueChange = { inputText = it },
-            onSendClick = {
-                if (inputText.isNotEmpty()) {
-                    // TODO: 메시지 전송 처리
-                    inputText = ""
-                }
-            },
+            onValueChange = onInputTextChanged,
+            onSendClick = onSendClick,
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -148,6 +150,6 @@ private fun ChatbotBodyInit() {
 @Composable
 fun ChatbotScreenPreview() {
     NearTheme {
-        ChatbotScreen()
+        ChatbotScreen(inputText = "")
     }
 }
