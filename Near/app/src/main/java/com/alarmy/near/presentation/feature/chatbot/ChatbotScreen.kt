@@ -18,7 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -32,7 +36,9 @@ import com.alarmy.near.presentation.feature.chatbot.components.ChatbotTextField
 import com.alarmy.near.presentation.feature.chatbot.state.ChatbotScreenState
 import com.alarmy.near.presentation.feature.chatbot.state.ChatbotUiState
 import com.alarmy.near.presentation.ui.component.NearFrame
+import com.alarmy.near.presentation.ui.component.snackbar.NearSnackbar
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,6 +70,14 @@ fun ChatbotScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
+    var showCopySnackbar by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showCopySnackbar) {
+        if (showCopySnackbar) {
+            delay(2000L)
+            showCopySnackbar = false
+        }
+    }
 
     // 키보드 상태 감지
     val imeHeightDp = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
@@ -114,6 +128,8 @@ fun ChatbotScreen(
 
                 is ChatbotScreenState.Success -> {
                     // TODO: 채팅 메시지 리스트 UI
+                    // ChatbotReceivedBubble 사용 시 onCopyComplete에 아래 람다 전달
+                    // onCopyComplete = { showCopySnackbar = true }
                 }
 
                 is ChatbotScreenState.Error -> {
@@ -122,18 +138,32 @@ fun ChatbotScreen(
             }
         }
 
-        // 텍스트필드를 하단에 배치
-        ChatbotTextField(
-            value = uiState.inputText,
-            onValueChange = onInputTextChanged,
-            onSendClick = onSendClick,
+        // 스낵바 + 텍스트필드를 하단에 배치
+        Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .background(NearTheme.colors.WHITE_FFFFFF)
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 16.dp, bottom = bottomPadding),
-        )
+                    .background(NearTheme.colors.WHITE_FFFFFF),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            // 스낵바
+            NearSnackbar(
+                isVisible = showCopySnackbar,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+
+            // 텍스트필드
+            ChatbotTextField(
+                value = uiState.inputText,
+                onValueChange = onInputTextChanged,
+                onSendClick = onSendClick,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = bottomPadding),
+            )
+        }
     }
 }
 
