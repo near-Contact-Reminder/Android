@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.ui.extension
 
+import android.content.Intent
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,7 +15,11 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -71,3 +76,31 @@ fun Modifier.dropShadow(
         }
     }
 }
+
+fun Modifier.clipboardCopy(
+    text: String,
+    onCopyComplete: () -> Unit = {},
+): Modifier =
+    composed {
+        val clipboardManager = LocalClipboardManager.current
+        clickable {
+            clipboardManager.setText(AnnotatedString(text))
+            onCopyComplete()
+        }
+    }
+
+fun Modifier.showShareIntent(text: String): Modifier =
+    composed {
+        val context = LocalContext.current
+
+        clickable {
+            val sendIntent =
+                Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    type = "text/plain"
+                }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            context.startActivity(shareIntent)
+        }
+    }
