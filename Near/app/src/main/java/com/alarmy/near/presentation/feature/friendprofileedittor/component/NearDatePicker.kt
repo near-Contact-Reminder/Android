@@ -1,7 +1,7 @@
 package com.alarmy.near.presentation.feature.friendprofileedittor.component
 
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
@@ -12,11 +12,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.alarmy.near.presentation.ui.theme.NearColor
 import com.alarmy.near.presentation.ui.theme.NearTheme
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,15 +29,27 @@ fun NearDatePicker(
             ),
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-                onDismiss()
-            }) {
+            TextButton(
+                onClick = {
+                    onDateSelected(datePickerState.selectedDateMillis)
+                    onDismiss()
+                },
+                colors =
+                    ButtonDefaults.textButtonColors(
+                        contentColor = NearTheme.colors.BLUE01_5AA2E9,
+                    ),
+            ) {
                 Text("확인")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = onDismiss,
+                colors =
+                    ButtonDefaults.textButtonColors(
+                        contentColor = NearTheme.colors.BLUE01_5AA2E9,
+                    ),
+            ) {
                 Text("닫기")
             }
         },
@@ -57,6 +65,13 @@ fun NearDatePicker(
             colors =
                 DatePickerDefaults.colors().copy(
                     containerColor = NearTheme.colors.WHITE_FFFFFF,
+                    selectedDayContainerColor = NearTheme.colors.BLUE01_5AA2E9,
+                    selectedDayContentColor = NearTheme.colors.WHITE_FFFFFF,
+                    todayDateBorderColor = NearTheme.colors.BLUE01_5AA2E9,
+                    todayContentColor = NearTheme.colors.BLUE01_5AA2E9,
+                    currentYearContentColor = NearTheme.colors.BLUE01_5AA2E9,
+                    selectedYearContentColor = NearTheme.colors.WHITE_FFFFFF,
+                    selectedYearContainerColor = NearTheme.colors.BLUE01_5AA2E9,
                 ),
         )
     }

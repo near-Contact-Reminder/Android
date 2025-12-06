@@ -45,17 +45,18 @@ import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
-import com.alarmy.near.presentation.ui.component.bottomsheet.CycleSettingBottomSheet
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
 import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
+import com.alarmy.near.presentation.ui.component.bottomsheet.CycleSettingBottomSheet
 import com.alarmy.near.presentation.ui.component.radiobutton.NearSmallRadioButton
 import com.alarmy.near.presentation.ui.component.textfield.NearLimitedTextField
 import com.alarmy.near.presentation.ui.component.textfield.NearTextField
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
+import com.alarmy.near.utils.extensions.DateExtension
 import kotlinx.coroutines.launch
 
 @Composable
@@ -333,12 +334,7 @@ fun FriendProfileEditorScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Text(
-                                    text =
-                                        stringResource(friendProfileEditorUIState.contactFrequency.reminderInterval.labelRes) +
-                                            stringResource(
-                                                R.string.friend_profile_editor_contact_period_format,
-                                                stringResource(friendProfileEditorUIState.contactFrequency.dayOfWeek.resId),
-                                            ),
+                                    text = buildContactFrequencyText(friendProfileEditorUIState.contactFrequency),
                                     style = NearTheme.typography.B2_14_MEDIUM,
                                     color = NearTheme.colors.BLACK_1A1A1A,
                                 )
@@ -612,4 +608,30 @@ fun FriendProfileEditorScreenPreview() {
                 ),
         )
     }
+}
+
+@Composable
+private fun buildContactFrequencyText(contactFrequency: ContactFrequency): String {
+    val intervalText = stringResource(contactFrequency.reminderInterval.labelRes)
+    val suffix =
+        when (contactFrequency.reminderInterval) {
+            ReminderInterval.EVERY_WEEK,
+            ReminderInterval.EVERY_TWO_WEEK,
+            -> DateExtension.getTodayDayOfWeekInKorean()
+            ReminderInterval.EVERY_MONTH,
+            ReminderInterval.EVERY_SIX_MONTH,
+            ->
+                stringResource(
+                    R.string.friend_profile_editor_contact_period_day_of_month,
+                    DateExtension.getTodayDayOfMonth(),
+                )
+            else -> null
+        }
+    if (suffix == null) {
+        return intervalText
+    }
+    return "$intervalText ${stringResource(
+        R.string.friend_profile_editor_contact_period_format,
+        suffix,
+    )}"
 }
