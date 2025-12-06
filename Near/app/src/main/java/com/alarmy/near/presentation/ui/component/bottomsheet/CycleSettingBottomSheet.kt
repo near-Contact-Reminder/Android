@@ -126,11 +126,10 @@ fun CycleSettingBottomSheet(
 
                 Text(
                     text =
-                        stringResource(R.string.friend_contact_cycle_next_cycle_prefix) +
-                            (
-                                selectedInterval?.let { DateExtension.getNextCycleDate(it) }
-                                    ?: DateExtension.getNextWeekSameDay()
-                            ),
+                        "${stringResource(R.string.friend_contact_cycle_next_cycle_prefix)} ${
+                            selectedInterval?.let { DateExtension.getNextCycleDate(it) }
+                                ?: DateExtension.getNextWeekSameDay()
+                        }",
                     style = NearTheme.typography.B2_14_MEDIUM,
                     color = NearTheme.colors.GRAY01_888888,
                 )
@@ -199,4 +198,3 @@ fun CycleSettingBottomSheetPreview() {
         )
     }
 }
-

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.presentation.feature.friendcontactcycle.model.FriendContactUIModel
+import com.alarmy.near.presentation.ui.extension.ImageLoader
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -116,10 +118,15 @@ fun FriendListItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f),
         ) {
-            Image(
-                painter = painterResource(R.drawable.img_64_user_gray),
+            ImageLoader(
+                uri = contact.photoUri,
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .clip(CircleShape),
+                placeholder = R.drawable.img_64_user_gray,
+                error = R.drawable.img_64_user_gray,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
             )
 
             Spacer(modifier = Modifier.size(12.dp))

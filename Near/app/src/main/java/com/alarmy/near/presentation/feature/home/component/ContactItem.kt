@@ -1,6 +1,7 @@
 package com.alarmy.near.presentation.feature.home.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,11 +9,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.alarmy.near.R
 import com.alarmy.near.model.friendsummary.ContactFrequencyLevel
 import com.alarmy.near.model.friendsummary.FriendSummary
+import com.alarmy.near.presentation.ui.extension.ImageLoader
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 
@@ -40,8 +44,14 @@ fun ContactItem(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box {
-            Image(
-                painter = painterResource(R.drawable.img_64_user1),
+            ImageLoader(
+                uri = friendSummary.profileImageUrl,
+                modifier =
+                    Modifier
+                        .size(64.dp)
+                        .clip(CircleShape),
+                placeholder = R.drawable.img_64_user1,
+                error = R.drawable.img_64_user1,
                 contentDescription = "",
             )
             Image(

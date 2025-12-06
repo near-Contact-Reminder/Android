@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -70,6 +73,7 @@ import com.alarmy.near.presentation.ui.component.appbar.NearTopAppbar
 import com.alarmy.near.presentation.ui.component.button.NearSolidTypeButton
 import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenu
 import com.alarmy.near.presentation.ui.component.dropdown.NearDropdownMenuItem
+import com.alarmy.near.presentation.ui.extension.ImageLoader
 import com.alarmy.near.presentation.ui.extension.onNoRippleClick
 import com.alarmy.near.presentation.ui.theme.NearTheme
 import kotlinx.coroutines.delay
@@ -248,11 +252,20 @@ fun FriendProfileScreen(
                                                 .padding(horizontal = 32.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
-                                        Box {
-                                            // 이미지 + 이모지
-                                            Image(
-                                                modifier = Modifier.align(Alignment.Center),
-                                                painter = painterResource(R.drawable.img_80_user1),
+                                        Box(
+                                            modifier =
+                                                Modifier
+                                                    .size(80.dp),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            ImageLoader(
+                                                uri = friend.imageUrl,
+                                                modifier =
+                                                    Modifier
+                                                        .matchParentSize()
+                                                        .clip(CircleShape),
+                                                placeholder = R.drawable.img_80_user1,
+                                                error = R.drawable.img_80_user1,
                                                 contentDescription = null,
                                             )
                                             Image(
@@ -345,7 +358,7 @@ fun FriendProfileScreen(
                                                 NearTheme.colors.GRAY01_888888.copy(
                                                     alpha = 0.3f,
                                                 ),
-                                                selected = currentTabPosition.intValue == 0,
+                                            selected = currentTabPosition.intValue == 0,
                                             onClick = { currentTabPosition.intValue = 0 },
                                         ) {
                                             Text(
@@ -375,9 +388,10 @@ fun FriendProfileScreen(
                                                     .height(50.dp),
                                             selected = currentTabPosition.intValue == 1,
                                             onClick = { currentTabPosition.intValue = 1 },
-                                            selectedContentColor = NearTheme.colors.GRAY01_888888.copy(
-                                                alpha = 0.3f
-                                            ),
+                                            selectedContentColor =
+                                                NearTheme.colors.GRAY01_888888.copy(
+                                                    alpha = 0.3f,
+                                                ),
                                         ) {
                                             Text(
                                                 text = stringResource(R.string.friend_profile_tab_text_record),

@@ -1,5 +1,6 @@
 package com.alarmy.near.data.mapper
 
+import com.alarmy.near.local.contact.ContactImageData
 import com.alarmy.near.model.Anniversary
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.DayOfWeek
@@ -7,6 +8,7 @@ import com.alarmy.near.model.Friend
 import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.network.request.ContactFrequencyInitRequest
+import com.alarmy.near.network.request.ImageUploadRequest
 import com.alarmy.near.network.request.FriendInitItemRequest
 import com.alarmy.near.network.response.AnniversaryInitEntity
 import com.alarmy.near.network.response.ContactFrequencyInitEntity
@@ -27,7 +29,10 @@ private fun String.formatPhoneNumber(): String = PhoneNumberFormatter.formatPhon
 /**
  * UI 모델을 서버 요청 모델로 변환
  */
-fun FriendContactUIModel.toFriendInitItemRequest(providerType: String): FriendInitItemRequest =
+fun FriendContactUIModel.toFriendInitItemRequest(
+    providerType: String,
+    imageUploadRequest: ImageUploadRequest?,
+): FriendInitItemRequest =
     FriendInitItemRequest(
         name = name,
         phone = phones.firstOrNull()?.formatPhoneNumber() ?: "",
@@ -35,7 +40,7 @@ fun FriendContactUIModel.toFriendInitItemRequest(providerType: String): FriendIn
         birthDay = birthDay,
         source = providerType,
         contactFrequency = createContactFrequencyRequest(reminderInterval!!),
-        imageUploadRequest = null,
+        imageUploadRequest = imageUploadRequest,
         anniversary = null,
         relation = "FRIEND", // 기본값으로 FRIEND 설정
     )
@@ -102,3 +107,11 @@ private fun String.toRelation(): Relation =
         .onFailure { exception ->
             NearLog.w("잘못된 관계 값: '$this', 기본값(FRIEND) 사용")
         }.getOrDefault(Relation.FRIEND)
+
+fun ContactImageData.toImageUploadRequest(category: String): ImageUploadRequest =
+    ImageUploadRequest(
+        fileName = fileName,
+        contentType = contentType,
+        fileSize = fileSize,
+        category = category,
+    )
