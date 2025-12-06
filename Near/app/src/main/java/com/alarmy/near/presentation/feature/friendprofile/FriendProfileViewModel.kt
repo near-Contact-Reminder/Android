@@ -113,14 +113,14 @@ class FriendProfileViewModel
                     }
                     if (friendFlow.value is FriendState.Success) {
                         _friendFlow.update {
+                            val updatedLastContactAt = getTodayDashFormat()
                             (it as FriendState.Success).copy(
                                 friend =
                                     it.friend.copy(
-                                        lastContactAt = getTodayDashFormat(),
-                                        lastContactFormat = it.friend.lastContactAt?.contactFormat(),
+                                        lastContactAt = updatedLastContactAt,
+                                        lastContactFormat = updatedLastContactAt.contactFormat(),
                                         isContactToday =
-                                            it.friend.lastContactAt?.isToday()
-                                                ?: false,
+                                            updatedLastContactAt.isToday(),
                                     ),
                             )
                         }
@@ -163,5 +163,5 @@ class FriendProfileViewModel
             val targetDate = LocalDate.parse(this, formatter)
             val today = LocalDate.now()
             return targetDate == today
+        }
     }
-}
