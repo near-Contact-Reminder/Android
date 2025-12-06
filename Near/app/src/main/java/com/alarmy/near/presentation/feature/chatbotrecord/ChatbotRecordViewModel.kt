@@ -34,10 +34,6 @@ class ChatbotRecordViewModel
                 .onStart {
                     _uiState.update { ChatbotRecordUiState.Loading }
                 }.onEach { chatbotRecords ->
-                    if (chatbotRecords.isEmpty()) {
-                        _uiState.update { ChatbotRecordUiState.Empty }
-                        return@onEach
-                    }
                     _uiState.update { ChatbotRecordUiState.Success(chatbotRecords) }
                 }.catch { exception ->
                     _uiState.update { ChatbotRecordUiState.Error(exception) }

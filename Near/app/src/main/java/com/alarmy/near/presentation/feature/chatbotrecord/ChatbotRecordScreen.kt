@@ -59,10 +59,6 @@ fun ChatbotRecordRoute(
                 onNavigateBack = { onNavigateBack() },
             )
         }
-
-        is ChatbotRecordUiState.Empty -> {
-            ChatbotRecordEmpty()
-        }
     }
 }
 
@@ -93,36 +89,6 @@ fun ChatbotRecordScreen(
                     record = record,
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun ChatbotRecordEmpty(onNavigateBack: () -> Unit = {}) {
-    NearFrame {
-        ChatbotRecordAppbar(
-            onNavigateBack = { onNavigateBack() },
-            onRecordClick = {},
-        )
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(modifier = Modifier.size(174.dp))
-
-            Image(
-                painter = painterResource(R.drawable.img_100_character_empty),
-                contentDescription = null,
-            )
-
-            Spacer(modifier = Modifier.size(16.dp))
-
-            Text(
-                text = "아직 기록이 없네요.",
-                style = NearTheme.typography.B2_14_MEDIUM,
-                color = NearTheme.colors.GRAY01_888888,
-            )
         }
     }
 }

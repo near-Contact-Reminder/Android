@@ -5,8 +5,6 @@ import com.alarmy.near.presentation.feature.chatbotrecord.model.ChatbotRecordUIM
 sealed class ChatbotRecordUiState {
     object Loading : ChatbotRecordUiState()
 
-    object Empty : ChatbotRecordUiState()
-
     data class Success(
         val records: List<ChatbotRecordUIModel>,
     ) : ChatbotRecordUiState()
