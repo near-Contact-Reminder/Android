@@ -37,7 +37,7 @@ fun NavController.navigateToFriendProfile(
 
 fun NavGraphBuilder.friendProfileNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onClickBackButton: () -> Unit,
+    onClickBackButton: (Friend?) -> Unit,
     onEditFriendInfo: (Friend) -> Unit = {},
     onClickCallButton: (phoneNumber: String) -> Unit = {},
     onClickMessageButton: (phoneNumber: String) -> Unit = {},
