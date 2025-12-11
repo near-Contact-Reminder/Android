@@ -57,6 +57,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alarmy.near.R
+import com.alarmy.near.model.Anniversary
 import com.alarmy.near.model.ContactFrequency
 import com.alarmy.near.model.DayOfWeek
 import com.alarmy.near.model.Friend
@@ -676,12 +677,14 @@ private fun ProfileDetailInfo(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                category,
+                modifier = Modifier.align(Alignment.Top),
+                text = category,
                 style = NearTheme.typography.B2_14_MEDIUM,
                 color = NearTheme.colors.GRAY01_888888,
             )
             Text(
-                content,
+                modifier = Modifier.padding(start = 54.dp),
+                text = content,
                 style = NearTheme.typography.B2_14_MEDIUM,
                 color = NearTheme.colors.BLACK_1A1A1A,
             )
