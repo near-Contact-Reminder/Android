@@ -151,13 +151,14 @@ fun CycleSettingBottomSheet(
                             if (!isSelected) {
                                 selectedInterval = interval
                             }
-                        }.padding(vertical = 15.dp),
+                        },
             ) {
                 Text(
+                    modifier = Modifier.padding(vertical = 15.dp),
                     text = stringResource(interval.labelRes),
                     style =
                         if (isSelected) {
-                            NearTheme.typography.B1_16_BOLD
+                            NearTheme.typography.B2_14_BOLD
                         } else {
                             NearTheme.typography.B2_14_MEDIUM
                         },
