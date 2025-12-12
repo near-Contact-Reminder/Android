@@ -46,6 +46,7 @@ import com.alarmy.near.model.Relation
 import com.alarmy.near.model.ReminderInterval
 import com.alarmy.near.presentation.feature.friendprofileedittor.component.NearDatePicker
 import com.alarmy.near.presentation.feature.friendprofileedittor.dialog.EditorExitDialog
+import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.AnniversaryUIState
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIEvent
 import com.alarmy.near.presentation.feature.friendprofileedittor.uistate.FriendProfileEditorUIState
 import com.alarmy.near.presentation.ui.component.NearFrame
@@ -540,7 +541,7 @@ fun FriendProfileEditorScreen(
                                 }
                             }
                         }
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             modifier =
                                 Modifier
