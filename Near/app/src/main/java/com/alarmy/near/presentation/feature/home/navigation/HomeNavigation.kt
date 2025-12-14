@@ -1,7 +1,10 @@
 package com.alarmy.near.presentation.feature.home.navigation
 
 import android.os.Parcelable
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -50,15 +53,17 @@ fun NavGraphBuilder.homeNavGraph(
     composable<RouteHome> { backStackEntry ->
         val viewModel: HomeViewModel = hiltViewModel()
         val homeEvent = backStackEntry.savedStateHandle.get<HomeNavigationEvent>(HOME_RESULT_EVENT)
-        when (homeEvent) {
-            is HomeNavigationEvent.FriendDeleted -> {
-                viewModel.deleteFriend(homeEvent.friendId)
-            }
+        LaunchedEffect(homeEvent) {
+            when (homeEvent) {
+                is HomeNavigationEvent.FriendDeleted -> {
+                    viewModel.deleteFriend(homeEvent.friendId)
+                }
 
-            is HomeNavigationEvent.FriendReminderUpdated -> {
-                viewModel.updateFriendReminder(homeEvent.friendId, homeEvent.friendReminderUpdatedAt)
+                is HomeNavigationEvent.FriendReminderUpdated -> {
+                    viewModel.updateFriendReminder(homeEvent.friendId, homeEvent.friendReminderUpdatedAt)
+                }
+                null -> Unit
             }
-            null -> Unit
         }
 
         HomeRoute(
