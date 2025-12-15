@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.alarmy.near.model.Friend
 import com.alarmy.near.presentation.feature.contact.navigation.CONTACT_SELECTION_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.contact.navigation.contactNavGraph
 import com.alarmy.near.presentation.feature.contact.navigation.navigateToContact
@@ -18,7 +19,8 @@ import com.alarmy.near.presentation.feature.friendprofile.navigation.navigateToF
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.FRIEND_PROFILE_EDIT_COMPLETE_KEY
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.friendProfileEditorNavGraph
 import com.alarmy.near.presentation.feature.friendprofileedittor.navigation.navigateToFriendProfileEditor
-import com.alarmy.near.presentation.feature.home.navigation.HOME_FRIEND_DELETE_COMPLETE_KEY
+import com.alarmy.near.presentation.feature.home.navigation.HOME_RESULT_EVENT
+import com.alarmy.near.presentation.feature.home.navigation.HomeNavigationEvent
 import com.alarmy.near.presentation.feature.home.navigation.homeNavGraph
 import com.alarmy.near.presentation.feature.home.navigation.navigateToHome
 import com.alarmy.near.presentation.feature.login.navigation.loginNavGraph
@@ -119,40 +121,57 @@ internal fun NearNavHost(
         )
 
         // 친구 프로필 화면 NavGraph
-        friendProfileNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {
-            navController.popBackStack()
-        }, onClickCallButton = { phoneNumber ->
-            val intent =
-                Intent(Intent.ACTION_DIAL).apply {
-                    data = "tel:$phoneNumber".toUri()
+        friendProfileNavGraph(
+            onShowErrorSnackBar = onShowSnackbar,
+            onClickBackButton = { friend: Friend? ->
+                friend?.let {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        HOME_RESULT_EVENT,
+                        HomeNavigationEvent.FriendReminderUpdated(
+                            friend.friendId,
+                            friend.lastContactAt,
+                        ),
+                    )
                 }
-            context.startActivity(intent)
-        }, onClickMessageButton = { phoneNumber ->
-            val intent =
-                Intent(Intent.ACTION_VIEW).apply {
-                    data = "sms:$phoneNumber".toUri()
-                }
-            context.startActivity(intent)
-        }, onEditFriendInfo = {
-            navController.navigateToFriendProfileEditor(
-                friend =
-                    it.copy(
-                        imageUrl =
-                            it.imageUrl?.let { imageUrl ->
-                                URLEncoder.encode(
-                                    imageUrl,
-                                    StandardCharsets.UTF_8.toString(),
-                                )
-                            },
-                    ),
-            )
-        }, onDeleteFriendSuccess = {
-            navController.previousBackStackEntry?.savedStateHandle?.set(
-                HOME_FRIEND_DELETE_COMPLETE_KEY,
-                it,
-            )
-            navController.popBackStack()
-        })
+
+                navController.popBackStack()
+            },
+            onClickCallButton = { phoneNumber ->
+                val intent =
+                    Intent(Intent.ACTION_DIAL).apply {
+                        data = "tel:$phoneNumber".toUri()
+                    }
+                context.startActivity(intent)
+            },
+            onClickMessageButton = { phoneNumber ->
+                val intent =
+                    Intent(Intent.ACTION_VIEW).apply {
+                        data = "sms:$phoneNumber".toUri()
+                    }
+                context.startActivity(intent)
+            },
+            onEditFriendInfo = {
+                navController.navigateToFriendProfileEditor(
+                    friend =
+                        it.copy(
+                            imageUrl =
+                                it.imageUrl?.let { imageUrl ->
+                                    URLEncoder.encode(
+                                        imageUrl,
+                                        StandardCharsets.UTF_8.toString(),
+                                    )
+                                },
+                        ),
+                )
+            },
+            onDeleteFriendSuccess = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    HOME_RESULT_EVENT,
+                    HomeNavigationEvent.FriendDeleted(it),
+                )
+                navController.popBackStack()
+            },
+        )
 
         // 친구 프로필 편집 화면 NavGraph
         friendProfileEditorNavGraph(onShowErrorSnackBar = onShowSnackbar, onClickBackButton = {

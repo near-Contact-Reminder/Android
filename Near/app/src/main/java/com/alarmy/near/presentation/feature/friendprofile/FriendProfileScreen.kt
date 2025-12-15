@@ -1,5 +1,6 @@
 package com.alarmy.near.presentation.feature.friendprofile
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -84,7 +85,7 @@ import kotlinx.coroutines.launch
 fun FriendProfileRoute(
     viewModel: FriendProfileViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onClickBackButton: () -> Unit = {},
+    onClickBackButton: (Friend?) -> Unit = {},
     onEditFriendInfo: (Friend) -> Unit = {},
     onClickCallButton: (phoneNumber: String) -> Unit = {},
     onClickMessageButton: (phoneNumber: String) -> Unit = {},
@@ -112,6 +113,11 @@ fun FriendProfileRoute(
             }
         }
     }
+    BackHandler {
+        // 다이얼로그 등이 있으면 해당 백 처리를 우선 수행
+        onClickBackButton((friendState.value as? FriendState.Success)?.friend)
+    }
+
     FriendProfileScreen(
         friendState = friendState.value,
         friendShipRecordState = friendShipRecordState.value,
@@ -134,7 +140,7 @@ fun FriendProfileScreen(
     friendState: FriendState,
     friendShipRecordState: FriendShipRecordState,
     recordSuccessDialogState: Boolean = false,
-    onClickBackButton: () -> Unit = {},
+    onClickBackButton: (Friend) -> Unit = {},
     onEditFriendInfo: (Friend) -> Unit = {},
     onClickCallButton: (phoneNumber: String) -> Unit = {},
     onClickMessageButton: (phoneNumber: String) -> Unit = {},
@@ -195,7 +201,9 @@ fun FriendProfileScreen(
                         // (1) 상단 AppBar — 고정
                         NearTopAppbar(
                             title = stringResource(R.string.friend_profile_title),
-                            onClickBackButton = onClickBackButton,
+                            onClickBackButton = {
+                                onClickBackButton(friend)
+                            },
                             menuButton = {
                                 Column(modifier = Modifier.padding(end = 20.dp)) {
                                     Image(
@@ -439,14 +447,21 @@ fun FriendProfileScreen(
                         // (3) 하단 고정 버튼
                         Box(
                             modifier =
-                                Modifier.fillMaxWidth().background(
-                                    brush =
-                                        Brush.linearGradient(
-                                            colors = listOf(Color(0x00FFFFFF), Color(0xFFFFFFFF)), // 파랑 → 밝은 하늘색
-                                            start = Offset(0f, 0f), // 위쪽 시작
-                                            end = Offset(0f, Float.POSITIVE_INFINITY),
-                                        ),
-                                ),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        brush =
+                                            Brush.linearGradient(
+                                                colors =
+                                                    listOf(
+                                                        Color(0x00FFFFFF),
+                                                        Color(0xFFFFFFFF),
+                                                    ),
+                                                // 파랑 → 밝은 하늘색
+                                                start = Offset(0f, 0f), // 위쪽 시작
+                                                end = Offset(0f, Float.POSITIVE_INFINITY),
+                                            ),
+                                    ),
                         ) {
                             NearSolidTypeButton(
                                 modifier =

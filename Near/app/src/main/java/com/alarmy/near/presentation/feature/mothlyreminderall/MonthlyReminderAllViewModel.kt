@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -92,6 +93,7 @@ class MonthlyReminderAllViewModel
             }
         }
 
+        // 챙김시에 기념일이 나와야 함
         fun onRecordFriendShip(friendId: String) {
             friendRepository
                 .recordContact(friendId)
@@ -103,7 +105,14 @@ class MonthlyReminderAllViewModel
                     if (recordedFriend != null) {
                         monthlyReminders.value =
                             monthlyReminders.value.filter { it.friendId != friendId }
-                        completedReminders.value = listOf(recordedFriend) + completedReminders.value
+                        completedReminders.value = listOf(
+                            recordedFriend.copy(
+                                nextContactAt =
+                                    LocalDate
+                                        .now()
+                                        .format(DateTimeFormatter.ofPattern("yy.MM.dd")),
+                            ),
+                        ) + completedReminders.value
                         combineRemindersToUIState()
                     }
                 }.handleError(viewModelScope, _uiEvent) { exception ->
