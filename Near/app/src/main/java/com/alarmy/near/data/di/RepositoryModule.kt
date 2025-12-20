@@ -5,6 +5,7 @@ import com.alarmy.near.data.repository.AuthRepositoryImpl
 import com.alarmy.near.data.repository.ContactRepository
 import com.alarmy.near.data.repository.DefaultContactRepository
 import com.alarmy.near.data.repository.DefaultFriendRepository
+import com.alarmy.near.data.repository.DefaultMessagingRepository
 import com.alarmy.near.data.repository.ExampleRepository
 import com.alarmy.near.data.repository.ExampleRepositoryImpl
 import com.alarmy.near.data.repository.FriendRepository
@@ -12,6 +13,7 @@ import com.alarmy.near.data.repository.OnBoardingRepository
 import com.alarmy.near.data.repository.OnBoardingRepositoryImpl
 import com.alarmy.near.data.repository.MemberRepository
 import com.alarmy.near.data.repository.MemberRepositoryImpl
+import com.alarmy.near.data.repository.MessagingRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -44,4 +46,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindContactRepository(contactRepository: DefaultContactRepository): ContactRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMessagingRepository(messagingRepository: DefaultMessagingRepository): MessagingRepository
 }
