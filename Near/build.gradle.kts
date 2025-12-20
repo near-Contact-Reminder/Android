@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.ktlint)
     alias(libs.plugins.google.service) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }

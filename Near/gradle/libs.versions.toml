@@ -34,6 +34,7 @@ v2All = "2.21.7"
 google-service = "4.4.4"
 # Firebase
 firebase = "34.6.0"
+firbase-crashlytics = "3.0.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -83,4 +84,5 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintVersion" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-parcelize = {id = "kotlin-parcelize"}
 google-service = { id = "com.google.gms.google-services", version.ref = "google-service"}
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firbase-crashlytics" }
 
