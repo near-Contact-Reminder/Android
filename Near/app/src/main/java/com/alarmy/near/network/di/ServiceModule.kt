@@ -24,4 +24,8 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideMemberApiService(retrofit: Retrofit): MemberApiService = retrofit.create(MemberApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMessageService(retrofit: Retrofit): FriendService = retrofit.create(FriendService::class.java)
 }
