@@ -8,12 +8,12 @@ import retrofit2.http.POST
 
 interface MessagingService {
     @POST("/messaging/register")
-    fun registerToken(
+    suspend fun registerToken(
         @Body fcmTokenRegistrationRequest: FcmTokenRegistrationRequest,
     )
 
     @DELETE("/messaging/unregister")
-    fun unregisterToken(
+    suspend fun unregisterToken(
         @Body fcmTokenUnRegistrationRequest: FcmTokenUnRegistrationRequest,
     )
 }
