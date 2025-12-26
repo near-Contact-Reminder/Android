@@ -3,6 +3,7 @@ package com.alarmy.near.presentation.feature.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alarmy.near.data.repository.AuthRepository
+import com.alarmy.near.data.repository.MessagingRepository
 import com.alarmy.near.model.ProviderType
 import com.alarmy.near.presentation.feature.login.model.TermType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ class LoginViewModel
     @Inject
     constructor(
         private val authRepository: AuthRepository,
+        private val messageRepository: MessagingRepository,
     ) : ViewModel() {
         // UI 상태 관리
         private val _uiState = MutableStateFlow(LoginUiState())

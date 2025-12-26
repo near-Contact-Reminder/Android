@@ -1,7 +1,9 @@
 package com.alarmy.near.data.repository
 
-interface MessagingRepository {
-    fun registerToken(token: String)
+import kotlinx.coroutines.flow.Flow
 
-    fun unregisterToken(token: String)
+interface MessagingRepository {
+    fun registerToken(token: String): Flow<Unit>
+
+    fun unregisterToken(token: String): Flow<Unit>
 }
